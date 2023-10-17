@@ -2,14 +2,14 @@
 @section('content')
     <div class="pagetitle">
       <h1>Employee Asset Control System</h1><br>
-      <nav>
+      {{-- <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="{{route('home')}}" style="color:#000;">Dashboard</a></li>
           <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.index')}}" style="color:#000;">Back</a></li>
           <!-- <li class="breadcrumb-item">New</li>
           <li class="breadcrumb-item active">Back</li> -->
         </ol>
-      </nav>
+      </nav> --}}
     </div><!-- End Page Title -->
 
     @if(Session::has('success'))
@@ -49,7 +49,7 @@
               @endif
               <h2>{{$datas->emp_name}}</h2>
               <h3>{{$datas->department}}</h3>
-              
+
             </div>
           </div>
 
@@ -68,7 +68,7 @@
 
                 @if(Auth::user()->type=='superadmin')
                 <li class="nav-item">
-                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit" style="font-size: 18px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;">Edit Employee </button>
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit" style="font-size: 18px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;">Edit </button>
                 </li>
                 @endif
 
@@ -76,7 +76,7 @@
               <div class="tab-content pt-2">
 
                 <div class="tab-pane fade show active profile-overview" id="profile-overview"  style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;">
-       
+
                   <h5 class="card-title">Employee Details</h5>
 
                   <div class="row">
@@ -98,7 +98,7 @@
 
                   <h5 class="card-title" style="font-size: 15px; color:blue;">Employee Infomation</h5>
                   @if($datas->type=='Emp')
-               
+
                   <div class="row">
                     <div class="col-lg-3 col-md-4">Employee Name</div>
                     <div class="col-lg-9 col-md-8">{{$datas->emp_name}}</div>
@@ -118,13 +118,13 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4">Branch Code</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->branch_code}}</div>
+                    <div class="col-lg-9 col-md-8">{{$datas->branch_code}} ({{$datas->branch_name}})</div>
                   </div>
-
+{{--
                   <div class="row">
                     <div class="col-lg-3 col-md-4">Branch Name</div>
                     <div class="col-lg-9 col-md-8">{{$datas->branch_name}}</div>
-                  </div>
+                  </div> --}}
 
                   <h5 class="card-title" style="font-size: 15px; color:blue;">Asset Infomation</h5>
 
@@ -200,6 +200,30 @@
                     {{$datas->remark}}
                   </p>
 
+                    <hr>
+                  <div class="row small fst-italic">
+                    @foreach ($files as $file)
+                    <div class="col-lg-3 col-md-3">
+
+                        <a href="" data-bs-toggle="modal" data-bs-target="#viewUpload{{ $file->id }}">
+                        <img src="{{asset('storage/asset_upload/'.$file->file)}}" alt="asset images" class="img-fluid" style="width: 200px;"></a>
+                        <div class="modal fade" id="viewUpload{{ $file->id }}" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-body">
+                                    <img src="{{asset('storage/asset_upload/'.$file->file)}}" alt="asset images" class="img-fluid" style="width: 600px;">
+                                </div>
+                                <div class="modal-footer">
+                                    {{-- <a href="{{asset('storage/asset_upload/'.$file->file)}}" target="_blank"  class="btn btn-primary">Download</a> --}}
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+
+                </div>
 
                 </div>
 
@@ -214,7 +238,7 @@
                   @METHOD('PUT')
                   @csrf
                   <div class="row g-3">
-<!-- 
+<!--
                   <div class="row">
 
                     <div class="form-check col-md-2 col-lg-2">
@@ -232,20 +256,20 @@
                         By Department
                       </label>
                     </div>
-                  
+
                   </div><br><br><hr> -->
 
                     <div class="col-md-4 col-lg-4">
                       <input type="hidden" class="form-control"  name="userid" value="1">
                       <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;color:blue;">Employee Information</label><br>
-                   
+
                       <div class="row">
                       <div class="col-md-6">
                       <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Document No</label>
                       <input type="text" class="form-control" id="validationCustom01" name="doc_no"  value="{{$datas->doc_no}}" style="box-shadow:1px 1px 1px #333;" readonly>
                       </div>
                       <div class="col-md-6">
-                      <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department/Employee</label>
+                      <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">De/Emp</label>
                       <select class="form-control" name="type" style="box-shadow:1px 1px 1px #333;">
                           <option value="{{$datas->type}}" selected>
                             @if($datas->type=='Emp')
@@ -259,13 +283,30 @@
                       </select>
                       </div>
                       </div>
-                    
-               
+
+
                       <label for="validationCustom02" class="form-label card-title" style="font-size: 15px;">Employee ID</label>
                       <input type="text" class="form-control" id="empID" name="empcode" value="{{$datas->emp_code}}" style="box-shadow:1px 1px 1px #333;">
 
                       <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Employee name</label>
                       <input type="text" class="form-control" id="employee_name" name="empname"  value="{{$datas->emp_name}}" style="box-shadow:1px 1px 1px #333;">
+
+                      <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch Code</label>
+                      <select class="form-control" id="branchescode" name="branchcode" required>
+                          <option value="{{$datas->branch_code}}">{{$datas->branch_code}}({{$datas->branch_name}})</option>
+                            @foreach($branches as $branch)
+                            <option value="{{$branch->branch_code}}">{{$branch->branch_code}}({{$branch->branch_name}})</option>
+                            @endforeach
+                      </select>
+                      <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                        Please enter your branch code.
+                      </div>
+<br>
+                      {{-- <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch Name</label> --}}
+                      <select class="form-control" id="branches" name="branchname" readonly>
+                        <option value="{{$datas->branch_name}}">{{$datas->branch_name}}</option>
+                     </select>
+
 
                       <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department</label>
                       <select class="form-control" id="department" name="department" required>
@@ -278,28 +319,9 @@
                       <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                         Please enter your Department.
                       </div>
-            
-                      <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch Code</label>
-                      <select class="form-control" id="branchescode" name="branchcode" required>
-                          <option value="{{$datas->branch_code}}">{{$datas->branch_code}}</option>
-                            @foreach($branches as $branch)
-                            <option value="{{$branch->branch_code}}">{{$branch->branch_code}}</option>
-                            @endforeach
-                      </select>
-                      <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                        Please enter your branch code.
-                      </div>
-           
-                      <label for="validationCustom04" class="form-label card-title" style="font-size: 15px;">Branch Name</label>
-                     
-                      <select class="form-control" id="branches" name="branchname" required>
-                          <option value="{{$datas->branch_name}}">{{$datas->branch_name}}</option>
-                      </select>
-                      <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                        Please enter your branch name.
-                      </div>
+
                       <br>
-                      <div class="row g-3">
+                      {{-- <div class="row g-3">
                     <div class="col-md-6 col-lg-6">
                     <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">
                     <i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> Employee Profile</label>
@@ -307,19 +329,29 @@
                     <i class="bi bi-upload btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Employee profile click the button."></i>
                     </label>
                     <input type="file" id="my_file" style="display: none;" value="{{$datas->file}}" name="file" />
-                 
+
                     </div>
                     <div class="col-md-6 col-lg-6">
                     <div id="image_preview" style="width: 100px;"></div>
                     <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
                     </div>
-               
-                    </div>
+
+                    </div> --}}
+                    <div class="row g-3">
+                        <div class="col-md-12 col-lg-">
+                        <a href="" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#uploadasset">
+                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;cursor: pointer;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> Upload Your Asset images</label>
+                        <i class="bi bi-upload" style="color:#2809f5;font-size:20px;"></i>
+                        </a>
+                        </div>
+
+                     </div>
+
                       <br>
-                      
+
                     </div>
-                  
-                  
+
+
                     <div class="col-md-4 col-lg-4">
                       <h5 class="card-title" style="font-size: 15px; color:blue;">Asset Infomation</h5>
                       <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Type</label>
@@ -340,23 +372,31 @@
 
                       <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Laptop Asset Code</label>
                       <input type="text" class="form-control" id="validationCustom05" name="laptopcode" value="{{$datas->laptop_asset_code}}" style="box-shadow:1px 1px 1px #333;">
-              
+
                       <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Laptop Asset Name</label>
                       <textarea class="form-control" id="validationCustom06" style="height: 100px;box-shadow:1px 1px 1px #333;" value="{{$datas->laptop_asset_name}}" name="laptopname">{{$datas->laptop_asset_name}}</textarea>
 
-                 
+
                       <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Handset Asset Code</label>
                       <input type="text" class="form-control" id="validationCustom05"  value="{{$datas->handset_asset_code}}" style="box-shadow:1px 1px 1px #333;" name="handsetcode">
-                
+
                       <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Handset Asset Name</label>
                       <textarea class="form-control" id="validationCustom06" value="{{$datas->handset_asset_name}}" style="height: 100px;box-shadow:1px 1px 1px #333;" name="handsetname">{{$datas->handset_asset_name}}</textarea>
-                     
-               
+
+
                       <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Operator</label>
-                      <input type="text" class="form-control" id="validationCustom05"  style="box-shadow:1px 1px 1px #333;" name="simname" value="{{$datas->sim_name}}">
-                  
+                      <select class="form-select" aria-label="Default select example" name="simname" style="box-shadow:1px 1px 1px #333;" required>
+                        <option value="{{$datas->sim_name}}" selected>{{$datas->sim_name}}</option>
+                        <option value="ATOM">ATOM</option>
+                        <option value="Ooredoo">Ooredoo</option>
+                        <option value="MPT">MPT</option>
+                        <option value="Mytel">Mytel</option>
+                        </select>
+
+
                       <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Phone Number</label>
-                      <input type="text" class="form-control" id="validationCustom05" value="{{$datas->sim_phone}}" style="box-shadow:1px 1px 1px #333;" name="simnumber">
+                      <input  type="tel" class="form-control" pattern="09[0-9]{9}" id="validationCustom05" value="{{$datas->sim_phone}}" style="box-shadow:1px 1px 1px #333;" name="simnumber">
+
                     </div>
 
                       <div class="col-md-4 col-lg-4">
@@ -368,7 +408,6 @@
                       </div>
 
 
-                  
                         <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Receipt Type</label>
                             <select class="form-select" aria-label="Default select example" name='receipttype' style="box-shadow:1px 1px 1px #333;"  required>
                             <option value="{{$datas->receipt_type}}" selected>{{$datas->receipt_type}}</option>
@@ -377,7 +416,7 @@
                             <option value="Transfer">Transfer</option>
                             <option value="Log">Log</option>
                             </select>
-                   
+
                       <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Remark</label>
                       <textarea class="form-control" value="{{$datas->remark}}" id="validationCustom06" style="height: 100px;box-shadow:1px 1px 1px #333;" name="remark" required>{{$datas->remark}}</textarea>
                       <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
@@ -388,17 +427,99 @@
                     </div>
                   </div>
 
-
                   <hr>
                   <div class="col-12">
                     <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 15px;">Save</font></button>
                     <button class="btn btn-warning" type="reset"> <font class="card-title" style="color:#fff;font-size: 15px;">Back</font></button>
                   </div>
+
+                  <div class="modal fade" id="uploadasset" tabindex="-1">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Upload Asset Images</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="drop-zone" id="dropZone">
+                                <span class="drop-text">Drag & Drop Images Here</span>
+                                <input type="file" id="fileInput" style="display:none;" name="file[]" multiple>
+
+                            </div>
+                            <div id="preview" class="image-preview"></div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Confirm</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div><!-- End Vertically centered Modal-->
               </form><!-- End Custom Styled Validation -->
+
+              <hr>
+              <div class="row small fst-italic">
+                @foreach ($files as $file)
+                <div class="col-lg-3 col-md-3">
+                    <a href="" data-bs-toggle="modal" data-bs-target="#delupload{{ $file->id }}">
+                        <i class="ri-delete-bin-6-fill" style="color:red;font-size:20px;"></i></a><br>
+
+                    <a href="" data-bs-toggle="modal" data-bs-target="#viewUpload1{{ $file->id }}">
+
+                    <img src="{{asset('storage/asset_upload/'.$file->file)}}" alt="asset images" class="img-fluid"></a>
+                    <div class="modal fade" id="viewUpload1{{ $file->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-body">
+                               <center><img src="{{asset('storage/asset_upload/'.$file->file)}}" alt="asset images" class="img-fluid" style="width: 600px;"></center>
+                            </div>
+                            <div class="modal-footer">
+                                {{-- <a href="{{asset('storage/asset_upload/'.$file->file)}}" target="_blank"  class="btn btn-primary">Download</a> --}}
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+
+                <div class="modal fade" id="delupload{{ $file->id }}" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12 col-12">
+                                        <center>
+                                            <img
+                                                src="https://img.icons8.com/external-kmg-design-outline-color-kmg-design/52/000000/external-warning-maps-navigation-kmg-design-outline-color-kmg-design.png" />
+                                            <p style="color:#000;">Do you want to
+                                                delete?</p>
+                                            <i class="bi bi-x-circle btn btn-danger"
+                                                onclick='deleteRecordUpload("{{ $file->id }}")'
+                                                style="font-size:20px;color:fff;width:200px;">
+                                                Yes, delete it!</i>
+                                            <button type="button"
+                                                class="btn btn-light-secondary"
+                                                data-bs-dismiss="modal">
+                                                <i
+                                                    class="bx bx-x d-block d-sm-none"></i>
+                                                <span
+                                                    class="d-none d-sm-block">Cancel</span>
+                                            </button>
+                                        </center>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+
+            </div>
               </div>
         </div>
      </div>
-     <div class="col-lg-4"></div> 
+     <div class="col-lg-4"></div>
      </div>
           </div>
 
@@ -420,6 +541,88 @@
         }
     });
 
+    function deleteRecordUpload(id) {
+            console.log(id);
+              $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "/employee_asset/delete_upload_record/" + id,
+                type: 'DELETE',
+                data: {
+
+                    "id": id,
+                }
+            });
+
+            setTimeout(function() {
+                window.location.reload(); // Reload the page on success
+            }, 1000);
+        }
+
+        const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+
+// Trigger the file input when clicking the drop-zone
+dropZone.addEventListener('click', () => {
+    fileInput.click();
+});
+
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    handleFiles(files);
+});
+
+fileInput.addEventListener('change', () => {
+    const files = fileInput.files;
+    handleFiles(files);
+});
+
+function handleFiles(files) {
+    for (const file of files) {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const imageContainer = document.createElement('div');
+                imageContainer.classList.add('image-container');
+
+                const image = new Image();
+                image.src = e.target.result;
+
+                const removeButton = document.createElement('button');
+                removeButton.innerText = 'Remove';
+                removeButton.classList.add('remove-button');
+                removeButton.addEventListener('click', () => {
+                    imageContainer.remove();
+                });
+
+                imageContainer.appendChild(removeButton);
+                imageContainer.appendChild(image);
+
+                preview.appendChild(imageContainer);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+}
+
+
 </script>
 <script>
     function deleteRecord(id) {
@@ -433,7 +636,7 @@
                 url: "/employee_benefic/delete_record/" + id,
                 type: 'DELETE',
                 data: {
-                  
+
                     "id": id,
                 }
             });
@@ -471,6 +674,8 @@ $('#branches').select2({
     placeholder : 'Choose Your Sale branch',
     width: '100%'
 });
+
+
 
 $('#branchescode').select2({
     theme       : 'bootstrap-5',

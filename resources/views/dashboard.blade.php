@@ -1,7 +1,7 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
     <div class="pagetitle">
-      <h1>Employee Assect Control System</h1><br>
+      <h1>Asset Control System</h1><br>
       <nav>
         <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{route('home')}}" style="color:blue;">Dashboard</a></li>
@@ -44,7 +44,7 @@
         <div class="col-lg-6">
             <div class="card">
             <div class="card-body">
-              
+
             <h5 class="card-title">By Department</h5>
             <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
             <div id="container-bar-department"></div>
@@ -57,10 +57,10 @@
         <div class="col-lg-6">
             <div class="card">
             <div class="card-body">
-              
+
             <h5 class="card-title">By Branch</h5>
             <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
-             
+
 
             <div id="container-bar-branch"></div>
             </div>
@@ -99,7 +99,7 @@
                 url: "/employee_benefic/delete_record/" + id,
                 type: 'DELETE',
                 data: {
-                  
+
                     "id": id,
                 }
             });
@@ -186,7 +186,7 @@ foreach ($branches as $branch) {
 }
 
  ?>
- 
+
 <script type="text/javascript">
 
 Highcharts.chart('container-bar-department', {

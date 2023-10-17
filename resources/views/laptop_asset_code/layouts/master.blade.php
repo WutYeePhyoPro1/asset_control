@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Pro 1 Global Home Center</title>
+  <title>Asset Control System</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -80,15 +80,74 @@ input[type="text"],textarea,select,input[type="date"],input[type="radio"]{
 .pointer{
 cursor: pointer;
 }
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.drop-zone {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 50px;
+    text-align: center;
+    cursor: pointer;
+    height:150px;
+}
+
+.drop-text {
+    font-size: 18px;
+    color: #888;
+}
+
+.image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.image-preview .image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+}
+
+.image-preview img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+/* Your existing CSS code */
+
+/* Stylized Remove button */
+.remove-button {
+    background-color: #ff5c5c;
+    color: #fff;
+    border: none;
+    font-size:10px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+    margin: 5px;
+}
+
+.remove-button:hover {
+    background-color: #ff3333;
+}
+
+
 </style>
 </head>
 
 <body>
 @include('laptop_asset_code/parts/header')
 <main id="main" class="main">
-   
+
     @yield('content')
-  
+
 </main>
 @include('laptop_asset_code/parts/footer')
 

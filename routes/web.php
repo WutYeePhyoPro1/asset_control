@@ -23,7 +23,7 @@ Auth::routes(['verify' => true]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['middleware' => ['auth']], function () {
 Route::get('/', function () {
-    
+
     $datas=LaptopAssetCode::latest()->paginate(20);
     $branches=Branch::all();
     $departments=Department::all();
@@ -36,11 +36,14 @@ Route::match(['get', 'post'], '/employee_benefic/search', [LaptopAssetCodeContro
 Route::match(['get', 'post'], '/all_user/search', [UserController::class, 'search'])->name('all_user.search');
 Route::delete('/employee_benefic/delete_record/{id}',[LaptopAssetCodeController::class,'deletRecord']);
 Route::delete('/all_user/delete_record/{id}',[UserController::class,'destroy']);
-
+Route::delete('/employee_asset/delete_upload_record/{id}',[LaptopAssetCodeController::class,'deletUpload']);
 Route::post('change_password/{id}',[App\Http\Controllers\UserController::class,'changePassword'])->name('change_password');
 Route::get('branch_name/all_branchcode/{branch_name}', [LaptopAssetCodeController::class, 'branchSearch']);
 Route::post('employee_asset/excel_import', [AssetImportExcelController::class, 'importExcel'])->name('excel_import');
 Route::get('employee_asset/search_emp_id/{emp_id}', [LaptopAssetCodeController::class, 'empIDsearch']);
+Route::get('employee_asset/search_asset_code/{asset_code}', [LaptopAssetCodeController::class, 'assetCodesearch']);
+Route::get('employee_asset/search_asset_code2/{asset_code2}', [LaptopAssetCodeController::class, 'assetCodesearch']);
+Route::get('/limit_rows', [LaptopAssetCodeController::class, 'paginateData']);
 });
 
 Route::post('/logout', [App\Http\Controllers\HomeController::class, 'logout'])->name('logout');

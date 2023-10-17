@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class AssetImport implements ToModel, 
+class AssetImport implements ToModel,
 WithHeadingRow,
 SkipsOnError,
 WithValidation,
@@ -27,10 +27,10 @@ SkipsOnFailure
 
 {
     use Importable,SkipsErrors, SkipsFailures;
-    public $type; 
+    public $type;
     public $rowCount;
-    public $rowLimit; 
-    
+    public $rowLimit;
+
     public function __construct($type,$rowLimit)
     {
         $this->type = $type;
@@ -41,7 +41,7 @@ SkipsOnFailure
     public function model(array $row)
     {
         if ($this->rowCount >= $this->rowLimit) {
-            return null; 
+            return null;
         }
 
         $empId=$row['emp_id'];
@@ -55,7 +55,7 @@ SkipsOnFailure
         }
         // Generate the date in the 'Ymd' format
         $date = Carbon::today()->format('Ymd');
-      
+
         $today = LaptopAssetCode::where(['date' => Carbon::today()->format('Y-m-d'), 'type' => $de_type])->get();
         // dd($today);
         if ($today->isEmpty()) {
@@ -67,7 +67,7 @@ SkipsOnFailure
 
         // Format the suffix as a 4-digit string
         $data = sprintf("%'.04d", $suffix);
-       
+
         $doc_no = $prefix. $date . '-' . $data;
         // dd($doc_no);
 
@@ -84,7 +84,7 @@ SkipsOnFailure
         $ex_date = $row['receipt_date'];
         $receipt_date = Date::excelToDateTimeObject($ex_date)->format('Y-m-d');
         // dd($receipt_date);
-    
+
         $new = new LaptopAssetCode();
         $new->doc_no = $doc_no;
         $new->type      = $de_type;
@@ -99,13 +99,13 @@ SkipsOnFailure
         $new->handset_asset_code = $row['handset_asset_code']==null? '' : $row['handset_asset_code'];
         $new->handset_asset_name = $row['handset_asset_name']==null? '' : $row['handset_asset_name'];
         $new->sim_name           = $row['operator']==null? '' : $row['operator'];
-        $new->sim_phone          = $row['phone_number']==null? '' :$row['phone_number'];    
+        $new->sim_phone          = $row['phone_number']==null? '' :$row['phone_number'];
         $new->receipt_date       = $receipt_date==null? '' : $receipt_date;
         $new->receipt_type       = $row['receipt_type']==null? '' : $row['receipt_type'];
         $new->remark             = $row['remark']==null? '' : $row['remark'];
         $new->date               = Carbon::today()->format('Y-m-d');
         $new->save();
-      
+
         $this->rowCount++;
         return $new;
     }
@@ -121,7 +121,7 @@ SkipsOnFailure
                 if($old_laptop_asset){
                     $fail("The :attribute already added.");
                 }
-   
+
             }
         ],
         'handset_asset_code' =>[
@@ -134,16 +134,16 @@ SkipsOnFailure
 
         }
     ],
-    'emp_code' =>[
-        function($attribute,$value,$fail){
-            $old_emp_code =LaptopAssetCode::where(['emp_code'=>$value])->latest()->first();
+    // 'emp_code' =>[
+    //     function($attribute,$value,$fail){
+    //         $old_emp_code =LaptopAssetCode::where(['emp_code'=>$value])->latest()->first();
 
-            if($old_emp_code){
-                $fail("The :attribute already added.");
-            }
+    //         if($old_emp_code){
+    //             $fail("The :attribute already added.");
+    //         }
 
-        }
-    ]
+    //     }
+    // ]
 
         ];
     }

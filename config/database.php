@@ -92,6 +92,21 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'Fixasset' => [
+            'driver' => 'pgsql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('Fixasset_DB_HOST', '127.0.0.1'),
+            'port' => env('Fixasset_DB_PORT', '5432'),
+            'database' => env('Fixasset_DB_DATABASE', 'forge'),
+            'username' => env('Fixasset_DB_USERNAME', 'forge'),
+            'password' => env('Fixasset_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'schema' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),

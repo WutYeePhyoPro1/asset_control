@@ -30,5 +30,14 @@ class LaptopAssetCode extends Model
         'file',
         'date'
     ];
-    
+
+    public function assetUpload(){
+        return $this->belongsTo(Assetfile::class,'doc_id','id')->withDefault();
+    }
+
+
+    public function assetUploada(){
+        return $this->hasMany(Assetfile::class,'doc_id');
+    }
+
 }

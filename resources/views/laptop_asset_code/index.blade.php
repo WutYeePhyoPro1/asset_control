@@ -1,13 +1,13 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
     <div class="pagetitle">
-      <h1>Employee Assect Control System</h1><br>
-      <nav>
+      <h1>Asset Control System</h1><br>
+      {{-- <nav>
         <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{route('home')}}" style="color:#000;">Dashboard</a></li>
           <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.create')}}" style="color:#000;">Add New</a></li>
         </ol>
-      </nav>
+      </nav> --}}
     </div><!-- End Page Title -->
 
     @if(Session::has('success'))
@@ -76,14 +76,12 @@
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              
-            <h5 class="card-title">Laptop Asset Code</h5>
 
-
+            {{-- <h5 class="card-title">Laptop Asset Code</h5> --}}
           <!-- Default Tabs -->
-          <ul class="nav nav-tabs" id="myTab" role="tablist">
+          {{-- <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true"> 
+              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
                 <font class="card-title" style="font-size: 15px;">Laptop Asset</font></button>
             </li>
             <!-- <li class="nav-item" role="presentation">
@@ -92,21 +90,28 @@
             </li> -->
 
           </ul>
-          <br>
+          <br> --}}
 
 <div class="tab-content pt-2" id="myTabContent">
         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-       
-    
+
+
         <div class="card">
             <div class="card-body">
             <div class="row g-3">
             <div class="col-md-10 col-lg-10"></div>
             <div class="col-md-2 col-lg-2">
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import" type="button" style="margin:20px;float:right;">
+
+            <div>
+                <button class="btn">
+                    <a href="{{route('laptop_asset_code.create')}}">
+                    <i class="bi bi-plus-square-fill" style="color:##1c88fc;font-size:33px;"></i></a></button>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import" type="button">
             <font class="card-title" style="color:#fff;font-size: 13px;">
             <i class="ri-file-excel-2-line" style="font-size: 12px;"></i> Excel Import</font></button>
-           </div>
+            </div><hr>
+
+            </div>
             </div>
 
             <form method="POST" action="{{route('employee_benefic.search')}}">
@@ -165,7 +170,7 @@
                     <div class="col-md-2 col-lg-2">
                     <label for="validationCustom01" class="form-label" style="font-size: 12px;padding:0px;"><br></label><br>
                     <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 13px;">Search</font></button>
-                  
+
                     </div>
 
             </div>
@@ -193,24 +198,33 @@
                     <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                         Please import your excel file.
                     </div>
-                                  
+
                     <div id="file_name" class="file-name" style="font-size: 13px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;margin-top:10px;"></div>
 
                     <!-- <div id="excel_preview" class="excel-preview"></div> -->
-        
+
                     <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
-                   
+
                     </div>
                     <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Import</button>
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Close</button>
-                    
+
                     </form>
                     </div>
                   </div>
                 </div>
               </div><!-- End Vertically centered Modal-->
             <br>
+            <form action="/limit_rows" method="get">
+                <label for="per_page" style="font-weight: 500;color: #000;font-family: Poppins, sans-serif;font-size:13px;">Showing Rows:</label>
+                <select name="per_page" id="per_page">
+                    <option value=""></option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="100">100</option>
+                </select>
+            </form>
             <div class="table-responsive" style="margin: 10px;">
               <table class="table table-sm card-title table-hover table-bordered table-fix" style="font-size: 15px;" id="myTable">
                 <thead>
@@ -218,14 +232,14 @@
                     <th scope="col">#</th>
                     <th scope="col">Action</th>
                     <th scope="col">Document No</th>
+                    <th scope="col">Employee Name</th>
                     <th scope="col">By Dep/Emp</th>
-                    <th scope="col">Employee ID</th>
                     <th scope="col">Department</th>
                     <th scope="col">Branch Code</th>
-                    <th scope="col">Branch</th>
+                    {{-- <th scope="col">Branch</th> --}}
                     <th scope="col">Laptop Asset Code</th>
                     <th scope="col">Handset Asset Code</th>
-                    <th scope="col">Sim card Number</th>
+                    <th scope="col">Phone Number</th>
                     <th scope="col">Receipt Date</th>
                   </tr>
                 </thead>
@@ -239,6 +253,15 @@
                       <a href="{{route('laptop_asset_code.show',$data->id)}}"><i class="bi bi-eye-fill pointer"></i></a></center>
                     </td>
                     <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->doc_no}}</a></td>
+                    <td>
+                        <a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">
+                            @if($data->emp_name==null)
+                            -
+                            @else
+                            {{$data->emp_name}}
+                            @endif
+                        </a>
+                    </td>
                     <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">
                     @if($data->type=='Dept')
                     By Department
@@ -246,18 +269,39 @@
                     By Employee
                     @endif
                   </a></td>
-                    <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->emp_code}}</a></td>
+                    {{-- <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->emp_code}}</a></td> --}}
                     <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->department}}</a></td>
-                    <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branch_code}}</a></td>
-					          <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branch_name}}</a></td>
-                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{$data->laptop_asset_name}}">{{$data->laptop_asset_code}}</td>
-                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{$data->handset_asset_name}}">{{$data->handset_asset_code}}</td>
-                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{$data->sim_name}}">{{$data->sim_phone}}</td>
+                    <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branch_code}} ({{$data->branch_name}})</a></td>
+					{{-- <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branch_name}}</a></td> --}}
+                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{$data->laptop_asset_name}}">
+                        @if($data->laptop_asset_code==null)
+                        -
+                        @else
+                        {{$data->laptop_asset_code}}
+                        @endif
+
+                    </td>
+                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{$data->handset_asset_name}}">
+                        @if($data->handset_asset_code==null)
+                        -
+                        @else
+                        {{$data->handset_asset_code}}
+                        @endif
+
+                    </td>
+                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{$data->sim_name}}">
+                        @if($data->sim_phone=='09' || $data->sim_phone==null)
+                        -
+                        @else
+                        {{$data->sim_phone}}
+                        @endif
+
+                    </td>
                     <td>{{$data->receipt_date}}</td>
                   </tr>
                 @php($no++)
 
-                <div class="modal fade" id="del{{ $data->id }}"
+                                                <div class="modal fade" id="del{{ $data->id }}"
                                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                             <div class="modal-dialog modal-dialog-centered">
                                                                 <div class="modal-content">
@@ -298,14 +342,14 @@
            <p class="card-title">
            {{$datas->links('pagination::bootstrap-5')}}
            </p>
-                 
+
               </div>
             </div>
           </div>
         </div>
 
           <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-  
+
           </div>
         </div>
      </div>
@@ -347,7 +391,7 @@
                 url: "/employee_benefic/delete_record/" + id,
                 type: 'DELETE',
                 data: {
-                  
+
                     "id": id,
                 }
             });
@@ -442,6 +486,16 @@ $('#department1').select2({
 });
 
 });
+
+
+
+    $(document).ready(function () {
+        $('#per_page').change(function () {
+            // Automatically submit the form when the user selects an option
+            $(this).closest('form').submit();
+        });
+    });
+
 
 </script>
 @endsection

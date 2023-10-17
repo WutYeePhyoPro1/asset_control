@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\LaptopAssetCode;
+use App\Models\Assetfile;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,7 @@ class LaptopAssetCodeController extends Controller
         $datas=LaptopAssetCode::latest()->paginate(20);
         $branches=Branch::all();
         $departments=Department::all();
+
         return view('laptop_asset_code.index',compact('datas','branches','departments'));
     }
 
@@ -39,27 +41,27 @@ class LaptopAssetCodeController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            'file' => 'required|mimes:jpeg,jpg,png,gif,webp|max:3300',
-        ], [
-            'file.required' => 'Employee profile is required.',
-            'file.mimes' => 'Only jpeg, jpg, png,webp and gif file types are allowed.',
-            'file.max' => 'File size should not exceed 3MB.',
-        ]);
-        
+        // $request->validate([
+        //     'file' => 'required|mimes:jpeg,jpg,png,gif,webp|max:3300',
+        // ], [
+        //     'file.required' => 'Employee profile is required.',
+        //     'file.mimes' => 'Only jpeg, jpg, png,webp and gif file types are allowed.',
+        //     'file.max' => 'File size should not exceed 3MB.',
+        // ]);
+
         $date = Carbon::parse($request->date)->format('Ymd');
         $today=LaptopAssetCode::where(['date'=>Carbon::parse($request->date)->format('Y-m-d'),'type'=>$request->type])->distinct('doc_no')->get();
         // $today = LaptopAssetCode::where(['date' => Carbon::parse($request->date)->format('Y-m-d')])->orderBy('id', 'DESC')->get();
-        
+
         if ($today->isEmpty()) {
             $suffix = 1;
         } else {
             $next = $today->count();
             $suffix = $next + 1;
         }
-        
+
         $data = sprintf("%'.04d", $suffix);
-        
+
         if ($request->type == 'Dept') {
             $doc_no = 'ACSDE' . $date . '-' . $data;
         } else {
@@ -69,11 +71,11 @@ class LaptopAssetCodeController extends Controller
         if($request){
 
         }
-        
 
-        $file=rand(0,999999)."_".$request->file('file')->getClientOriginalName();
-        $pathfile= Storage::putFileAs('public/emp_profile',$request->file('file'),$file);
-        
+
+        // $file=rand(0,999999)."_".$request->file('file')->getClientOriginalName();
+        // $pathfile= Storage::putFileAs('public/emp_profile',$request->file('file'),$file);
+
         $asset=LaptopAssetCode::create([
             'user_id'=>$request->userid,
             'doc_no'=>$doc_no,
@@ -93,9 +95,34 @@ class LaptopAssetCodeController extends Controller
             'receipt_date'=>$request->receiptdate,
             'receipt_type'=>$request->receipttype,
             'remark'=>$request->remark,
-            'file'=>$file,
+            // 'file'=>$file,
             'date'=>$request->date
         ]);
+
+
+        if(isset($request['file']))
+
+                    foreach($request['file'] as $file)
+                    {
+
+                        $folderName = "public/asset_upload";
+                        $fileName = $file->getClientOriginalName();
+                        $originalFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '',$fileName);
+                        $savedFileName = $originalFileName.$file->getClientOriginalExtension();
+                        $file->storeAs($folderName,$savedFileName);
+                        $data_image                 =[
+                            'doc_id'                =>$asset->id,
+                            'file'                  =>$savedFileName,
+
+                            'created_at'            =>Carbon::now(),
+                            'updated_at'            =>Carbon::now(),
+                        ];
+
+                        DB::table('assetfiles')->insert($data_image);
+
+                    }
+
+
 
         // return back()->with('success','Successfully your created.');
         return redirect('employee_benefic/laptop_asset_code/'.$asset->id)->with('success','Successfully your created.');
@@ -108,8 +135,9 @@ class LaptopAssetCodeController extends Controller
     {
         $datas=LaptopAssetCode::find($id);
         $branches=Branch::all();
+        $files= Assetfile::where('doc_id',$id)->get();
         $departments=Department::all();
-        return view('laptop_asset_code.detail',compact('datas','branches','departments'));
+        return view('laptop_asset_code.detail',compact('datas','branches','departments','files'));
     }
 
     /**
@@ -126,15 +154,15 @@ class LaptopAssetCodeController extends Controller
     public function update(Request $request, $id)
     {
         // dd($request->all());
-        $request->validate([
-            'file' => 'mimes:jpeg,jpg,png,gif,webp|max:3300',
-        ], [
-            'file.mimes' => 'Only jpeg, jpg, png, webp, and gif file types are allowed.',
-            'file.max' => 'File size should not exceed 3MB.',
-        ]);
-        
+        // $request->validate([
+        //     'file' => 'mimes:jpeg,jpg,png,gif,webp|max:3300',
+        // ], [
+        //     'file.mimes' => 'Only jpeg, jpg, png, webp, and gif file types are allowed.',
+        //     'file.max' => 'File size should not exceed 3MB.',
+        // ]);
 
-       
+
+
         $datas=LaptopAssetCode::find($id);
         $datas->doc_no=$request->doc_no;
         $datas->type=$request->type;
@@ -160,31 +188,53 @@ class LaptopAssetCodeController extends Controller
         $datas->receipt_type=$request->receipttype;
         $datas->receipt_date=$request->receiptdate;
         $datas->remark=$request->remark;
-        $datas->file=$request->file;
+        // $datas->file=$request->file;
         $datas->date=$request->date;
-        if($request->hasfile('file'))
+        // if($request->hasfile('file'))
+        // {
+
+        //     //dd("Testing True... ");
+
+        //     $destnation ='app/public/emp_profile/'.$datas->file;
+        //     if(Storage::exists($destnation)){
+        //         unlink(storage_path('app/public/emp_profile/'.$datas->file));
+        //     }
+
+        //     //delete exisiting image
+        //     //unlink(storage_path('app/public/iqnposimages/degree/'.$iqnstudents->degreefile));
+
+        //     $file=rand(0,999999)."_".$request->file('file')->getClientOriginalName();
+        //     $pathfile= Storage::putFileAs('public/emp_profile',$request->file('file'),$file);
+
+        //     $datas->file=$file;
+        // }else{
+        //     $datas->file=$request->curr_file;
+        // }
+
+
+        $datas->update();
+
+        if(isset($request['file']))
+
+        foreach($request['file'] as $file)
         {
 
-            //dd("Testing True... ");
-            
-            $destnation ='app/public/emp_profile/'.$datas->file;
-            if(Storage::exists($destnation)){
-                unlink(storage_path('app/public/emp_profile/'.$datas->file));
-            }
+            $folderName = "public/asset_upload";
+            $fileName = $file->getClientOriginalName();
+            $originalFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '',$fileName);
+            $savedFileName = $originalFileName.$file->getClientOriginalExtension();
+            $file->storeAs($folderName,$savedFileName);
+            $data_image                 =[
+                'doc_id'                =>$datas->id,
+                'file'                  =>$savedFileName,
 
-            //delete exisiting image
-            //unlink(storage_path('app/public/iqnposimages/degree/'.$iqnstudents->degreefile));
+                'created_at'            =>Carbon::now(),
+                'updated_at'            =>Carbon::now(),
+            ];
 
-            $file=rand(0,999999)."_".$request->file('file')->getClientOriginalName();
-            $pathfile= Storage::putFileAs('public/emp_profile',$request->file('file'),$file);
+            DB::table('assetfiles')->insert($data_image);
 
-            $datas->file=$file;
-        }else{
-            $datas->file=$request->curr_file;
         }
-
-       
-        $datas->update();
 
         return back()->with('success','successfully updated...');
     }
@@ -201,7 +251,14 @@ class LaptopAssetCodeController extends Controller
         // dd('hi');
         LaptopAssetCode::find($id)->delete($id);
         return back()->with('success','Successfully Deleted.');
-    
+
+    }
+
+    public function deletUpload($id){
+        // dd('hi');
+        Assetfile::find($id)->delete($id);
+        return back()->with('success','Successfully Deleted.');
+
     }
 
 
@@ -216,31 +273,31 @@ public function search(Request $request)
             if($request->branch !=0){
                 $query = $query->where('branch_name',$branch);
             }
-        
+
             if ($request->filled('doc_no')) {
                 $query->where('doc_no', 'LIKE', '%' . $request->input('doc_no') . '%');
             }
-    
+
             if ($request->filled('assettype')) {
                 $query->where('asset_type', 'LIKE', '%' . $request->input('assettype') . '%');
             }
-        
+
             if ($request->filled('empname')) {
                 $query->where('emp_name', 'LIKE', '%' . $request->input('empname') . '%');
             }
-        
+
             if ($request->filled('empcode')) {
                 $query->where('emp_code', 'LIKE', '%' . $request->input('empcode') . '%');
             }
-        
+
             if ($request->filled('department')) {
                 $query->where('department', 'LIKE', '%' . $request->input('department') . '%');
             }
-    
+
             if ($request->filled('type')) {
                 $query->where('type', 'LIKE', '%' . $request->input('type') . '%');
             }
-        
+
             // if ($request->filled('branch')) {
             //     $query->where('branch_name', 'LIKE', '%' . $request->input('branch') . '%');
             // }
@@ -249,22 +306,22 @@ public function search(Request $request)
                 $query=$query->latest();
             }
 
-       
+
             if ($request->filled('laptop')) {
                 $query->orwhere('laptop_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
                       ->orwhere('handset_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
                       ->orwhere('sim_phone', 'LIKE', '%' . $request->input('laptop') . '%');
             }
-        
+
             $datas = $query->latest()->paginate(20);
             // $datas->appends($request->all());
-       
+
             return view('laptop_asset_code.index', compact('datas','branches','departments'));
         // }
         // // else{
         // //     return back()->with('fails', 'No result Found');
         // // }
-        
+
 }
 
     public function branchSearch($branch_code) {
@@ -283,15 +340,16 @@ public function search(Request $request)
 
     public function empIDsearch($emp_id){
         $conn    = DB::connection('Hremployee');
-        $datas   = $conn->select("
-        SELECT employeename FROM hremployee.all_employee
-        where employeecode='$emp_id'
-        ");
+        $data = $conn->select("
+        SELECT emp.employeecode, emp.employeename, brch.branch_code, brch.branch_name
+        FROM hremployee.employee emp
+        left join master_data.master_branch brch on brch.branch_code = emp.brchcode
+        where emp.employeecode = '$emp_id'");
 
-        if(!empty($datas)){
+        if(!empty($data)){
             return response()->json([
                 'status' => 'success',
-                'data' => $datas
+                'data' => $data
             ]);
         }else{
             return response()->json([
@@ -299,4 +357,38 @@ public function search(Request $request)
             ]);
         }
     }
+
+    public function assetCodesearch($asset_code2){
+        $conn    = DB::connection('Fixasset');
+        $data = $conn->select("
+        select fxassetdetailcode, fxassetdetailname
+        from asset.fxassetdetail
+        where fxassetdetailcode = '$asset_code2'");
+
+        if(!empty($data)){
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ]);
+        }else{
+            return response()->json([
+                'status' => 'fail'
+            ]);
+        }
+    }
+
+
+    public function paginateData(Request $request) {
+        $perPage = $request->input('per_page', 10);
+        $branches = Branch::all();
+        $departments = Department::all();
+        $datas = LaptopAssetCode::paginate($perPage);
+
+        return view('laptop_asset_code.index', [
+            'datas' => $datas,
+            'branches' => $branches,
+            'departments' => $departments
+        ]);
+    }
+
 }

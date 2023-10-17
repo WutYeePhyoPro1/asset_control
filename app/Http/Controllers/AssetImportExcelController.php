@@ -19,13 +19,13 @@ class AssetImportExcelController extends Controller
         ]);
 
         $type = $request->type;
-        $import= new AssetImport($type,20);
+        $import= new AssetImport($type,30);
         try {
-          
+
             $import->import($request->file('file'));
 
         } catch (\Exception $e) {
-           
+
             return redirect()->back()->with('error', 'An error occurred during the import: ' . $e->getMessage());
         }
         if ($import->failures()->isNotEmpty()) {
@@ -33,6 +33,6 @@ class AssetImportExcelController extends Controller
         }
 
         return back()->with('success', 'The product list has been successfully imported.');
-        
+
     }
 }

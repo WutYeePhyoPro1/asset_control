@@ -4,9 +4,10 @@
     <div class="d-flex align-items-center justify-content-between">
       <a href="index.html" class="logo d-flex align-items-center">
         <img src="{{asset('assets/img/logo.png')}}" alt="" class="img-fluid">
-       
+
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
+      {{-- <p style="padding-left:100px;">Asset Control System</p> --}}
     </div><!-- End Logo -->
 
     <!-- <div class="search-bar">
@@ -36,13 +37,12 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>{{Auth::user()->name}}</h6>
-  
+
               {{Auth::user()->emp_code}}
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
-            
 
             <li>
               <a class="dropdown-item d-flex align-items-center" href="">
@@ -84,7 +84,7 @@
                             @csrf
                         </form>
 
-              
+
             </li>
 
           </ul><!-- End Profile Dropdown Items -->
@@ -108,10 +108,11 @@
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>Employee Asset Control</span><i class="bi bi-chevron-down ms-auto"></i>
+        <a class="nav-link collapsed" href="{{route('laptop_asset_code.index')}}">
+          <i class="bi bi-menu-button-wide"></i><span>Asset Control</span>
+          {{-- <i class="bi bi-chevron-down ms-auto"></i> --}}
         </a>
-        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        {{-- <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
             <a href="{{route('laptop_asset_code.index')}}">
               <i class="bi bi-circle"></i><span>Laptop Asset Code</span>
@@ -122,12 +123,12 @@
               <i class="bi bi-circle"></i><span>Add New</span>
             </a>
           </li>
-          
-        </ul>
+
+        </ul> --}}
       </li><!-- End Components Nav -->
 
       @if(Auth::user()->type=='superadmin')
-      <li class="nav-heading">Pages</li>
+      <li class="nav-heading"><hr></li>
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{route('all_user.index')}}">
