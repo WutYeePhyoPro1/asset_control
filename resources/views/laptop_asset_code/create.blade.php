@@ -24,11 +24,11 @@
     @endif
 
     @if ($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show outline-animation" role="alert" style="width: 300px; float: right; z-index: 1000; position: absolute; top: 15%; right: 2%;" id="toast">
+    <div class="alert alert-danger alert-dismissible fade show outline-animation" role="alert" style="width: 600px; float: right; z-index: 1000; position: absolute; top: 15%; right: 2%;" id="toast">
       <h4 class="alert-heading" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">Error Message</h4><hr>
           <p class="mb-0" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">
           @foreach ($errors->all() as $error)
-                   {{ $error }}
+                   {{ $error }}<br>
                 @endforeach
           </p>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -42,20 +42,7 @@
             <div class="card-body">
 
             <h5 class="card-title">Create New Asset</h5>
-{{--
-          <!-- Default Tabs -->
-          <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
-                <font class="card-title" style="font-size: 15px;">Laptop Asset</font></button>
-            </li>
-            <!-- <li class="nav-item" role="presentation">
-              <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
-              <font class="card-title" style="font-size: 15px;"><i class="bi bi-plus-square-fill" style="font-size: 20px;"></i>&nbsp; Add New</font></button>
-            </li> -->
 
-          </ul>
-          <br> --}}
 
         <div class="tab-content pt-2" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -68,7 +55,9 @@
                     @csrf
                 <div class="row">
                   <div class="row">
+
                     <div class="form-check col-md-2 col-lg-2">
+                        <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font>
                       <input class="form-check-input" type="radio" name="type" id="gridRadios1" value="Emp" required>
                       <label class="form-check-label" for="gridRadios1" style="font-size: 15px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
                        By Employee
@@ -78,6 +67,7 @@
                         </p>
                     </div>
                     <div class="form-check col-md-2 col-lg-2">
+                      <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font>
                       <input class="form-check-input" type="radio" name="type" id="gridRadios2" value="Dept" required>
                       <label class="form-check-label" for="gridRadios2" style="font-size: 15px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
                         By Department
@@ -94,7 +84,7 @@
                     <div id="employeeFields">
                     <div class="row mb-2">
                         <div class="col-sm-12">
-                        <label for="empID" class="form-label card-title" style="font-size: 15px;">Employee ID</label>
+                        <label for="empID" class="form-label card-title" style="font-size: 15px;">Employee ID <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font></label>
                         <input type="text" class="form-control" id="empID" name="empcode" style="box-shadow:1px 1px 1px #333;" required>
                         <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                             Please enter your employee ID.
@@ -103,7 +93,7 @@
                       </div>
                      <div class="row mb-2">
                         <div class="col-sm-12">
-                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Employee name</label>
+                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Employee name <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font></label>
                         <input type="text" class="form-control" id="employee_name" name="empname"  style="box-shadow:1px 1px 1px #333;" required>
                         <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                             Please enter your employee name.
@@ -112,13 +102,13 @@
                       </div>
                     </div>
 
-
                       <div class="row mb-2">
                             <div class="col-sm-12">
-                            <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch Code</label>
+                            <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font></label>
                             <select class="form-select" id="branchescode" name="branchcode" required>
+                                    <option value="">Select Your Branch</option>
                                     @foreach($branches as $branch)
-                                    <option value="{{$branch->branch_code}}">{{$branch->branch_code}} ({{$branch->branch_name}})</option>
+                                    <option value="{{$branch->branch_code}}({{$branch->branch_name}})">{{$branch->branch_code}} ({{$branch->branch_name}})</option>
                                     @endforeach
                             </select>
                             <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
@@ -128,22 +118,10 @@
                       </div>
 
                       <input type="hidden" class="form-control" id="branches" name="branchname"  style="box-shadow:1px 1px 1px #333;">
-                      {{-- <div class="row mb-2">
-                        <div class="col-sm-12">
-                            <label for="validationCustom04" class="form-label card-title" style="font-size: 15px;">Branch Name</label>
-                            <input type="text" class="form-control" id="branches" name="branchname"  style="box-shadow:1px 1px 1px #333;" required>
-                            <select class="form-select" id="branches" name="branchname" required>
-
-                            </select>
-                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                                Please enter your branch name.
-                            </div>
-                        </div>
-                      </div> --}}
 
                       <div class="row mb-2">
                         <div class="col-sm-12">
-                        <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department</label>
+                        <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font></label>
                         <select class="form-select" aria-label="Default select example" id="department" name="department" required>
                             <option value="">Select Your Department</option>
 
@@ -159,202 +137,151 @@
 
                       <div class="row g-3">
                         <div class="col-md-12 col-lg-">
-                        <a href="" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#uploadasset">
-                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;cursor: pointer;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> Upload Your Asset images</label>
-                        <i class="bi bi-upload" style="color:#2809f5;font-size:20px;"></i>
-                        </a>
-                        </div>
 
+                        </div>
                      </div>
 
-                    {{-- <div class="row g-3">
-                    <div class="col-md-6 col-lg-6">
-                    <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> Employee Profile</label>
-                    <label for="my_file">
-                    <i class="bi bi-upload btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Employee profile click the button."></i>
-                    </label>
-                    <input type="file" id="my_file" style="display: none;" name="file" required/>
-                    <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                        Please upload your employee profile.
-                    </div>
-
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                    <div id="image_preview" style="width: 100px;"></div>
-                    <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
-                    </div>
-
-                    </div> --}}
                     </div>
 
 
-                    <div class="col-md-4 col-lg-4">
-                      <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;color:blue;">Asset Information</label>
+                   <div class="col-md-8 col-lg-8">
 
-                      <div class="row mb-2">
-                        <div class="col-sm-12">
-                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Type</label>
-                            <select class="form-select" aria-label="Default select example" id="elementSelector" name="assettype" style="box-shadow:1px 1px 1px #333;" required>
-                            <option value="" selected>Select your asset type</option>
-                            <option value="laptop">Laptop</option>
-                            <option value="phone">Phone</option>
-                            <option value="lp">Laptop and Phone</option>
-                            </select>
-                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                            Please select your asset type.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="laptop" class="selected-content">
-                      <div class="row mb-2">
-                        <div class="col-sm-12">
-                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Laptop Asset Code</label>
-                        <input type="text" class="form-control" id="assetCode" name="laptopcode" style="box-shadow:1px 1px 1px #333;" required>
-                        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                            Please enter your laptop asset code.
-                        </div>
-                        </div>
-                      </div>
-
-                      <div class="row mb-2">
-                            <div class="col-sm-12">
-                            <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Laptop Asset Name</label>
-                            <textarea class="form-control" id="assetName" style="height: 100px;box-shadow:1px 1px 1px #333;" name="laptopname" required></textarea>
-                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                                Please enter your laptop asset name.
-                            </div>
-                            </div>
-                      </div>
-                    </div>
-
-                    <div id="phone" class="hidden">
-                      <div class="row mb-2">
-                        <div class="col-sm-12">
-                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Handset Asset Code</label>
-                        <input type="text" class="form-control" id="assetCode2"  style="box-shadow:1px 1px 1px #333;" name="handsetcode" required>
-                        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                            Please enter your handset asset code.
-                        </div>
-                        </div>
-                      </div>
-
-                      <div class="row mb-2">
-                            <div class="col-sm-12">
-                            <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Handset Asset Name</label>
-                            <textarea class="form-control" id="assetName2" style="height: 100px;box-shadow:1px 1px 1px #333;" name="handsetname" required></textarea>
-                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                                Please enter your handset asset name.
-                            </div>
-                            </div>
-                      </div>
-
-
-                        <div class="row mb-2">
-                            <div class="col-sm-12">
-                            <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Operator</label>
-                            <select class="form-select" aria-label="Default select example" name="simname" style="box-shadow:1px 1px 1px #333;" required>
-                                <option value="" selected>Select your Operator</option>
-                                <option value="ATOM">ATOM</option>
-                                <option value="Ooredoo">Ooredoo</option>
-                                <option value="MPT">MPT</option>
-                                <option value="Mytel">Mytel</option>
-                                </select>
-                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                                Please enter your operator.
-                            </div>
-                            </div>
-                        </div>
-
-
-                      <div class="row mb-2">
-                            <div class="col-sm-12">
-                            <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Phone Number</label>
-                            <input type="tel" class="form-control" pattern="09[0-9]{9}" id="ph" value="09" style="box-shadow:1px 1px 1px #333;" name="simnumber" required>
-                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                                Please check your phone number.
-                            </div>
-                            </div>
-                      </div>
-                    </div>
-
-
-                    </div>
-
-
-                    <div class="col-md-4 col-lg-4">
-                      <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;color:blue;">Receipt Information</label>
-                      <div class="row mb-2">
-                            <div class="col-sm-12">
-                            <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Receipt Date</label>
-                            <input type="date" class="form-control" id="validationCustom05" name="receiptdate" style="box-shadow:1px 1px 1px #333;" required>
-                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                                Please select your receipt date.
-                            </div>
-                            </div>
-                      </div>
-
-                    <input type="hidden"  name="receipttype" value="-">
-                      {{-- <div class="row mb-2">
-                        <div class="col-sm-12">
-
-                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Receipt Type</label>
-                            <select class="form-select" aria-label="Default select example" name='receipttype' style="box-shadow:1px 1px 1px #333;"  required>
-                            <option value="" selected>Select your receipt type</option>
-                            <option value="New">New</option>
-                            <option value="Exchange">Exchange</option>
-                            <option value="Transfer">Transfer</option>
-                            <option value="Loss">Loss</option>
-                            </select>
-                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                                Please Select your receipt type.
-                              </div>
-                        </div>
-                    </div> --}}
-
+                    <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;color:blue;">Receipt Information</label>
                     <div class="row mb-2">
-                    <div class="col-sm-12">
-                      <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Remark</label>
-                      <textarea class="form-control" id="validationCustom06" style="height: 100px;box-shadow:1px 1px 1px #333;" name="remark" required></textarea>
-                      <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                        Please enter your remark.
-                      </div>
-                    </div>
+                          <div class="col-sm-6">
+                          <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Receipt Date <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font></label>
+                          <input type="date" class="form-control" id="validationCustom05" name="receiptdate" style="box-shadow:1px 1px 1px #333;" required>
+                          <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                              Please select your receipt date.
+                          </div>
+                          </div>
                     </div>
 
+                  <input type="hidden"  name="receipttype" value="-">
+
+                  <div class="row mb-2">
+                  <div class="col-sm-6">
+                    <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Remark <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font></label>
+                    <textarea class="form-control" id="validationCustom06" style="height: 100px;box-shadow:1px 1px 1px #333;" name="remark" required></textarea>
+                    <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                      Please enter your remark.
                     </div>
                   </div>
+                  </div>
+                   </div>
 
 
-                  <hr>
+                   <div class="col-md-12 col-lg-12">
+
+                    <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;color:blue;">Asset Information</label>
+
+                    <table class="table table-borderless">
+                        <thead>
+
+                        <tr>
+                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Action</label></td>
+                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Type</label></td>
+                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code</label></td>
+                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Name</label></td>
+                            <td id="operatorFieldf" style="display: none;"><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Operator</label></td>
+                            <td id="operatorFields" style="display: none;"><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Phone No:</label></td>
+                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Upload</label></td>
+                        </tr>
+
+
+                        </thead>
+                        <tbody id="rowsasset">
+                            <tr>
+                                <td><i class="bi bi-plus-square-fill" style="color:#1c88fc;font-size:23px;" id="addbtn"></i></td>
+                                <td>
+                                    <select class="form-select" aria-label="Default select example" id="elementSelector" name="assettype[]" style="box-shadow:1px 1px 1px #333;">
+                                        <option value="" selected>Select your asset type</option>
+                                        <option value="laptop">Laptop</option>
+                                        <option value="phone">Phone</option>
+                                        <option value="Properties">Properties</option>
+                                        <option value="Other">Other</option>
+                                        </select>
+                                </td>
+
+
+                                <td>
+                                    <input type="text" class="form-control" id="assetCode" name="assetcode[]" style="box-shadow:1px 1px 1px #333;" >
+                                    <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                        Please enter your asset code.
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <textarea class="form-control" id="assetName" style="height: 100px;box-shadow:1px 1px 1px #333;" name="assetname[]" ></textarea>
+                                    <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                            Please enter your handset asset name.
+                                    </div>
+                                </td>
+
+                                <td id="operatorFieldt" style="display: none;">
+                                    <select class="form-select" aria-label="Default select example" name="simname[]" style="box-shadow:1px 1px 1px #333;" >
+                                        <option value="" selected>Select your Operator</option>
+                                        <option value="ATOM">ATOM</option>
+                                        <option value="Ooredoo">Ooredoo</option>
+                                        <option value="MPT">MPT</option>
+                                        <option value="Mytel">Mytel</option>
+                                        </select>
+                                    <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                        Please enter your operator.
+                                    </div>
+                                </td>
+
+                                <td id="operatorFieldft" style="display: none;">
+                                    <input type="tel" class="form-control" id="ph" placeholder="09******" style="box-shadow:1px 1px 1px #333;" name="simnumber[]" >
+                                    {{-- pattern="09[0-9]{9}" --}}
+                                </td>
+
+                                <td>
+                                    <a href="" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#uploadasset">
+                                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;cursor: pointer;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i>Asset image</label>
+                                        <i class="bi bi-upload" style="color:#2809f5;font-size:20px;"></i>
+                                        </a>
+                                        <div class="modal fade" id="uploadasset" tabindex="-1">
+                                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h5 class="modal-title">Upload Asset Images</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="drop-zone" id="dropZone">
+                                                        <span class="drop-text">Drag & Drop Images Here</span>
+                                                        <input type="file" id="fileInput" style="display:none;" name="file[]" multiple>
+                                                    </div>
+                                                    <div id="preview" class="image-preview"></div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Confirm</button>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div><!-- End Vertically centered Modal-->
+                                </td>
+
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr>
+
+                   </div>
+
+
+                  </div>
+
                   <div class="col-12">
                     <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 15px;">Save</font></button>
                     <button class="btn btn-warning" type="reset"> <font class="card-title" style="color:#fff;font-size: 15px;">Cancel</font></button>
                   </div>
-              <!-- End Custom Styled Validation -->
+
               </div>
 
-              <div class="modal fade" id="uploadasset" tabindex="-1">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title">Upload Asset Images</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="drop-zone" id="dropZone">
-                            <span class="drop-text">Drag & Drop Images Here</span>
-                            <input type="file" id="fileInput" style="display:none;" name="file[]" multiple>
 
-                        </div>
-                        <div id="preview" class="image-preview"></div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-success" data-bs-dismiss="modal">Confirm</button>
-                    </div>
-                  </div>
-                </div>
-              </div><!-- End Vertically centered Modal-->
             </form>
         </div>
      </div>
@@ -371,79 +298,365 @@
 @endsection
 @section('js')
 <script>
-    // JavaScript to handle the display and hiding of the toast
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     const toast = document.getElementById('toast');
-    //     if (toast.innerText) {
-    //         toast.style.display = 'block';
-    //         setTimeout(() => {
-    //             toast.style.display = 'none';
-    //         }, 5000); // Hide the toast after 3 seconds
-    //     }
-    // });
 
-const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
-const preview = document.getElementById('preview');
+    $(document).ready(function () {
+$('#elementSelector').change(function () {
+    var selectedType = $(this).val();
+    if (selectedType === 'phone') {
+        $('#operatorFieldf').show();
+        $('#operatorFields').show();
+        $('#operatorFieldt').show();
+        $('#operatorFieldft').show();
+    } else {
+        $('#operatorFieldf').hide();
+        $('#operatorFields').hide();
+        $('#operatorFieldt').hide();
+        $('#operatorFieldft').hide();
+    }
 
-// Trigger the file input when clicking the drop-zone
-dropZone.addEventListener('click', () => {
-    fileInput.click();
+    // if (selectedType === 'phone') {
+    //     $('#operatorField1').show();
+    // } else {
+    //     $('#operatorField1').hide();
+    // }
+
+    // if (selectedType === 'phone') {
+    //     $('#operatorField2').show();
+    // } else {
+    //     $('#operatorField2').hide();
+    // }
+
+    // if (selectedType === 'phone') {
+    //     $('#operatorField3').show();
+    // } else {
+    //     $('#operatorField3').hide();
+    // }
+
+
+});
 });
 
-dropZone.addEventListener('dragover', (e) => {
+
+</script>
+<script>
+    $(document).on('click','#removebtn',function (e){
+        $(this).parent('td').parent('tr').remove();
+
+    });
+
+    $(document).ready(function (){
+
+        var max_filed=10;
+        var x=0;
+        // if(x < max_filed){
+            $('#addbtn').on('click', function() {
+
+                    x++;
+                    console.log(x);
+                var wrapperasset =`
+                <tr>
+                    <td><i class="bi bi-dash-square-fill" style="color:red;font-size:23px;" id="removebtn"></i></td>
+                    <td>
+                        <select class="form-select" id="elementSelectorw${x}" aria-label="Default select example" name="assettype[]" style="box-shadow:1px 1px 1px #333;">
+                            <option value="" selected>Select your asset type</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="phone">Phone</option>
+                            <option value="Properties">Properties</option>
+                            <option value="Other">Other</option>
+                            </select>
+                    </td>
+
+                    <td>
+                        <input type="text" class="form-control" id="assetCode${x}" name="assetcode[]" style="box-shadow:1px 1px 1px #333;">
+                        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                            Please enter your asset code.
+                        </div>
+                    </td>
+
+                    <td>
+                        <textarea class="form-control" id="assetName${x}" style="height: 100px;box-shadow:1px 1px 1px #333;" name="assetname[]"></textarea>
+                        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                Please enter your handset asset name.
+                        </div>
+                    </td>
+
+
+                    <td id="operatorFieldw${x}" style="display: none;">
+                                    <select class="form-select" aria-label="Default select example" name="simname[]" style="box-shadow:1px 1px 1px #333;">
+                                        <option value="" selected>Select your Operator</option>
+                                        <option value="ATOM">ATOM</option>
+                                        <option value="Ooredoo">Ooredoo</option>
+                                        <option value="MPT">MPT</option>
+                                        <option value="Mytel">Mytel</option>
+                                        </select>
+                                    <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                        Please enter your operator.
+                                    </div>
+                                </td>
+
+
+                    <td id="operatorFieldp${x}" style="display: none;">
+                                    <input type="tel" class="form-control" id="ph" placeholder="09*******" style="box-shadow:1px 1px 1px #333;" name="simnumber[]">
+
+                    </td>
+
+
+                    <td>
+                        <a href="" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#uploadasset${x}">
+                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;cursor: pointer;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> Asset images</label>
+                        <i class="bi bi-upload" style="color:#2809f5;font-size:20px;"></i>
+                        </a>
+
+                        <div class="modal fade" id="uploadasset${x}" tabindex="-1">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title">Upload Asset Images</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="drop-zone" id="dropZone${x}">
+                                    <span class="drop-text">Drag & Drop Images Here</span>
+                                    <input type="file" id="fileInput${x}" style="display:none;" name="file[]" multiple>
+                                </div>
+                                <div id="preview${x}" class="image-preview"></div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Confirm</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div><!-- End Vertically centered Modal-->
+                    </td>
+
+                </tr>
+                `;
+
+                $('#rowsasset').append(wrapperasset);
+                $(document).on('change','#elementSelectorw'+x,function(){
+
+                    var selectedType = $(this).val();
+
+                    if (selectedType === 'phone') {
+                        $('#operatorFieldw'+x).show();
+                    } else {
+                        $('#operatorFieldw'+x).hide();
+                    }
+
+                        if (selectedType === 'phone') {
+                            $('#operatorFieldp'+x).show();
+                        } else {
+                            $('#operatorFieldp'+x).hide();
+                        }
+                    })
+
+//   $('#elementSelectorw'+x).change(function () {
+
+//     var selectedType = $(this).val();
+
+
+
+// });
+
+
+  const dropZone = document.getElementById('dropZone'+x);
+  const fileInput = document.getElementById('fileInput'+x);
+  const preview = document.getElementById('preview'+x);
+
+
+  dropZone.addEventListener('click', () => {
+    fileInput.click();
+  });
+
+  dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZone.classList.add('dragover');
-});
+  });
 
-dropZone.addEventListener('dragleave', () => {
+  dropZone.addEventListener('dragleave', () => {
     dropZone.classList.remove('dragover');
-});
+  });
 
-dropZone.addEventListener('drop', (e) => {
+  dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.classList.remove('dragover');
     const files = e.dataTransfer.files;
     handleFiles(files);
-});
+  });
 
-fileInput.addEventListener('change', () => {
+  fileInput.addEventListener('change', () => {
     const files = fileInput.files;
     handleFiles(files);
-});
+  });
 
-function handleFiles(files) {
+  function removePreview(element) {
+    element.remove();
+  }
+
+  function handleFiles(files) {
     for (const file of files) {
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
+      const reader = new FileReader();
+      const fileType = file.type;
 
-            reader.onload = (e) => {
-                const imageContainer = document.createElement('div');
-                imageContainer.classList.add('image-container');
+      const removeButton = document.createElement('button');
+      removeButton.innerText = 'Remove';
+      removeButton.classList.add('remove-button');
 
-                const image = new Image();
-                image.src = e.target.result;
+      const container = document.createElement('div');
+      container.classList.add('file-container');
 
-                const removeButton = document.createElement('button');
-                removeButton.innerText = 'Remove';
-                removeButton.classList.add('remove-button');
-                removeButton.addEventListener('click', () => {
-                    imageContainer.remove();
-                });
 
-                imageContainer.appendChild(removeButton);
-                imageContainer.appendChild(image);
+      reader.onload = (e) => {
+        if (fileType.startsWith('image/')) {
+          const image = new Image();
+          image.src = e.target.result;
 
-                preview.appendChild(imageContainer);
-            };
+          removeButton.addEventListener('click', () => {
+            removePreview(container);
+          });
 
-            reader.readAsDataURL(file);
+          container.appendChild(removeButton);
+          container.appendChild(image);
+        } else if (fileType === 'application/pdf') {
+          const pdfEmbed = document.createElement('embed');
+          pdfEmbed.setAttribute('src', e.target.result);
+          pdfEmbed.setAttribute('type', 'application/pdf');
+          pdfEmbed.setAttribute('width', '400px');
+          pdfEmbed.setAttribute('height', '200px');
+
+          removeButton.addEventListener('click', () => {
+            removePreview(container);
+          });
+
+          container.appendChild(removeButton);
+          container.appendChild(pdfEmbed);
         }
+        preview.appendChild(container);
+      };
+
+      reader.readAsDataURL(file);
     }
-}
+  }
+
+
+  $('#assetCode'+x).on('change', function () {
+    var assetCode = this.value;
+    console.log(assetCode);
+    $.ajax({
+        url: "/employee_asset/search_asset_code/" + assetCode,
+        type: "GET",
+        data: { 'assetCode': assetCode },
+        success: function (response) {
+            console.log(response);
+            if (response.status === 'success') {
+                $('#assetName'+x).val(response.data[0].fxassetdetailname);
+            }
+            if (response.status === 'fail') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Laptop asset code not found.',
+                    text: 'The requested Laptop asset code could not be found.'
+                });
+                $('#assetCode'+x).val('');
+                $('#assetName'+x).val('');
+
+            }
+        }
+    });
+    });
+
+
+            });
+
+
+        // }
+
+
+    });
 
 
 </script>
+
+<script>
+const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  const preview = document.getElementById('preview');
+
+  dropZone.addEventListener('click', () => {
+    fileInput.click();
+  });
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    handleFiles(files);
+  });
+
+  fileInput.addEventListener('change', () => {
+    const files = fileInput.files;
+    handleFiles(files);
+  });
+
+  function removePreview(element) {
+    element.remove();
+  }
+
+  function handleFiles(files) {
+    for (const file of files) {
+      const reader = new FileReader();
+      const fileType = file.type;
+
+      const removeButton = document.createElement('button');
+      removeButton.innerText = 'Remove';
+      removeButton.classList.add('remove-button');
+
+      const container = document.createElement('div');
+      container.classList.add('file-container');
+
+
+      reader.onload = (e) => {
+        if (fileType.startsWith('image/')) {
+          const image = new Image();
+          image.src = e.target.result;
+
+          removeButton.addEventListener('click', () => {
+            removePreview(container);
+          });
+
+          container.appendChild(removeButton);
+          container.appendChild(image);
+        } else if (fileType === 'application/pdf') {
+          const pdfEmbed = document.createElement('embed');
+          pdfEmbed.setAttribute('src', e.target.result);
+          pdfEmbed.setAttribute('type', 'application/pdf');
+          pdfEmbed.setAttribute('width', '400px');
+          pdfEmbed.setAttribute('height', '200px');
+
+          removeButton.addEventListener('click', () => {
+            removePreview(container);
+          });
+
+          container.appendChild(removeButton);
+          container.appendChild(pdfEmbed);
+        }
+        preview.appendChild(container);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+</script>
+
 <script>
     function deleteRecord(id) {
             console.log(id);
@@ -521,60 +734,60 @@ $('#department1').select2({
 
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-    const elementSelector = document.getElementById('elementSelector');
-    const laptopContent = document.getElementById('laptop');
-    const phoneContent = document.getElementById('phone');
-    const laptopphone = document.getElementById('laptopphone');
-    const ph = document.getElementById('ph');
-    // Set initial state: Hide phone content and disable required
-    phoneContent.style.display = 'none';
-    phoneContent.querySelectorAll('input, textarea').forEach((el) => {
-        el.required = false;
-    });
+// document.addEventListener("DOMContentLoaded", function() {
+//     const elementSelector = document.getElementById('elementSelector');
+//     const laptopContent = document.getElementById('laptop');
+//     const phoneContent = document.getElementById('phone');
+//     const laptopphone = document.getElementById('laptopphone');
+//     const ph = document.getElementById('ph');
+//     // Set initial state: Hide phone content and disable required
+//     phoneContent.style.display = 'none';
+//     phoneContent.querySelectorAll('input, textarea').forEach((el) => {
+//         el.required = false;
+//     });
 
-    // Add a change event listener to the "select" element
-    elementSelector.addEventListener('change', function () {
-        // Get the selected value
-        const selectedValue = elementSelector.value;
+//     // Add a change event listener to the "select" element
+//     elementSelector.addEventListener('change', function () {
+//         // Get the selected value
+//         const selectedValue = elementSelector.value;
 
-        // Show/hide content based on the selection
-        if (selectedValue === 'laptop') {
-            if(ph.hasAttribute('pattern')){
-                ph.removeAttribute('pattern');
-            }
-            laptopContent.style.display = 'block';
-            phoneContent.style.display = 'none';
-            laptopContent.querySelectorAll('input, textarea').forEach((el) => {
-                el.required = true;
-            });
-            phoneContent.querySelectorAll('input, textarea,select').forEach((el) => {
-                el.required = false;
-            });
-        } else if (selectedValue === 'phone') {
-            // if(!ph.hasAttribute('pattern')){
-            //     ph.addAttribute('pattern','09[0-9]{9}');
-            // }
-            laptopContent.style.display = 'none';
-            phoneContent.style.display = 'block';
-            laptopContent.querySelectorAll('input, textarea').forEach((el) => {
-                el.required = false;
-            });
-            phoneContent.querySelectorAll('input, textarea,select,tel').forEach((el) => {
-                el.required = true;
-            });
-        }else if (selectedValue === 'lp') {
-            laptopContent.style.display = 'block';
-            phoneContent.style.display = 'block';
-            laptopContent.querySelectorAll('input, textarea,select,tel').forEach((el) => {
-                el.required = true;
-            });
-            phoneContent.querySelectorAll('input, textarea,select,tel').forEach((el) => {
-                el.required = true;
-            });
-        }
-    });
-});
+//         // Show/hide content based on the selection
+//         if (selectedValue === 'laptop') {
+//             if(ph.hasAttribute('pattern')){
+//                 ph.removeAttribute('pattern');
+//             }
+//             laptopContent.style.display = 'block';
+//             phoneContent.style.display = 'none';
+//             laptopContent.querySelectorAll('input, textarea').forEach((el) => {
+//                 el.required = true;
+//             });
+//             phoneContent.querySelectorAll('input, textarea,select').forEach((el) => {
+//                 el.required = false;
+//             });
+//         } else if (selectedValue === 'phone') {
+//             // if(!ph.hasAttribute('pattern')){
+//             //     ph.addAttribute('pattern','09[0-9]{9}');
+//             // }
+//             laptopContent.style.display = 'none';
+//             phoneContent.style.display = 'block';
+//             laptopContent.querySelectorAll('input, textarea').forEach((el) => {
+//                 el.required = false;
+//             });
+//             phoneContent.querySelectorAll('input, textarea,select,tel').forEach((el) => {
+//                 el.required = true;
+//             });
+//         }else if (selectedValue === 'lp') {
+//             laptopContent.style.display = 'block';
+//             phoneContent.style.display = 'block';
+//             laptopContent.querySelectorAll('input, textarea,select,tel').forEach((el) => {
+//                 el.required = true;
+//             });
+//             phoneContent.querySelectorAll('input, textarea,select,tel').forEach((el) => {
+//                 el.required = true;
+//             });
+//         }
+//     });
+// });
 
 
 document.addEventListener("DOMContentLoaded", function () {

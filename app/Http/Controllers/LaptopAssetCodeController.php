@@ -6,11 +6,16 @@ use App\Models\Branch;
 use App\Models\Department;
 use App\Models\LaptopAssetCode;
 use App\Models\Assetfile;
+use App\Models\AssetType;
+use App\Models\Remark;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 class LaptopAssetCodeController extends Controller
 {
     /**
@@ -18,7 +23,7 @@ class LaptopAssetCodeController extends Controller
      */
     public function index()
     {
-        $datas=LaptopAssetCode::latest()->paginate(20);
+        $datas=LaptopAssetCode::latest()->get();
         $branches=Branch::all();
         $departments=Department::all();
 
@@ -40,18 +45,22 @@ class LaptopAssetCodeController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-        // $request->validate([
-        //     'file' => 'required|mimes:jpeg,jpg,png,gif,webp|max:3300',
-        // ], [
-        //     'file.required' => 'Employee profile is required.',
-        //     'file.mimes' => 'Only jpeg, jpg, png,webp and gif file types are allowed.',
-        //     'file.max' => 'File size should not exceed 3MB.',
-        // ]);
+
+        $validatedData = $request->validate([
+            'assettype.*' => 'required',
+            'assetname.*' => 'required',
+            'assetcode.*' => 'required',
+        ],[
+            'assettype.*.required' => 'Asset type ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset type.)',
+            'assetname.*.required' => 'Asset Code ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset code.)',
+            'assetcode.*.required' => 'Asset Name ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset name.)',
+
+        ]
+
+    );
 
         $date = Carbon::parse($request->date)->format('Ymd');
         $today=LaptopAssetCode::where(['date'=>Carbon::parse($request->date)->format('Y-m-d'),'type'=>$request->type])->distinct('doc_no')->get();
-        // $today = LaptopAssetCode::where(['date' => Carbon::parse($request->date)->format('Y-m-d')])->orderBy('id', 'DESC')->get();
 
         if ($today->isEmpty()) {
             $suffix = 1;
@@ -72,10 +81,6 @@ class LaptopAssetCodeController extends Controller
 
         }
 
-
-        // $file=rand(0,999999)."_".$request->file('file')->getClientOriginalName();
-        // $pathfile= Storage::putFileAs('public/emp_profile',$request->file('file'),$file);
-
         $asset=LaptopAssetCode::create([
             'user_id'=>$request->userid,
             'doc_no'=>$doc_no,
@@ -85,13 +90,6 @@ class LaptopAssetCodeController extends Controller
             'branch_code'=>$request->branchcode,
             'branch_name'=>$request->branchname,
             'department'=>$request->department,
-            'asset_type'=>$request->assettype,
-            'laptop_asset_code'=>$request->laptopcode,
-            'laptop_asset_name'=>$request->laptopname,
-            'handset_asset_code'=>$request->handsetcode,
-            'handset_asset_name'=>$request->handsetname,
-            'sim_name'=>$request->simname,
-            'sim_phone'=>$request->simnumber,
             'receipt_date'=>$request->receiptdate,
             'receipt_type'=>$request->receipttype,
             'remark'=>$request->remark,
@@ -99,6 +97,28 @@ class LaptopAssetCodeController extends Controller
             'date'=>$request->date
         ]);
 
+
+            $assettype                  = $request['assettype'];
+            $assetcode                  = $request['assetcode'];
+            $assetname                  = $request['assetname'];
+            $operator                   = $request['simname'];
+            $phone                      = $request['simnumber'];
+
+            for($i=0;$i<count($assetcode);$i++){
+                $addasset=[
+                    'doc_id'            =>$asset->id,
+                    'department'        =>$asset->department,
+                    'branch'            =>$asset->branch_code,
+                    'assettype'         =>$assettype[$i],
+                    'assetcode'         =>$assetcode[$i],
+                    'assetname'         =>$assetname[$i],
+                    'operator'          =>$operator[$i],
+                    'ph'                =>$phone[$i],
+                ];
+
+                DB::table('asset_types')->insert($addasset);
+
+            }
 
         if(isset($request['file']))
 
@@ -123,8 +143,6 @@ class LaptopAssetCodeController extends Controller
                     }
 
 
-
-        // return back()->with('success','Successfully your created.');
         return redirect('employee_benefic/laptop_asset_code/'.$asset->id)->with('success','Successfully your created.');
     }
 
@@ -136,8 +154,9 @@ class LaptopAssetCodeController extends Controller
         $datas=LaptopAssetCode::find($id);
         $branches=Branch::all();
         $files= Assetfile::where('doc_id',$id)->get();
+        $addassets= AssetType::where('doc_id',$id)->get();
         $departments=Department::all();
-        return view('laptop_asset_code.detail',compact('datas','branches','departments','files'));
+        return view('laptop_asset_code.detail',compact('datas','branches','departments','files','addassets'));
     }
 
     /**
@@ -178,38 +197,10 @@ class LaptopAssetCodeController extends Controller
         $datas->branch_code=$request->branchcode;
         $datas->branch_name=$request->branchname;
         $datas->department=$request->department;
-        $datas->asset_type=$request->assettype;
-        $datas->laptop_asset_code=$request->laptopcode;
-        $datas->laptop_asset_name=$request->laptopname;
-        $datas->handset_asset_code=$request->handsetcode;
-        $datas->handset_asset_name=$request->handsetname;
-        $datas->sim_name=$request->simname;
-        $datas->sim_phone=$request->simnumber;
         $datas->receipt_type=$request->receipttype;
         $datas->receipt_date=$request->receiptdate;
         $datas->remark=$request->remark;
-        // $datas->file=$request->file;
         $datas->date=$request->date;
-        // if($request->hasfile('file'))
-        // {
-
-        //     //dd("Testing True... ");
-
-        //     $destnation ='app/public/emp_profile/'.$datas->file;
-        //     if(Storage::exists($destnation)){
-        //         unlink(storage_path('app/public/emp_profile/'.$datas->file));
-        //     }
-
-        //     //delete exisiting image
-        //     //unlink(storage_path('app/public/iqnposimages/degree/'.$iqnstudents->degreefile));
-
-        //     $file=rand(0,999999)."_".$request->file('file')->getClientOriginalName();
-        //     $pathfile= Storage::putFileAs('public/emp_profile',$request->file('file'),$file);
-
-        //     $datas->file=$file;
-        // }else{
-        //     $datas->file=$request->curr_file;
-        // }
 
 
         $datas->update();
@@ -254,6 +245,20 @@ class LaptopAssetCodeController extends Controller
 
     }
 
+    public function deletasset($id){
+        // dd('hi');
+        AssetType::find($id)->delete($id);
+        return back()->with('success','Successfully Deleted.');
+
+    }
+
+    public function deletRemark($id){
+        // dd('hi');
+        Remark::find($id)->delete($id);
+        return back()->with('success','Successfully Deleted.');
+
+    }
+
     public function deletUpload($id){
         // dd('hi');
         Assetfile::find($id)->delete($id);
@@ -261,68 +266,153 @@ class LaptopAssetCodeController extends Controller
 
     }
 
+    public function search1(Request $request)
+    {
+        $branches = Branch::all();
+        $departments = Department::all();
+        $query = LaptopAssetCode::query();
+        $branch = $request->branch;
 
-public function search(Request $request)
+        // Apply search filters
+        if ($branch != 0) {
+            $query->where('branch_name', $branch);
+        }
+
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', 'LIKE', '%' . $request->input('doc_no') . '%');
+        }
+
+        if ($request->filled('assettype')) {
+            $query->where('asset_type', 'LIKE', '%' . $request->input('assettype') . '%');
+        }
+
+        if ($request->filled('empname')) {
+            $query->where('emp_name', 'LIKE', '%' . $request->input('empname') . '%');
+        }
+
+        if ($request->filled('empcode')) {
+            $query->where('emp_code', 'LIKE', '%' . $request->input('empcode') . '%');
+        }
+
+        if ($request->filled('department')) {
+            $query->where('department', 'LIKE', '%' . $request->input('department') . '%');
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', 'LIKE', '%' . $request->input('type') . '%');
+        }
+
+        if ($branch == 0) {
+            $query->latest();
+        }
+
+        if ($request->filled('laptop')) {
+            $query->where(function ($query) use ($request) {
+                $query->orWhere('laptop_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
+                    ->orWhere('handset_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
+                    ->orWhere('sim_phone', 'LIKE', '%' . $request->input('laptop') . '%');
+            });
+        }
+
+        // Export to Excel
+        if ($request->filled('export') && $request->input('export') === 'excel') {
+            $exportFileName = 'laptop_asset_code_export.xlsx';
+
+            // Export the query results directly
+            return Excel::download(function () use ($query) {
+                return $query->get();
+            }, $exportFileName);
+        }
+
+        $datas = $query->latest()->paginate(20);
+
+        return view('laptop_asset_code.index', compact('datas', 'branches', 'departments'));
+    }
+
+
+    public function search(Request $request)
 {
-        $branches=Branch::all();
-        $departments=Department::all();
+    $branches = Branch::all();
+    $departments = Department::all();
+    $query = LaptopAssetCode::query();
+    $branch = $request->branch;
+
+    if ($branch != 0) {
+        $query->where('branch_name', $branch);
+    }
+
+    if ($request->filled('doc_no')) {
+        $query->where('doc_no', 'LIKE', '%' . $request->input('doc_no') . '%');
+    }
+
+    if ($request->filled('assettype')) {
+        $query->where('asset_type', 'LIKE', '%' . $request->input('assettype') . '%');
+    }
+
+    if ($request->filled('empname')) {
+        $query->where('emp_name', 'LIKE', '%' . $request->input('empname') . '%');
+    }
+
+    if ($request->filled('empcode')) {
+        $query->where('emp_code', 'LIKE', '%' . $request->input('empcode') . '%');
+    }
+
+    if ($request->filled('department')) {
+        $query->where('department', 'LIKE', '%' . $request->input('department') . '%');
+    }
+
+    if ($request->filled('type')) {
+        $query->where('type', 'LIKE', '%' . $request->input('type') . '%');
+    }
+
+    if ($branch == 0) {
+        $query->latest();
+    }
+
+    if ($request->filled('laptop')) {
+        $query->where(function ($query) use ($request) {
+            $query->orWhere('laptop_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
+                ->orWhere('handset_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
+                ->orWhere('sim_phone', 'LIKE', '%' . $request->input('laptop') . '%');
+        });
+    }
+
+
+
+    // Export to Excel
+    if ($request->filled('export') && $request->input('export') === 'excel') {
+        $exportFileName = 'employee_asset_system.xlsx';
+
+        // Export the query results directly
+        return Excel::download(function () use ($query) {
+            return $query->get();
+        }, $exportFileName);
+    }
+
+    $datas = $query->latest()->paginate(20);
+
+    return view('laptop_asset_code.index', compact('datas', 'branches', 'departments'));
+}
+
+
+    public function export(Request $request)
+        {
+            $query = $this->buildSearchQuery($request); // Create a method to build the query
+
+            $exportFileName = 'laptop_asset_code_export.xlsx';
+            return Excel::download(new \App\Exports\LaptopAssetCodeExport($query), $exportFileName);
+
+        }
+
+    private function buildSearchQuery(Request $request)
+    {
         $query = LaptopAssetCode::query();
 
-        // if($request->branch!=null){
-            $branch = $request->branch;
-            if($request->branch !=0){
-                $query = $query->where('branch_name',$branch);
-            }
-
-            if ($request->filled('doc_no')) {
-                $query->where('doc_no', 'LIKE', '%' . $request->input('doc_no') . '%');
-            }
-
-            if ($request->filled('assettype')) {
-                $query->where('asset_type', 'LIKE', '%' . $request->input('assettype') . '%');
-            }
-
-            if ($request->filled('empname')) {
-                $query->where('emp_name', 'LIKE', '%' . $request->input('empname') . '%');
-            }
-
-            if ($request->filled('empcode')) {
-                $query->where('emp_code', 'LIKE', '%' . $request->input('empcode') . '%');
-            }
-
-            if ($request->filled('department')) {
-                $query->where('department', 'LIKE', '%' . $request->input('department') . '%');
-            }
-
-            if ($request->filled('type')) {
-                $query->where('type', 'LIKE', '%' . $request->input('type') . '%');
-            }
-
-            // if ($request->filled('branch')) {
-            //     $query->where('branch_name', 'LIKE', '%' . $request->input('branch') . '%');
-            // }
-
-            if ($branch == 0) {
-                $query=$query->latest();
-            }
+        return $query;
+    }
 
 
-            if ($request->filled('laptop')) {
-                $query->orwhere('laptop_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
-                      ->orwhere('handset_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
-                      ->orwhere('sim_phone', 'LIKE', '%' . $request->input('laptop') . '%');
-            }
 
-            $datas = $query->latest()->paginate(20);
-            // $datas->appends($request->all());
-
-            return view('laptop_asset_code.index', compact('datas','branches','departments'));
-        // }
-        // // else{
-        // //     return back()->with('fails', 'No result Found');
-        // // }
-
-}
 
     public function branchSearch($branch_code) {
         // Find the branch based on the provided branch_code
@@ -390,5 +480,130 @@ public function search(Request $request)
             'departments' => $departments
         ]);
     }
+
+
+    public function fix_asset() {
+        $conn = DB::connection('Fixasset');
+        $query = "SELECT
+            fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+            fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date, fxdt.fxstatus AS status
+            FROM asset.fxassetdetail fxdt
+            LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+            LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+            LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+            LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+            LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+            LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+            LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+            WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
+            ORDER BY purchase_date";
+
+        $fix_assets = $conn->select($query);
+        // dd($fix_assets);
+
+        // $currentPage = request()->input('page', 1);
+        // $perPage = 20;
+        // $offset = ($currentPage - 1) * $perPage;
+
+        // $slice = array_slice($results, $offset, $perPage);
+        // $fix_assets = new LengthAwarePaginator($slice, count($results), $perPage, $currentPage);
+
+        return view('laptop_asset_code.fix_asset', compact('fix_assets'));
+    }
+
+
+    public function reMark(Request $request)
+    {
+        // dd($reques);
+
+        Remark::create([
+            'asset_code' => $request->input('asset_code'),
+            'name' => $request->input('name'),
+            'remark' => $request->input('remark'),
+        ]);
+
+
+        return redirect()->route('laptop_asset_code.fix_asset')->with('success', 'Data inserted successfully!');
+    }
+
+
+    public function updateRemark($id, Request $request){
+        Remark::where('id', $id)->update($request->all());
+        $data = Remark::whereId($id)->first();
+        return response()->json(['success' => true, 'data' => $data], 200);
+    }
+
+    public function updatestore(Request $request)
+    {
+            // dd($request->all());
+            $id=$request->getID;
+            $branch_code=$request->branch_code;
+            $department=$request->department;
+            $validatedData = $request->validate([
+                'assettype.*' => 'required',
+                'assetname.*' => 'required',
+                'assetcode.*' => 'required',
+            ],[
+                'assettype.*.required' => 'Asset type ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset type.)',
+                'assetname.*.required' => 'Asset Code ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset code.)',
+                'assetcode.*.required' => 'Asset Name ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset name.)',
+
+            ]
+
+        );
+
+            // dd($id);
+            $assettype                  = $request['assettype'];
+            $assetcode                  = $request['assetcode'];
+            $assetname                  = $request['assetname'];
+            $operator                   = $request['simname'];
+            $phone                      = $request['simnumber'];
+
+            for($i=0;$i<count($assetcode);$i++){
+                $addasset=[
+                    'doc_id'            =>$id,
+                    'assettype'         =>$assettype[$i],
+                    'department'        =>$department,
+                    'branch'            =>$branch_code[$i],
+                    'assetcode'         =>$assetcode[$i],
+                    'assetname'         =>$assetname[$i],
+                    'operator'          =>$operator[$i],
+                    'ph'                =>$phone[$i],
+                ];
+
+                DB::table('asset_types')->insert($addasset);
+
+            }
+
+        if(isset($request['file']))
+
+                    foreach($request['file'] as $file)
+                    {
+
+                        $folderName = "public/asset_upload";
+                        $fileName = $file->getClientOriginalName();
+                        $originalFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '',$fileName);
+                        $savedFileName = $originalFileName.$file->getClientOriginalExtension();
+                        $file->storeAs($folderName,$savedFileName);
+                        $data_image                 =[
+                            'doc_id'                =>$id,
+                            'file'                  =>$savedFileName,
+
+                            'created_at'            =>Carbon::now(),
+                            'updated_at'            =>Carbon::now(),
+                        ];
+
+                        DB::table('assetfiles')->insert($data_image);
+
+                    }
+
+
+
+        // return back()->with('success','Successfully your created.');
+        return back()->with('success','Successfully your created.');
+    }
+
+
+
 
 }

@@ -41,7 +41,7 @@
             <script src="https://code.highcharts.com/modules/exporting.js"></script>
             <script src="https://code.highcharts.com/modules/export-data.js"></script>
             <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <div class="card">
             <div class="card-body">
 
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <div class="card">
             <div class="card-body">
 
@@ -159,45 +159,86 @@ $('#department1').select2({
 });
 </script>
 <?php
-$departments = App\Models\LaptopAssetCode::whereNotNull('department')->distinct('department')->pluck('department');
 
+$departments = App\Models\LaptopAssetCode::whereNotNull('department')->distinct('department')->get();
 $departmentLaptopCounts = [];
 $departmentPhoneCounts = [];
+$departmentProperties = [];
+$departmentOther = [];
+$allOperators = [];
 
 foreach ($departments as $department) {
-    $laptopCount = App\Models\LaptopAssetCode::where('department', $department)->whereNotNull('laptop_asset_code')->count();
-    $phoneCount = App\Models\LaptopAssetCode::where('department', $department)->whereNotNull('handset_asset_code')->count();
+    $laptopCount = App\Models\AssetType::where('department', $department->department)
+                    ->where('assettype', 'laptop')
+                    ->count();
+
+    $phoneCount = App\Models\AssetType::where('department', $department->department)
+                    ->where('assettype', 'phone')
+                    ->count();
+
+    $properties = App\Models\AssetType::where('department', $department->department)
+                    ->where('assettype', 'Properties')
+                    ->count();
+
+    $other = App\Models\AssetType::where('department', $department->department)
+                    ->where('assettype', 'Other')
+                    ->count();
+    $operators = App\Models\AssetType::where('department', $department->department)
+                    ->groupBy('operator')
+                    ->selectRaw('count(*) as count, operator as operator_name')
+                    ->get();
+
+     $operatorCounts = [];
+
+            foreach ($operators as $operator) {
+                $operatorCounts[$operator->operator_name] = $operator->count;
+            }
+
+
+    $allOperators[] = $operatorCounts;
 
     $departmentLaptopCounts[] = $laptopCount;
     $departmentPhoneCounts[] = $phoneCount;
-}
-//---------------------------------------------------------------------
-$branches = App\Models\LaptopAssetCode::whereNotNull('branch_name')->distinct('branch_name')->pluck('branch_name');
-
-$branchLaptopCounts = [];
-$branchPhoneCounts = [];
-
-foreach ($branches as $branch) {
-    $laptopCount = App\Models\LaptopAssetCode::where('branch_name', $branch)->whereNotNull('laptop_asset_code')->count();
-    $phoneCount = App\Models\LaptopAssetCode::where('branch_name', $branch)->whereNotNull('handset_asset_code')->count();
-
-    $branchLaptopCounts[] = $laptopCount;
-    $branchPhoneCounts[] = $phoneCount;
+    $departmentProperties[] = $properties;
+    $departmentOther[] = $other;
 }
 
- ?>
+?>
 
 <script type="text/javascript">
+const departments = {!! json_encode($departments) !!};
+const departmentLaptopCounts = {!! json_encode($departmentLaptopCounts) !!};
+const departmentPhoneCounts = {!! json_encode($departmentPhoneCounts) !!};
+const departmentProperties = {!! json_encode($departmentProperties) !!};
+const departmentOther = {!! json_encode($departmentOther) !!};
+const allOperators = {!! json_encode($allOperators) !!};
 
 Highcharts.chart('container-bar-department', {
     chart: {
         type: 'column'
     },
     title: {
-        text: ''
+        text: 'Department-wise Asset Counts'
     },
     xAxis: {
-        categories: {!! json_encode($departments) !!}
+        categories: departments.map(department => department.department)
+    },
+    yAxis: {
+        title: {
+            text: 'Counts'
+        }
+    },
+    legend: {
+        align: 'center',
+        verticalAlign: 'top',
+        floating: true,
+        backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+    },
+    tooltip: {
+        shared: true
     },
     credits: {
         enabled: false
@@ -205,10 +246,10 @@ Highcharts.chart('container-bar-department', {
     plotOptions: {
         column: {
             borderRadius: '25%',
-            colors: ['#007bff', '#ff0000'],
+            colors: ['#007bff', '#ff0000', '#00ff00', '#ffcc00', '#000000'],
             dataLabels: {
                 enabled: true,
-                format: '{point.y}', // Display the value on top of the bar
+                format: '{point.y}',
                 style: {
                     color: 'black'
                 }
@@ -216,47 +257,146 @@ Highcharts.chart('container-bar-department', {
         }
     },
     series: [{
-        name: 'Laptop',
-        data: {!! json_encode($departmentLaptopCounts) !!}
+        name: 'Laptop Counts',
+        data: departmentLaptopCounts
+    }, {
+        name: 'Phone Counts',
+        data: departmentPhoneCounts
+    }, {
+        name: 'Properties Counts',
+        data: departmentProperties
+    }, {
+        name: 'Other Counts',
+        data: departmentOther
     },{
-        name: 'Phone',
-        data: {!! json_encode($departmentPhoneCounts) !!}
-    }]
+        name: 'Sim Operator',
+        data: allOperators.map((operatorCounts, index) => ({
+        name: departments[index].department,
+        y: Object.values(operatorCounts).reduce((acc, val) => acc + val, 0)
+    }))
+    }
+
+]
+
 });
 
-Highcharts.chart('container-bar-branch', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: ''
-    },
-    xAxis: {
-        categories: {!! json_encode($branches) !!}
-    },
-    credits: {
-        enabled: false
-    },
-    plotOptions: {
-        column: {
-            borderRadius: '25%',
-            colors: ['#007bff', '#ff0000'],
-            dataLabels: {
-                enabled: true,
-                format: '{point.y}', // Display the value on top of the bar
-                style: {
-                    color: 'black'
+</script>
+
+<?php
+$branches = App\Models\LaptopAssetCode::whereNotNull('branch_code')->distinct('branch_code')->get();
+$branchLaptopCounts = [];
+$branchPhoneCounts = [];
+$branchProperties = [];
+$branchOther = [];
+$allOperators = [];
+
+foreach ($branches as $branch) {
+    $laptopCount = App\Models\AssetType::where('branch', $branch->branch_co)
+                    ->where('assettype', 'laptop')
+                    ->count();
+
+    $phoneCount = App\Models\AssetType::where('branch', $branch->branch_code)
+                    ->where('assettype', 'phone')
+                    ->count();
+
+    $properties = App\Models\AssetType::where('branch', $branch->branch_code)
+                    ->where('assettype', 'Properties')
+                    ->count();
+
+    $other = App\Models\AssetType::where('branch', $branch->branch_code)
+                    ->where('assettype', 'Other')
+                    ->count();
+    $operators = App\Models\AssetType::where('branch', $branch->branch_code)
+                    ->groupBy('operator')
+                    ->selectRaw('count(*) as count, operator as operator_name')
+                    ->get();
+
+     $operatorCounts = [];
+
+            foreach ($operators as $operator) {
+                $operatorCounts[$operator->operator_name] = $operator->count;
+            }
+
+
+    $allOperators[] = $operatorCounts;
+
+    $branchLaptopCounts[] = $laptopCount;
+    $branchPhoneCounts[] = $phoneCount;
+    $branchProperties[] = $properties;
+    $branchOther[] = $other;
+}
+?>
+<script>
+    const branches = {!! json_encode($branches) !!};
+    const branchLaptopCounts = {!! json_encode($branchLaptopCounts) !!};
+    const branchPhoneCounts = {!! json_encode($branchPhoneCounts) !!};
+    const branchProperties = {!! json_encode($branchProperties) !!};
+    const branchOther = {!! json_encode($branchOther) !!};
+    const allBranchOperators = {!! json_encode($allOperators) !!};
+
+    Highcharts.chart('container-bar-branch', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Branch-wise Asset Counts'
+        },
+        xAxis: {
+            categories: branches.map(branch => branch.branch_code)
+        },
+        yAxis: {
+            title: {
+                text: 'Counts'
+            }
+        },
+        legend: {
+            align: 'center',
+            verticalAlign: 'top',
+            floating: true,
+            backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || 'white',
+            borderColor: '#CCC',
+            borderWidth: 1,
+            shadow: false
+        },
+        tooltip: {
+            shared: true
+        },
+        credits: {
+            enabled: false
+        },
+        plotOptions: {
+            column: {
+                borderRadius: '25%',
+                colors: ['#007bff', '#ff0000', '#00ff00', '#ffcc00', '#000000'],
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y}', // Display the value on top of the bar
+                    style: {
+                        color: 'black'
+                    }
                 }
             }
-        }
-    },
-    series: [{
-        name: 'Laptop',
-        data: {!! json_encode($branchLaptopCounts) !!}
-    },{
-        name: 'Phone',
-        data: {!! json_encode($branchPhoneCounts) !!}
-    }]
-});
+        },
+        series: [{
+            name: 'Laptop Counts',
+            data: branchLaptopCounts
+        }, {
+            name: 'Phone Counts',
+            data: branchPhoneCounts
+        }, {
+            name: 'Properties Counts',
+            data: branchProperties
+        }, {
+            name: 'Other Counts',
+            data: branchOther
+        }, {
+            name: 'Sim Operator',
+            data: allBranchOperators.map((operatorCounts, index) => ({
+                name: branches[index].branch,
+                y: Object.values(operatorCounts).reduce((acc, val) => acc + val, 0)
+            }))
+        }]
+    });
+
 </script>
 @endsection

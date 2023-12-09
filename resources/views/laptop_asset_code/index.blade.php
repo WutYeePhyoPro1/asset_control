@@ -77,20 +77,6 @@
           <div class="card">
             <div class="card-body">
 
-            {{-- <h5 class="card-title">Laptop Asset Code</h5> --}}
-          <!-- Default Tabs -->
-          {{-- <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
-                <font class="card-title" style="font-size: 15px;">Laptop Asset</font></button>
-            </li>
-            <!-- <li class="nav-item" role="presentation">
-              <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
-              <font class="card-title" style="font-size: 15px;"><i class="bi bi-plus-square-fill" style="font-size: 20px;"></i>&nbsp; Add New</font></button>
-            </li> -->
-
-          </ul>
-          <br> --}}
 
 <div class="tab-content pt-2" id="myTabContent">
         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
@@ -106,15 +92,15 @@
                 <button class="btn">
                     <a href="{{route('laptop_asset_code.create')}}">
                     <i class="bi bi-plus-square-fill" style="color:##1c88fc;font-size:33px;"></i></a></button>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import" type="button">
+            {{-- <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import" type="button">
             <font class="card-title" style="color:#fff;font-size: 13px;">
-            <i class="ri-file-excel-2-line" style="font-size: 12px;"></i> Excel Import</font></button>
+            <i class="ri-file-excel-2-line" style="font-size: 12px;"></i> Excel Import</font></button> --}}
             </div><hr>
 
             </div>
             </div>
 
-            <form method="POST" action="{{route('employee_benefic.search')}}">
+            {{-- <form method="POST" action="{{route('employee_benefic.search')}}">
               @csrf
             <div class="row g-3">
                     <div class="col-md-2 col-lg-2">
@@ -171,10 +157,12 @@
                     <label for="validationCustom01" class="form-label" style="font-size: 12px;padding:0px;"><br></label><br>
                     <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 13px;">Search</font></button>
 
-                    </div>
+
+
+                    <a href="{{ route('laptop-asset-code.export', request()->all()) }}" class="btn btn-success">Export</a>
 
             </div>
-            </form>
+            </form> --}}
 
             <div class="modal fade" id="import" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
@@ -216,7 +204,7 @@
                 </div>
               </div><!-- End Vertically centered Modal-->
             <br>
-            <form action="/limit_rows" method="get">
+            {{-- <form action="/limit_rows" method="get">
                 <label for="per_page" style="font-weight: 500;color: #000;font-family: Poppins, sans-serif;font-size:13px;">Showing Rows:</label>
                 <select name="per_page" id="per_page">
                     <option value=""></option>
@@ -224,10 +212,43 @@
                     <option value="20">20</option>
                     <option value="100">100</option>
                 </select>
-            </form>
+            </form> --}}
             <div class="table-responsive" style="margin: 10px;">
-              <table class="table table-sm card-title table-hover table-bordered table-fix" style="font-size: 15px;" id="myTable">
+              <table class="table table-sm card-title table-hover table-bordered table-fix" style="font-size: 15px;" id="fixasset">
                 <thead>
+                    <form id="clear">
+                        <tr  style="text-wrap: nowrap">
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col">
+                                <div class="col-md-3" id="filter_col2" data-column="2">
+                                    <input type="text" class="form-control column_filter" placeholder="Enter Doc No" id="col2_filter" style="border:1px solid #2809f5;width:250px;">
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="col-md-3" id="filter_col3" data-column="3">
+                                    <input type="text" class="form-control column_filter" placeholder="Enter Employee Name" id="col3_filter" style="border:1px solid #2809f5;width:250px;">
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="col-md-3" id="filter_col4" data-column="4">
+                                    <input type="text" class="form-control column_filter" placeholder="Enter By Dep/Emp" id="col4_filter" style="border:1px solid #2809f5;width:250px;">
+                                </div>
+                            </th>
+                            <th scope="col">
+                                <div class="col-md-3" id="filter_col5" data-column="5">
+                                    <input type="text" class="form-control column_filter" placeholder="Enter Department" id="col5_filter" style="border:1px solid #2809f5;width:250px;">
+                                </div>
+                            </th>
+
+                            <th scope="col">
+                                <div class="col-md-3" id="filter_col6" data-column="6">
+                                    <input type="text" class="form-control column_filter" placeholder="Enter Branch" id="col6_filter" style="border:1px solid #2809f5;width:250px;">
+                                </div>
+                            </th>
+
+                        </tr>
+                    </form>
                   <tr class="table-primary" style="text-wrap: nowrap">
                     <th scope="col">#</th>
                     <th scope="col">Action</th>
@@ -235,11 +256,7 @@
                     <th scope="col">Employee Name</th>
                     <th scope="col">By Dep/Emp</th>
                     <th scope="col">Department</th>
-                    <th scope="col">Branch Code</th>
-                    {{-- <th scope="col">Branch</th> --}}
-                    <th scope="col">Laptop Asset Code</th>
-                    <th scope="col">Handset Asset Code</th>
-                    <th scope="col">Phone Number</th>
+                    <th scope="col">Branch</th>
                     <th scope="col">Receipt Date</th>
                   </tr>
                 </thead>
@@ -271,32 +288,9 @@
                   </a></td>
                     {{-- <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->emp_code}}</a></td> --}}
                     <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->department}}</a></td>
-                    <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branch_code}} ({{$data->branch_name}})</a></td>
+                    <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branch_code}}</a></td>
 					{{-- <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branch_name}}</a></td> --}}
-                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{$data->laptop_asset_name}}">
-                        @if($data->laptop_asset_code==null)
-                        -
-                        @else
-                        {{$data->laptop_asset_code}}
-                        @endif
 
-                    </td>
-                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{$data->handset_asset_name}}">
-                        @if($data->handset_asset_code==null)
-                        -
-                        @else
-                        {{$data->handset_asset_code}}
-                        @endif
-
-                    </td>
-                    <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{$data->sim_name}}">
-                        @if($data->sim_phone=='09' || $data->sim_phone==null)
-                        -
-                        @else
-                        {{$data->sim_phone}}
-                        @endif
-
-                    </td>
                     <td>{{$data->receipt_date}}</td>
                   </tr>
                 @php($no++)
@@ -338,10 +332,10 @@
                 </tbody>
               </table>
               <!-- End small tables -->
-
+{{--
            <p class="card-title">
            {{$datas->links('pagination::bootstrap-5')}}
-           </p>
+           </p> --}}
 
               </div>
             </div>
@@ -495,6 +489,78 @@ $('#department1').select2({
             $(this).closest('form').submit();
         });
     });
+
+
+</script>
+<script>
+$(document).ready(function() {
+    var table = $('#fixasset').DataTable({
+        "lengthMenu": [10, 20, 50, 100, 200],
+        "pageLength": 20,
+        "deferRender": true,
+        "lengthChange": true,
+        "searching": true,
+        "searchHighlight": true,
+
+        buttons: [
+            {
+                extend: 'copy',
+                text: 'Copy to Clipboard'
+            },
+            {
+                extend: 'excel',
+                text: 'Export to Excel',
+
+            },
+
+            {
+                extend: 'csv',
+                text: 'Export to CSV'
+            },
+            {
+                extend: 'pdf',
+                text: 'Export to PDF'
+            },
+            {
+                extend: 'print',
+                text: 'Print'
+            },
+            'colvis'
+        ],
+
+
+    });
+
+
+    table.buttons().container().appendTo('#fixasset_wrapper .col-md-6:eq(0)');
+
+    function filterColumn ( i ) {
+
+
+        $('#fixasset').DataTable().column( i ).search(
+            $('#col'+i+'_filter').val()
+        ).draw();
+        }
+
+
+        $(document).ready(function() {
+        $('#fixasset').DataTable();
+
+        $('input.global_filter').on( 'keyup click', function () {
+            filterGlobal();
+        } );
+
+        $('input.column_filter').on( 'keyup click', function () {
+            filterColumn( $(this).parents('div').attr('data-column') );
+        } );
+        } );
+
+        $('select.column_filter').on('change', function () {
+            filterColumn( $(this).parents('div').attr('data-column') );
+        } );
+        });
+
+
 
 
 </script>

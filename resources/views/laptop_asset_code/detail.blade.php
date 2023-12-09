@@ -13,49 +13,34 @@
     </div><!-- End Page Title -->
 
     @if(Session::has('success'))
-      <div class="alert alert-success alert-dismissible fade show outline-animation" role="alert" style="width: 300px; float: right; z-index: 1000; position: absolute; top: 15%; right: 2%;" id="toast">
-      <h4 class="alert-heading" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">Success</h4><hr>
-          <p class="mb-0" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">
-          {{ Session::get('success') }}
-                      @php
-                          Session::forget('success');
-                      @endphp
-          </p>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    @endif
+    <div class="alert alert-success alert-dismissible fade show outline-animation" role="alert" style="width: 300px; float: right; z-index: 1000; position: absolute; top: 15%; right: 2%;" id="toast">
+    <h4 class="alert-heading" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">Success</h4><hr>
+        <p class="mb-0" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">
+        {{ Session::get('success') }}
+                    @php
+                        Session::forget('success');
+                    @endphp
+        </p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
 
-    @if ($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show outline-animation" role="alert" style="width: 300px; float: right; z-index: 1000; position: absolute; top: 15%; right: 2%;" id="toast">
-      <h4 class="alert-heading" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">Error Message</h4><hr>
-          <p class="mb-0" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">
-          @foreach ($errors->all() as $error)
-                   {{ $error }}
-          @endforeach
-          </p>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    @endif
+  @if ($errors->any())
+  <div class="alert alert-danger alert-dismissible fade show outline-animation" role="alert" style="width: 600px; float: right; z-index: 1000; position: absolute; top: 15%; right: 2%;" id="toast">
+    <h4 class="alert-heading" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">Error Message</h4><hr>
+        <p class="mb-0" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">
+        @foreach ($errors->all() as $error)
+                 {{ $error }}<br>
+              @endforeach
+        </p>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
     <section class="section profile">
       <div class="row">
-        <div class="col-xl-2">
 
-          <div class="card">
-            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-              @if($datas->file==null)
-              <img src="{{asset('assets/img/acc.png')}}" alt="Profile" class="rounded-circle">
-              @else
-              <img src="{{asset('storage/emp_profile/'.$datas->file)}}" alt="Profile" class="rounded-circle">
-              @endif
-              <h2>{{$datas->emp_name}}</h2>
-              <h3>{{$datas->department}}</h3>
 
-            </div>
-          </div>
-
-        </div>
-
-        <div class="col-xl-10">
+        <div class="col-xl-12">
 
           <div class="card">
             <div class="card-body pt-3">
@@ -77,9 +62,22 @@
 
                 <div class="tab-pane fade show active profile-overview" id="profile-overview"  style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;">
 
-                  <h5 class="card-title">Employee Details</h5>
+                  <div class="card" style="background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20230114/pngtree-blue-background-light-mobile-wallpaper-stock-photo-free-image_1539073.jpg')">
+                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                      @if($datas->file==null)
+                      <img src="{{asset('assets/img/acc.png')}}" alt="Profile" class="rounded-circle">
+                      @else
+                      <img src="{{asset('storage/emp_profile/'.$datas->file)}}" alt="Profile" class="rounded-circle">
+                      @endif
+                      <h2 style="color:#fff;text-shadow:1px 2px 3px #000;">{{$datas->emp_name}}</h2>
+                      <h3 style="color:#fff;text-shadow:1px 2px 3px #000;">{{$datas->department}}</h3>
 
+                    </div>
+                  </div>
+
+                  <h5 class="card-title">Employee Details</h5>
                   <div class="row">
+
                     <div class="col-lg-3 col-md-4">Document No</div>
                     <div class="col-lg-9 col-md-8">{{$datas->doc_no}}</div>
                   </div>
@@ -110,7 +108,6 @@
                   </div>
                   @endif
 
-
                   <div class="row">
                     <div class="col-lg-3 col-md-4">Department</div>
                     <div class="col-lg-9 col-md-8">{{$datas->department}}</div>
@@ -118,87 +115,39 @@
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4">Branch Code</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->branch_code}} ({{$datas->branch_name}})</div>
+                    <div class="col-lg-9 col-md-8">{{$datas->branch_code}}</div>
                   </div>
-{{--
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4">Branch Name</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->branch_name}}</div>
-                  </div> --}}
+
 
                   <h5 class="card-title" style="font-size: 15px; color:blue;">Asset Infomation</h5>
 
-                  @if($datas->asset_type=='lp')
-
+                  @foreach ($addassets as $addasset)
                   <div class="row">
-                    <div class="col-lg-3 col-md-4">Laptop Asset Code</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->laptop_asset_code}}</div>
+                    <div class="col-lg-3 col-md-4">Asset Type</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->assettype}}</div>
                   </div>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4">Laptop Asset Name</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->laptop_asset_name}}</div>
+                    <div class="col-lg-3 col-md-4">Asset Code</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->assetcode}}</div>
                   </div>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4">Handset Asset Code</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->handset_asset_name}}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4">Operator</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->sim_name}}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4">Phone Number</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->sim_phone}}</div>
-                  </div>
-                  @elseif($datas->asset_type=='laptop')
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4">Laptop Asset Code</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->laptop_asset_code}}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4">Laptop Asset Name</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->laptop_asset_name}}</div>
-                  </div>
-
-                  @else
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4">Handset Asset Code</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->handset_asset_name}}</div>
+                    <div class="col-lg-3 col-md-4">Asset Name</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->assetname}}</div>
                   </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4">Operator</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->sim_name}}</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->operator}}</div>
                   </div>
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4">Phone Number</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->sim_phone}}</div>
+                    <div class="col-lg-3 col-md-4">Phone No:</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->ph}}</div>
                   </div>
-
-                  @endif
-
-
-                  <h5 class="card-title" style="font-size: 15px; color:blue;">Receipt Infomation</h5>
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4">Receipt Date</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->receipt_date}}</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4">Receipt type</div>
-                    <div class="col-lg-9 col-md-8">{{$datas->receipt_type}}</div>
-                  </div>
-
-                  <h5 class="card-title">Remark</h5>
-                  <p class="small fst-italic">
-                    {{$datas->remark}}
-                  </p>
+                  <hr>
+                  @endforeach
 
                     <hr>
                   <div class="row small fst-italic">
@@ -238,26 +187,18 @@
                   @METHOD('PUT')
                   @csrf
                   <div class="row g-3">
-<!--
-                  <div class="row">
+                    <div class="card" style="background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20230114/pngtree-blue-background-light-mobile-wallpaper-stock-photo-free-image_1539073.jpg');">
+                        <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                          @if($datas->file==null)
+                          <img src="{{asset('assets/img/acc.png')}}" alt="Profile" class="rounded-circle">
+                          @else
+                          <img src="{{asset('storage/emp_profile/'.$datas->file)}}" alt="Profile" class="rounded-circle">
+                          @endif
+                          <h2 style="color:#fff;text-shadow:1px 2px 3px #000;">{{$datas->emp_name}}</h2>
+                          <h3 style="color:#fff;text-shadow:1px 2px 3px #000;">{{$datas->department}}</h3>
 
-                    <div class="form-check col-md-2 col-lg-2">
-                      <input class="form-check-input" type="radio" name="type" id="gridRadios1" value="{{$datas->type}}">
-                      <label class="form-check-label" for="gridRadios1" style="font-size: 15px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
-                       By Employee
-                      </label>
-                      <p class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                        Please choose your employee or department.
-                        </p>
-                    </div>
-                    <div class="form-check col-md-2 col-lg-2">
-                      <input class="form-check-input" type="radio" name="type" id="gridRadios2" value="{{$datas->type}}">
-                      <label class="form-check-label" for="gridRadios2" style="font-size: 15px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
-                        By Department
-                      </label>
-                    </div>
-
-                  </div><br><br><hr> -->
+                        </div>
+                      </div>
 
                     <div class="col-md-4 col-lg-4">
                       <input type="hidden" class="form-control"  name="userid" value="1">
@@ -270,7 +211,7 @@
                       </div>
                       <div class="col-md-6">
                       <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">De/Emp</label>
-                      <select class="form-control" name="type" style="box-shadow:1px 1px 1px #333;">
+                      <select class="form-control" name="type" style="box-shadow:1px 1px 1px #333;" readonly>
                           <option value="{{$datas->type}}" selected>
                             @if($datas->type=='Emp')
                             By Employee
@@ -286,30 +227,24 @@
 
 
                       <label for="validationCustom02" class="form-label card-title" style="font-size: 15px;">Employee ID</label>
-                      <input type="text" class="form-control" id="empID" name="empcode" value="{{$datas->emp_code}}" style="box-shadow:1px 1px 1px #333;">
+                      <input type="text" class="form-control" id="empID" name="empcode" value="{{$datas->emp_code}}" style="box-shadow:1px 1px 1px #333;" readonly>
 
                       <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Employee name</label>
-                      <input type="text" class="form-control" id="employee_name" name="empname"  value="{{$datas->emp_name}}" style="box-shadow:1px 1px 1px #333;">
+                      <input type="text" class="form-control" id="employee_name" name="empname"  value="{{$datas->emp_name}}" style="box-shadow:1px 1px 1px #333;" readonly>
 
                       <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch Code</label>
-                      <select class="form-control" id="branchescode" name="branchcode" required>
-                          <option value="{{$datas->branch_code}}">{{$datas->branch_code}}({{$datas->branch_name}})</option>
+                      <select class="form-control" id="branchescode" name="branchcode" readonly>
+                          <option value="{{$datas->branch_code}}">{{$datas->branch_code}}</option>
                             @foreach($branches as $branch)
-                            <option value="{{$branch->branch_code}}">{{$branch->branch_code}}({{$branch->branch_name}})</option>
+                            <option value="{{$branch->branch_code}}">{{$branch->branch_code}}</option>
                             @endforeach
                       </select>
                       <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                         Please enter your branch code.
-                      </div>
-<br>
-                      {{-- <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch Name</label> --}}
-                      <select class="form-control" id="branches" name="branchname" readonly>
-                        <option value="{{$datas->branch_name}}">{{$datas->branch_name}}</option>
-                     </select>
-
+                      </div><br>
 
                       <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department</label>
-                      <select class="form-control" id="department" name="department" required>
+                      <select class="form-control" id="department" name="department" readonly>
                           <option value="{{$datas->department}}">{{$datas->department}}</option>
                             @foreach($departments as $department)
                             <option value="{{$department->name}}">{{$department->name}}</option>
@@ -321,95 +256,21 @@
                       </div>
 
                       <br>
-                      {{-- <div class="row g-3">
-                    <div class="col-md-6 col-lg-6">
-                    <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">
-                    <i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> Employee Profile</label>
-                    <label for="my_file">
-                    <i class="bi bi-upload btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Employee profile click the button."></i>
-                    </label>
-                    <input type="file" id="my_file" style="display: none;" value="{{$datas->file}}" name="file" />
-
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                    <div id="image_preview" style="width: 100px;"></div>
-                    <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
-                    </div>
-
-                    </div> --}}
-                    <div class="row g-3">
-                        <div class="col-md-12 col-lg-">
-                        <a href="" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#uploadasset">
-                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;cursor: pointer;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> Upload Your Asset images</label>
-                        <i class="bi bi-upload" style="color:#2809f5;font-size:20px;"></i>
-                        </a>
-                        </div>
-
-                     </div>
-
-                      <br>
 
                     </div>
 
-
-                    <div class="col-md-4 col-lg-4">
-                      <h5 class="card-title" style="font-size: 15px; color:blue;">Asset Infomation</h5>
-                      <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Type</label>
-                      <select class="form-select" aria-label="Default select example" id="elementSelector" name="assettype" style="box-shadow:1px 1px 1px #333;">
-                          <option value="{{$datas->asset_type}}" selected>
-                            @if($datas->asset_type=='lp')
-                            Laptop and Phone
-                            @elseif($datas->asset_type=='laptop')
-                            Laptop
-                            @else
-                            Phone
-                            @endif
-                          </option>
-                          <option value="laptop">Laptop</option>
-                          <option value="phone">Phone</option>
-                          <option value="lp">Laptop and Phone</option>
-                      </select>
-
-                      <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Laptop Asset Code</label>
-                      <input type="text" class="form-control" id="validationCustom05" name="laptopcode" value="{{$datas->laptop_asset_code}}" style="box-shadow:1px 1px 1px #333;">
-
-                      <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Laptop Asset Name</label>
-                      <textarea class="form-control" id="validationCustom06" style="height: 100px;box-shadow:1px 1px 1px #333;" value="{{$datas->laptop_asset_name}}" name="laptopname">{{$datas->laptop_asset_name}}</textarea>
-
-
-                      <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Handset Asset Code</label>
-                      <input type="text" class="form-control" id="validationCustom05"  value="{{$datas->handset_asset_code}}" style="box-shadow:1px 1px 1px #333;" name="handsetcode">
-
-                      <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Handset Asset Name</label>
-                      <textarea class="form-control" id="validationCustom06" value="{{$datas->handset_asset_name}}" style="height: 100px;box-shadow:1px 1px 1px #333;" name="handsetname">{{$datas->handset_asset_name}}</textarea>
-
-
-                      <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Operator</label>
-                      <select class="form-select" aria-label="Default select example" name="simname" style="box-shadow:1px 1px 1px #333;" required>
-                        <option value="{{$datas->sim_name}}" selected>{{$datas->sim_name}}</option>
-                        <option value="ATOM">ATOM</option>
-                        <option value="Ooredoo">Ooredoo</option>
-                        <option value="MPT">MPT</option>
-                        <option value="Mytel">Mytel</option>
-                        </select>
-
-
-                      <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Phone Number</label>
-                      <input  type="tel" class="form-control" pattern="09[0-9]{9}" id="validationCustom05" value="{{$datas->sim_phone}}" style="box-shadow:1px 1px 1px #333;" name="simnumber">
-
-                    </div>
 
                       <div class="col-md-4 col-lg-4">
                       <h5 class="card-title" style="font-size: 15px; color:blue;">Asset Infomation</h5>
                       <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Receipt Date</label>
-                      <input type="date" class="form-control" id="validationCustom05" value="{{$datas->receipt_date}}" name="receiptdate" style="box-shadow:1px 1px 1px #333;" required>
+                      <input type="date" class="form-control" id="validationCustom05" value="{{$datas->receipt_date}}" name="receiptdate" style="box-shadow:1px 1px 1px #333;" readonly>
                       <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                         Please select your purchase date.
                       </div>
 
 
                         <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Receipt Type</label>
-                            <select class="form-select" aria-label="Default select example" name='receipttype' style="box-shadow:1px 1px 1px #333;"  required>
+                            <select class="form-select" aria-label="Default select example" name='receipttype' style="box-shadow:1px 1px 1px #333;"  readonly>
                             <option value="{{$datas->receipt_type}}" selected>{{$datas->receipt_type}}</option>
                             <option value="New">New</option>
                             <option value="Exchange">Exchange</option>
@@ -418,45 +279,212 @@
                             </select>
 
                       <label for="validationCustom06" class="form-label card-title" style="font-size: 15px;">Remark</label>
-                      <textarea class="form-control" value="{{$datas->remark}}" id="validationCustom06" style="height: 100px;box-shadow:1px 1px 1px #333;" name="remark" required>{{$datas->remark}}</textarea>
+                      <textarea class="form-control" value="{{$datas->remark}}" id="validationCustom06" style="height: 100px;box-shadow:1px 1px 1px #333;" name="remark" readonly>{{$datas->remark}}</textarea>
                       <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                         Please enter your remark.
                       </div>
                       <br>
-                         <input type="hidden"  value="{{$datas->file}}" name="curr_file" />
+
+
                     </div>
-                  </div>
 
-                  <hr>
                   <div class="col-12">
-                    <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 15px;">Save</font></button>
-                    <button class="btn btn-warning" type="reset"> <font class="card-title" style="color:#fff;font-size: 15px;">Back</font></button>
+                    {{-- <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 15px;">Save</font></button> --}}
+                    {{-- <button class="btn btn-warning" type="reset"> <font class="card-title" style="color:#fff;font-size: 15px;">Back</font></button> --}}
+                    <hr>
                   </div>
+                    <div class="col-md-12" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;line-height:3;">
 
-                  <div class="modal fade" id="uploadasset" tabindex="-1">
-                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title">Upload Asset Images</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="drop-zone" id="dropZone">
-                                <span class="drop-text">Drag & Drop Images Here</span>
-                                <input type="file" id="fileInput" style="display:none;" name="file[]" multiple>
 
-                            </div>
-                            <div id="preview" class="image-preview"></div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Confirm</button>
-                        </div>
+                  <h5 class="card-title" style="font-size: 15px; color:blue;">Asset Infomation</h5>
+
+                  @foreach ($addassets as $addasset)
+
+                  <div class="row">
+
+                    <div class="col-lg-12 col-md-12" style="text-align:right;">
+                      <a href="" data-bs-toggle="modal" data-bs-target="#delasset{{ $addasset->id }}">
+                        <i class="ri-delete-bin-6-fill" style="color:red;font-size:30px;"></i></a><br>
+
+                        <div class="modal fade" id="delasset{{ $addasset->id }}" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                  <div class="modal-body">
+                                      <div class="row">
+                                          <div class="col-md-12 col-12">
+                                              <center>
+                                                  <img
+                                                      src="https://img.icons8.com/external-kmg-design-outline-color-kmg-design/52/000000/external-warning-maps-navigation-kmg-design-outline-color-kmg-design.png" />
+                                                  <p style="color:#000;">Do you want to
+                                                      delete?</p>
+                                                  <i class="bi bi-x-circle btn btn-danger"
+                                                      onclick='deleteRecordasset("{{ $addasset->id }}")'
+                                                      style="font-size:20px;color:fff;width:200px;">
+                                                      Yes, delete it!</i>
+                                                  <button type="button"
+                                                      class="btn btn-light-secondary"
+                                                      data-bs-dismiss="modal">
+                                                      <i
+                                                          class="bx bx-x d-block d-sm-none"></i>
+                                                      <span
+                                                          class="d-none d-sm-block">Cancel</span>
+                                                  </button>
+                                              </center>
+                                          </div>
+
+                                      </div>
+                                  </div>
+
+                              </div>
+                          </div>
                       </div>
                     </div>
-                  </div><!-- End Vertically centered Modal-->
+                  </div>
+
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4">Asset Type</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->assettype}}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4">Asset Code</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->assetcode}}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4">Asset Name</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->assetname}}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4">Operator</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->operator}}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4">Phone No:</div>
+                    <div class="col-lg-9 col-md-8">{{$addasset->ph}}</div>
+                  </div>
+                  <hr>
+                  @endforeach
+                    </div>
+
+                  </div>
+
+
               </form><!-- End Custom Styled Validation -->
 
-              <hr>
+              <form action="{{route('asset_updatestore')}}" class="needs-validation" method="POST" enctype="multipart/form-data">
+                @csrf
+
+                <input type="hidden" value="{{ $datas->id }}" name="getID">
+                <input type="hidden" value="{{ $datas->department }}" name="department">
+                <input type="hidden" value="{{ $datas->branch_code }}" name="branch_code">
+              <div class="col-md-12 col-lg-12">
+
+                <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;color:blue;">Add New Asset Information</label>
+
+                <table class="table table-borderless">
+                    <thead>
+
+                    <tr>
+                        <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Action</label></td>
+                        <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Type</label></td>
+                        <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code</label></td>
+                        <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Name</label></td>
+                        <td id="operatorFieldf" style="display: none;"><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Operator</label></td>
+                        <td id="operatorFields" style="display: none;"><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Phone No:</label></td>
+                        <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Upload</label></td>
+                    </tr>
+
+
+                    </thead>
+                    <tbody id="rowsasset">
+                        <tr>
+                            <td><i class="bi bi-plus-square-fill" style="color:#1c88fc;font-size:23px;" id="addbtn"></i></td>
+                            <td>
+                                <select class="form-select" aria-label="Default select example" id="elementSelector" name="assettype[]" style="box-shadow:1px 1px 1px #333;">
+                                    <option value="" selected>Select your asset type</option>
+                                    <option value="laptop">Laptop</option>
+                                    <option value="phone">Phone</option>
+                                    <option value="Properties">Properties</option>
+                                    <option value="Other">Other</option>
+                                    </select>
+                            </td>
+
+
+                            <td>
+                                <input type="text" class="form-control" id="assetCode" name="assetcode[]" style="box-shadow:1px 1px 1px #333;" >
+                                <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                    Please enter your asset code.
+                                </div>
+                            </td>
+
+                            <td>
+                                <textarea class="form-control" id="assetName" style="height: 100px;box-shadow:1px 1px 1px #333;" name="assetname[]" ></textarea>
+                                <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                        Please enter your handset asset name.
+                                </div>
+                            </td>
+
+                            <td id="operatorFieldt" style="display: none;">
+                                <select class="form-select" aria-label="Default select example" name="simname[]" style="box-shadow:1px 1px 1px #333;" >
+                                    <option value="" selected>Select your Operator</option>
+                                    <option value="ATOM">ATOM</option>
+                                    <option value="Ooredoo">Ooredoo</option>
+                                    <option value="MPT">MPT</option>
+                                    <option value="Mytel">Mytel</option>
+                                    </select>
+                                <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                    Please enter your operator.
+                                </div>
+                            </td>
+
+                            <td id="operatorFieldft" style="display: none;">
+                                <input type="tel" class="form-control" id="ph" placeholder="09******" style="box-shadow:1px 1px 1px #333;" name="simnumber[]" >
+                                {{-- pattern="09[0-9]{9}" --}}
+                            </td>
+
+                            <td>
+                                <a href="" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#uploadasset">
+                                    <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;cursor: pointer;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i>Asset image</label>
+                                    <i class="bi bi-upload" style="color:#2809f5;font-size:20px;"></i>
+                                    </a>
+                                    <div class="modal fade" id="uploadasset" tabindex="-1">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h5 class="modal-title">Upload Asset Images</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="drop-zone" id="dropZone">
+                                                    <span class="drop-text">Drag & Drop Images Here</span>
+                                                    <input type="file" id="fileInput" style="display:none;" name="file[]" multiple>
+                                                </div>
+                                                <div id="preview" class="image-preview"></div>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Confirm</button>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div><!-- End Vertically centered Modal-->
+                            </td>
+
+
+                        </tr>
+                    </tbody>
+                </table>
+               </div>
+               <div class="col-12">
+                <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 15px;">Save</font></button>
+                {{-- <button class="btn btn-warning" type="reset"> <font class="card-title" style="color:#fff;font-size: 15px;">Back</font></button> --}}
+                <hr>
+              </div>
+               </form>
+
               <div class="row small fst-italic">
                 @foreach ($files as $file)
                 <div class="col-lg-3 col-md-3">
@@ -530,6 +558,290 @@
 @endsection
 @section('js')
 <script>
+
+    $(document).ready(function () {
+$('#elementSelector').change(function () {
+    var selectedType = $(this).val();
+    if (selectedType === 'phone') {
+        $('#operatorFieldf').show();
+        $('#operatorFields').show();
+        $('#operatorFieldt').show();
+        $('#operatorFieldft').show();
+    } else {
+        $('#operatorFieldf').hide();
+        $('#operatorFields').hide();
+        $('#operatorFieldt').hide();
+        $('#operatorFieldft').hide();
+    }
+
+});
+});
+
+
+</script>
+<script>
+    $(document).on('click','#removebtn',function (e){
+        $(this).parent('td').parent('tr').remove();
+
+    });
+
+    $(document).ready(function (){
+
+        var max_filed=10;
+        var x=0;
+        // if(x < max_filed){
+            $('#addbtn').on('click', function() {
+
+                    x++;
+                    console.log(x);
+                var wrapperasset =`
+                <tr>
+                    <td><i class="bi bi-dash-square-fill" style="color:red;font-size:23px;" id="removebtn"></i></td>
+                    <td>
+                        <select class="form-select" id="elementSelectorw${x}" aria-label="Default select example" name="assettype[]" style="box-shadow:1px 1px 1px #333;">
+                            <option value="" selected>Select your asset type</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="phone">Phone</option>
+                            <option value="Properties">Properties</option>
+                            <option value="Other">Other</option>
+                            </select>
+                    </td>
+
+                    <td>
+                        <input type="text" class="form-control" id="assetCode${x}" name="assetcode[]" style="box-shadow:1px 1px 1px #333;">
+                        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                            Please enter your asset code.
+                        </div>
+                    </td>
+
+                    <td>
+                        <textarea class="form-control" id="assetName${x}" style="height: 100px;box-shadow:1px 1px 1px #333;" name="assetname[]"></textarea>
+                        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                Please enter your handset asset name.
+                        </div>
+                    </td>
+
+
+                    <td id="operatorFieldw${x}" style="display: none;">
+                                    <select class="form-select" aria-label="Default select example" name="simname[]" style="box-shadow:1px 1px 1px #333;">
+                                        <option value="" selected>Select your Operator</option>
+                                        <option value="ATOM">ATOM</option>
+                                        <option value="Ooredoo">Ooredoo</option>
+                                        <option value="MPT">MPT</option>
+                                        <option value="Mytel">Mytel</option>
+                                        </select>
+                                    <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                                        Please enter your operator.
+                                    </div>
+                                </td>
+
+
+                    <td id="operatorFieldp${x}" style="display: none;">
+                                    <input type="tel" class="form-control" id="ph" placeholder="09*******" style="box-shadow:1px 1px 1px #333;" name="simnumber[]">
+
+                    </td>
+
+
+                    <td>
+                        <a href="" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#uploadasset${x}">
+                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;cursor: pointer;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> Asset images</label>
+                        <i class="bi bi-upload" style="color:#2809f5;font-size:20px;"></i>
+                        </a>
+
+                        <div class="modal fade" id="uploadasset${x}" tabindex="-1">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title">Upload Asset Images</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="drop-zone" id="dropZone${x}">
+                                    <span class="drop-text">Drag & Drop Images Here</span>
+                                    <input type="file" id="fileInput${x}" style="display:none;" name="file[]" multiple>
+                                </div>
+                                <div id="preview${x}" class="image-preview"></div>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Confirm</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div><!-- End Vertically centered Modal-->
+                    </td>
+
+                </tr>
+                `;
+
+                $('#rowsasset').append(wrapperasset);
+                $(document).on('change','#elementSelectorw'+x,function(){
+
+                    var selectedType = $(this).val();
+
+                    if (selectedType === 'phone') {
+                        $('#operatorFieldw'+x).show();
+                    } else {
+                        $('#operatorFieldw'+x).hide();
+                    }
+
+                        if (selectedType === 'phone') {
+                            $('#operatorFieldp'+x).show();
+                        } else {
+                            $('#operatorFieldp'+x).hide();
+                        }
+                    })
+
+//   $('#elementSelectorw'+x).change(function () {
+
+//     var selectedType = $(this).val();
+
+
+
+// });
+
+
+  const dropZone = document.getElementById('dropZone'+x);
+  const fileInput = document.getElementById('fileInput'+x);
+  const preview = document.getElementById('preview'+x);
+
+
+  dropZone.addEventListener('click', () => {
+    fileInput.click();
+  });
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    handleFiles(files);
+  });
+
+  fileInput.addEventListener('change', () => {
+    const files = fileInput.files;
+    handleFiles(files);
+  });
+
+  function removePreview(element) {
+    element.remove();
+  }
+
+  function handleFiles(files) {
+    for (const file of files) {
+      const reader = new FileReader();
+      const fileType = file.type;
+
+      const removeButton = document.createElement('button');
+      removeButton.innerText = 'Remove';
+      removeButton.classList.add('remove-button');
+
+      const container = document.createElement('div');
+      container.classList.add('file-container');
+
+
+      reader.onload = (e) => {
+        if (fileType.startsWith('image/')) {
+          const image = new Image();
+          image.src = e.target.result;
+
+          removeButton.addEventListener('click', () => {
+            removePreview(container);
+          });
+
+          container.appendChild(removeButton);
+          container.appendChild(image);
+        } else if (fileType === 'application/pdf') {
+          const pdfEmbed = document.createElement('embed');
+          pdfEmbed.setAttribute('src', e.target.result);
+          pdfEmbed.setAttribute('type', 'application/pdf');
+          pdfEmbed.setAttribute('width', '400px');
+          pdfEmbed.setAttribute('height', '200px');
+
+          removeButton.addEventListener('click', () => {
+            removePreview(container);
+          });
+
+          container.appendChild(removeButton);
+          container.appendChild(pdfEmbed);
+        }
+        preview.appendChild(container);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+
+
+  $('#assetCode'+x).on('change', function () {
+    var assetCode = this.value;
+    console.log(assetCode);
+    $.ajax({
+        url: "/employee_asset/search_asset_code/" + assetCode,
+        type: "GET",
+        data: { 'assetCode': assetCode },
+        success: function (response) {
+            console.log(response);
+            if (response.status === 'success') {
+                $('#assetName'+x).val(response.data[0].fxassetdetailname);
+            }
+            if (response.status === 'fail') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Laptop asset code not found.',
+                    text: 'The requested Laptop asset code could not be found.'
+                });
+                $('#assetCode'+x).val('');
+                $('#assetName'+x).val('');
+
+            }
+        }
+    });
+    });
+
+
+            });
+
+
+        // }
+
+
+    });
+
+
+</script>
+<script>
+
+function deleteRecordasset(id) {
+            console.log(id);
+              $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "/employee_asset/delete_asset_record/" + id,
+                type: 'DELETE',
+                data: {
+
+                    "id": id,
+                }
+            });
+
+            setTimeout(function() {
+                window.location.reload(); // Reload the page on success
+            }, 1000);
+        }
+
+
+
     // JavaScript to handle the display and hiding of the toast
     document.addEventListener('DOMContentLoaded', function() {
         const toast = document.getElementById('toast');
@@ -562,65 +874,65 @@
             }, 1000);
         }
 
-        const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
-const preview = document.getElementById('preview');
+// const dropZone = document.getElementById('dropZone');
+// const fileInput = document.getElementById('fileInput');
+// const preview = document.getElementById('preview');
 
-// Trigger the file input when clicking the drop-zone
-dropZone.addEventListener('click', () => {
-    fileInput.click();
-});
+// // Trigger the file input when clicking the drop-zone
+// dropZone.addEventListener('click', () => {
+//     fileInput.click();
+// });
 
-dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.classList.add('dragover');
-});
+// dropZone.addEventListener('dragover', (e) => {
+//     e.preventDefault();
+//     dropZone.classList.add('dragover');
+// });
 
-dropZone.addEventListener('dragleave', () => {
-    dropZone.classList.remove('dragover');
-});
+// dropZone.addEventListener('dragleave', () => {
+//     dropZone.classList.remove('dragover');
+// });
 
-dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    handleFiles(files);
-});
+// dropZone.addEventListener('drop', (e) => {
+//     e.preventDefault();
+//     dropZone.classList.remove('dragover');
+//     const files = e.dataTransfer.files;
+//     handleFiles(files);
+// });
 
-fileInput.addEventListener('change', () => {
-    const files = fileInput.files;
-    handleFiles(files);
-});
+// fileInput.addEventListener('change', () => {
+//     const files = fileInput.files;
+//     handleFiles(files);
+// });
 
-function handleFiles(files) {
-    for (const file of files) {
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
+// function handleFiles(files) {
+//     for (const file of files) {
+//         if (file.type.startsWith('image/')) {
+//             const reader = new FileReader();
 
-            reader.onload = (e) => {
-                const imageContainer = document.createElement('div');
-                imageContainer.classList.add('image-container');
+//             reader.onload = (e) => {
+//                 const imageContainer = document.createElement('div');
+//                 imageContainer.classList.add('image-container');
 
-                const image = new Image();
-                image.src = e.target.result;
+//                 const image = new Image();
+//                 image.src = e.target.result;
 
-                const removeButton = document.createElement('button');
-                removeButton.innerText = 'Remove';
-                removeButton.classList.add('remove-button');
-                removeButton.addEventListener('click', () => {
-                    imageContainer.remove();
-                });
+//                 const removeButton = document.createElement('button');
+//                 removeButton.innerText = 'Remove';
+//                 removeButton.classList.add('remove-button');
+//                 removeButton.addEventListener('click', () => {
+//                     imageContainer.remove();
+//                 });
 
-                imageContainer.appendChild(removeButton);
-                imageContainer.appendChild(image);
+//                 imageContainer.appendChild(removeButton);
+//                 imageContainer.appendChild(image);
 
-                preview.appendChild(imageContainer);
-            };
+//                 preview.appendChild(imageContainer);
+//             };
 
-            reader.readAsDataURL(file);
-        }
-    }
-}
+//             reader.readAsDataURL(file);
+//         }
+//     }
+// }
 
 
 </script>
@@ -758,4 +1070,113 @@ $(document).ready(function (){
   });
 });
 </script>
+<script>
+    $(document).ready(function () {
+    $('#assetCode').on('change', function () {
+
+        var assetCode = this.value;
+        console.log(assetCode);
+        $.ajax({
+            url: "/employee_asset/search_asset_code/" + assetCode,
+            type: "GET",
+            data: { 'assetCode': assetCode },
+            success: function (response) {
+                console.log(response);
+                if (response.status === 'success') {
+                    $('#assetName').val(response.data[0].fxassetdetailname);
+                }
+                if (response.status === 'fail') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Laptop asset code not found.',
+                        text: 'The requested Laptop asset code could not be found.'
+                    });
+                    $('#assetCode').val('');
+                    $('#assetName').val('');
+
+                }
+            }
+        });
+    });
+});
+</script>
+<script>
+    const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const preview = document.getElementById('preview');
+
+      dropZone.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+      });
+
+      fileInput.addEventListener('change', () => {
+        const files = fileInput.files;
+        handleFiles(files);
+      });
+
+      function removePreview(element) {
+        element.remove();
+      }
+
+      function handleFiles(files) {
+        for (const file of files) {
+          const reader = new FileReader();
+          const fileType = file.type;
+
+          const removeButton = document.createElement('button');
+          removeButton.innerText = 'Remove';
+          removeButton.classList.add('remove-button');
+
+          const container = document.createElement('div');
+          container.classList.add('file-container');
+
+
+          reader.onload = (e) => {
+            if (fileType.startsWith('image/')) {
+              const image = new Image();
+              image.src = e.target.result;
+
+              removeButton.addEventListener('click', () => {
+                removePreview(container);
+              });
+
+              container.appendChild(removeButton);
+              container.appendChild(image);
+            } else if (fileType === 'application/pdf') {
+              const pdfEmbed = document.createElement('embed');
+              pdfEmbed.setAttribute('src', e.target.result);
+              pdfEmbed.setAttribute('type', 'application/pdf');
+              pdfEmbed.setAttribute('width', '400px');
+              pdfEmbed.setAttribute('height', '200px');
+
+              removeButton.addEventListener('click', () => {
+                removePreview(container);
+              });
+
+              container.appendChild(removeButton);
+              container.appendChild(pdfEmbed);
+            }
+            preview.appendChild(container);
+          };
+
+          reader.readAsDataURL(file);
+        }
+      }
+    </script>
 @endsection

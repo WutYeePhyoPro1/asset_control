@@ -37,6 +37,7 @@ Route::match(['get', 'post'], '/all_user/search', [UserController::class, 'searc
 Route::delete('/employee_benefic/delete_record/{id}',[LaptopAssetCodeController::class,'deletRecord']);
 Route::delete('/all_user/delete_record/{id}',[UserController::class,'destroy']);
 Route::delete('/employee_asset/delete_upload_record/{id}',[LaptopAssetCodeController::class,'deletUpload']);
+Route::delete('/employee_asset/delete_asset_record/{id}',[LaptopAssetCodeController::class,'deletasset']);
 Route::post('change_password/{id}',[App\Http\Controllers\UserController::class,'changePassword'])->name('change_password');
 Route::get('branch_name/all_branchcode/{branch_name}', [LaptopAssetCodeController::class, 'branchSearch']);
 Route::post('employee_asset/excel_import', [AssetImportExcelController::class, 'importExcel'])->name('excel_import');
@@ -44,6 +45,13 @@ Route::get('employee_asset/search_emp_id/{emp_id}', [LaptopAssetCodeController::
 Route::get('employee_asset/search_asset_code/{asset_code}', [LaptopAssetCodeController::class, 'assetCodesearch']);
 Route::get('employee_asset/search_asset_code2/{asset_code2}', [LaptopAssetCodeController::class, 'assetCodesearch']);
 Route::get('/limit_rows', [LaptopAssetCodeController::class, 'paginateData']);
+Route::get('/laptop-asset-code/export', [LaptopAssetCodeController::class, 'export'])->name('laptop-asset-code.export');
+Route::get('/laptop_asset_code/fix-asset', [LaptopAssetCodeController::class, 'fix_asset'])->name('laptop_asset_code.fix_asset');
+Route::post('/remark-form',  [LaptopAssetCodeController::class, 'reMark'])->name('remark-form');
+Route::delete('/remark/delete_remark/{id}',[LaptopAssetCodeController::class,'deletRemark']);
+Route::post('/remark_update/{id}', [LaptopAssetCodeController::class, 'updateRemark']);
+Route::match(['get', 'post'], '/employee_asset/asset_updatestore', [LaptopAssetCodeController::class, 'updateStore'])->name('asset_updatestore');
+
 });
 
 Route::post('/logout', [App\Http\Controllers\HomeController::class, 'logout'])->name('logout');
