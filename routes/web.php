@@ -47,10 +47,18 @@ Route::get('employee_asset/search_asset_code2/{asset_code2}', [LaptopAssetCodeCo
 Route::get('/limit_rows', [LaptopAssetCodeController::class, 'paginateData']);
 Route::get('/laptop-asset-code/export', [LaptopAssetCodeController::class, 'export'])->name('laptop-asset-code.export');
 Route::get('/laptop_asset_code/fix-asset', [LaptopAssetCodeController::class, 'fix_asset'])->name('laptop_asset_code.fix_asset');
+
 Route::post('/remark-form',  [LaptopAssetCodeController::class, 'reMark'])->name('remark-form');
-Route::delete('/remark/delete_remark/{id}',[LaptopAssetCodeController::class,'deletRemark']);
+Route::post('/operator-form',  [LaptopAssetCodeController::class, 'OpNew'])->name('operator-form');
+Route::get('/remark/delete_remark/{id}',[LaptopAssetCodeController::class,'deletRemark']);
+Route::get('/operator/delete_operator/{id}',[LaptopAssetCodeController::class,'deleteOperator']);
+
 Route::post('/remark_update/{id}', [LaptopAssetCodeController::class, 'updateRemark']);
 Route::match(['get', 'post'], '/employee_asset/asset_updatestore', [LaptopAssetCodeController::class, 'updateStore'])->name('asset_updatestore');
+Route::get('/search_asset_code',[LaptopAssetCodeController::class,'search_asset_code'])->name('search_asset_code');
+Route::get('/detail_fixasset/{asset_code}',[LaptopAssetCodeController::class,'fix_detail'])->name('detail_fixasset');
+Route::put('/update_operator/{id}',[LaptopAssetCodeController::class,'update_operator'])->name('update_operator');
+Route::put('/update_contract/{id}',[LaptopAssetCodeController::class,'update_contract'])->name('update_contract');
 
 });
 

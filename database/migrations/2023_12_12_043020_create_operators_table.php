@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('remarks', function (Blueprint $table) {
+        Schema::create('operators', function (Blueprint $table) {
             $table->id();
             $table->string('asset_code')->nullable();
             $table->string('operator')->nullable();
             $table->string('phone')->nullable();
-            $table->string('contract')->nullable();
-            $table->text('remark')->nullable();
+            $table->string('department')->nullable();
+            $table->string('branch')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('remarks');
+        Schema::dropIfExists('operators');
     }
 };

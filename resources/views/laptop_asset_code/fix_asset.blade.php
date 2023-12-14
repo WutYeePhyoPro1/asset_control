@@ -77,60 +77,67 @@
           <div class="card">
             <div class="card-body">
 
-            {{-- <h5 class="card-title">Laptop Asset Code</h5> --}}
-          <!-- Default Tabs -->
-          {{-- <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
-                <font class="card-title" style="font-size: 15px;">Laptop Asset</font></button>
-            </li>
-            <!-- <li class="nav-item" role="presentation">
-              <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
-              <font class="card-title" style="font-size: 15px;"><i class="bi bi-plus-square-fill" style="font-size: 20px;"></i>&nbsp; Add New</font></button>
-            </li> -->
+          <form id="clear" style="margin-top: 20px;">
+            <div class="row"  style="text-wrap: nowrap">
 
-          </ul>
-          <br> --}}
+                    <div class="col-md-3" id="filter_col1" data-column="1">
+
+                    <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch</label>
+                    <select class="form-select column_filter" id="col1_filter" name="branchcode">
+                            <option value="">Select Your Branch</option>
+                            @foreach($branches as $branch)
+                            <option value="{{$branch->branch_name}} ({{$branch->branch_code}})">{{$branch->branch_name}} ({{$branch->branch_code}})</option>
+                            @endforeach
+                    </select>
+
+                    </div>
+
+                    <div class="col-md-3" id="filter_col2" data-column="2">
+                        <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department</label>
+                        <select class="form-select column_filter" aria-label="Default select example" id="col2_filter" name="department">
+                            <option value="">Select Your Department</option>
+
+                                @foreach($departments as $department)
+                                <option value="{{$department->name}}">{{$department->name}}</option>
+                                @endforeach
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-3" id="filter_col3" data-column="3">
+                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Asset Type</label>
+                        <select class="form-select column_filter" aria-label="Default select example" id="col3_filter" name="department">
+                            <option value="">Select Your Asset Type</option>
+
+                                <option value="Laptop">Laptop</option>
+                                <option value="Handset">Handset</option>
+
+                        </select>
+                    </div>
+
+<br><br>
+            <div class="row"  style="text-wrap: nowrap">
+
+                <div class="col-md-3" id="filter_col4" data-column="4">
+                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code </label>
+                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Code" id="col4_filter" style="border:1px solid #2809f5;">
+                </div>
+
+                <div class="col-md-3" id="filter_col5" data-column="5">
+                    <label class="form-label card-title" style="font-size: 15px;">Asset Name</label>
+                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Name" id="col5_filter" style="border:1px solid #2809f5;">
+                </div>
+            </div>
+        </form>
 
 <div class="tab-content pt-2" id="myTabContent">
         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-
         <div class="card">
             <div class="card-body">
-
-            <div class="table-responsive" style="margin: 10px;">
+            <div class="table-responsive" style="height: 550px;">
               <table class="table table-sm card-title table-hover table-bordered table-fix" style="font-size: 15px;" id="fixasset">
                 <thead>
-                    <form id="clear">
-                    <tr  style="text-wrap: nowrap">
-                        <th scope="col" colspan="2">
-                            <div class="col-md-3" id="filter_col1" data-column="1">
-                            <input type="text" class="form-control column_filter" placeholder="Enter Branch Name" id="col1_filter" style="border:1px solid #2809f5;width:250px;">
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="col-md-3" id="filter_col2" data-column="2">
-                                <input type="text" class="form-control column_filter" placeholder="Enter Department" id="col2_filter" style="border:1px solid #2809f5;width:250px;">
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="col-md-3" id="filter_col3" data-column="3">
-                                <input type="text" class="form-control column_filter" placeholder="Enter Laptop/Handset" id="col3_filter" style="border:1px solid #2809f5;width:250px;">
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="col-md-3" id="filter_col4" data-column="4">
-                                <input type="text" class="form-control column_filter" placeholder="Enter Asset Code" id="col4_filter" style="border:1px solid #2809f5;width:250px;">
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="col-md-3" id="filter_col5" data-column="5">
-                                <input type="text" class="form-control column_filter" placeholder="Enter Asset Name" id="col5_filter" style="border:1px solid #2809f5;width:250px;">
-                            </div>
-                        </th>
 
-                    </tr>
-                </form>
                   <tr class="table-primary" style="text-wrap: nowrap">
                     <th scope="col">No</th>
                     <th scope="col">Branch Name</th>
@@ -146,39 +153,76 @@
                   {{-- class="clickable-row" data-url="{{ $data->id }}" --}}
                   <tr style="text-wrap: nowrap;cursor: pointer;">
                     <td scope="row">{{$no}}.</td>
-
-                    <td>{{ $data->branch_name }} ({{ $data->branch_code }})</td>
+                    <td>
+                        <a href="{{ route('detail_fixasset',$data->asset_code) }}">
+                        {{ $data->branch_name }} ({{ $data->branch_code }})</a>
+                    </td>
                     <td>{{ $data->department }}</td>
                     <td>{{ $data->asset_type_name }}</td>
-                    <td><a data-bs-toggle="modal" data-bs-target="#fixasset{{ $data->asset_code }}" style="color:#000;">{{ $data->asset_code }}</a></td>
+                    <td>
+                        <a href="{{ route('detail_fixasset',$data->asset_code) }}">{{ $data->asset_code }}</a>
+                        {{-- <button type="button" class="btn btn-transparent"  data-toggle="modal" id="asset_code" value="{{ $data->asset_code }}">{{ $data->asset_code }}</button> --}}
+                    </td>
                     <td>{{ $data->asset_name }}</td>
                   </tr>
                 @php($no++)
 
-                <div class="modal fade" id="fixasset{{ $data->asset_code }}" tabindex="-1">
+                {{-- <div class="modal fade" id="fixasset{{ $data->asset_code }}" tabindex="-1">
                     <div class="modal-dialog modal-xl">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title">{{ $data->asset_code }}</h5>
+                          <h5 class="modal-title">{{ $data->asset_code }}&nbsp;&nbsp;/&nbsp;&nbsp;
+                            {{ $data->asset_name }}
+                          </h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <form action="{{ route('remark-form') }}" method="POST">
                                         @csrf
-                                        <h5 class="card-title">Name</h5>
+                                        <h5 class="card-title">Operator</h5>
                                         <input type="hidden" class="form-control" name="asset_code" value="{{  $data->asset_code }}">
-                                        <input type="text" class="form-control" name="name">
+                                        <select class="form-select" aria-label="Default select example" name="operator" style="box-shadow:1px 1px 1px #333;" required>
+                                            <option value="" selected>Select your Operator</option>
+                                            <option value="ATOM">ATOM</option>
+                                            <option value="Ooredoo">Ooredoo</option>
+                                            <option value="MPT">MPT</option>
+                                            <option value="Mytel">Mytel</option>
+                                            </select>
+
+                                        <h5 class="card-title">Ph No:</h5>
+                                        <input type="text" class="form-control" name="phone" style="box-shadow:1px 1px 1px #333;" required>
+
+                                        <h5 class="card-title">Contract</h5>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="contract" id="gridRadios1" value="Yes" required>
+                                            <label class="form-check-label" for="contract">
+                                              Yes
+                                            </label>
+                                          </div>
+                                          <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="contract" id="gridRadios2" value="No" required>
+                                            <label class="form-check-label" for="contract">
+                                              No
+                                            </label>
+                                          </div>
+
                                         <h5 class="card-title">Remark</h5>
                                         <textarea class="form-control" style="height: 100px" name="remark"></textarea><br>
                                         <button type="submit" class="btn btn-primary">Save</button>
                                     </form>
 
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-8">
                                     @foreach ( getRemark($data->asset_code) as $remark)
-                                    <span class="badge rounded-pill bg-primary" style="font-size: 12px;">{{ $remark->name }}</span><br><br>
+                                    Operator<br>
+                                    <span class="badge rounded-pill bg-primary" style="font-size: 12px;">{{ $remark->operator }}</span><br><br>
+                                    Phone No<br>
+                                    <span class="badge rounded-pill bg-primary" style="font-size: 12px;">{{ $remark->phone }}</span><br><br>
+                                    Contract<br>
+                                    <span class="badge rounded-pill bg-primary" style="font-size: 12px;">{{ $remark->contract }}</span><br><br>
+
                                     <textarea class="form-control" style="height: 100px" name="remark"
                                     id="remark{{ $remark->id }}" onblur="remarkUpdate({{ $remark->id }})">{{ $remark->remark }}</textarea><br>
 
@@ -197,17 +241,12 @@
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> --}}
                 @endforeach
                 </tbody>
               </table>
               <!-- End small tables -->
 
-           <p class="card-title">
-           {{-- {{$fix_assets->links('pagination::bootstrap-5')}} --}}
-           </p>
-
-              </div>
             </div>
           </div>
         </div>
@@ -218,6 +257,69 @@
    </div>
  </div>
 </div>
+<div class="modal" tabindex="-1" id="assetCodeModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><span id="code"></span> &nbsp;&nbsp;/&nbsp;&nbsp;
+                <span id="asname"></span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-4">
+                      <form action="{{ route('remark-form') }}" method="POST">
+                          @csrf
+                          <h5 class="card-title">Operator</h5>
+                          <input type="hidden" class="form-control asset_code" name="asset_code" value="">
+                          <select class="form-select" aria-label="Default select example" name="operator" style="box-shadow:1px 1px 1px #333;" required>
+                              <option value="" selected>Select your Operator</option>
+                              <option value="ATOM">ATOM</option>
+                              <option value="Ooredoo">Ooredoo</option>
+                              <option value="MPT">MPT</option>
+                              <option value="Mytel">Mytel</option>
+                              </select>
+
+                          <h5 class="card-title">Ph No:</h5>
+                          <input type="text" class="form-control" name="phone" style="box-shadow:1px 1px 1px #333;" required>
+
+                          <h5 class="card-title">Contract</h5>
+                          <div class="form-check">
+                              <input class="form-check-input" type="radio" name="contract" id="gridRadios1" value="Yes" required>
+                              <label class="form-check-label" for="contract">
+                                Yes
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="radio" name="contract" id="gridRadios2" value="No" required>
+                              <label class="form-check-label" for="contract">
+                                No
+                              </label>
+                            </div>
+
+                          <h5 class="card-title">Remark</h5>
+                          <textarea class="form-control" style="height: 100px" name="remark"></textarea><br>
+                          <button type="submit" class="btn btn-primary">Save</button>
+                      </form>
+
+                  </div>
+                  <div class="col-md-8">
+
+                      <div class="remarks-container">
+                      </div>
+                  </div>
+
+              </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="closeModalBtn" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+
+          </div>
+        </div>
+      </div>
+  </div>
 </section>
 <style>
 
@@ -229,6 +331,57 @@
 @endsection
 @section('js')
 <script>
+        $(document).ready(function() {
+
+        $('#closeModalBtn').on('click', function() {
+            $('#assetCodeModal').removeClass('d-block'); // Assuming 'd-block' class is used to display modal
+
+        });
+    });
+</script>
+<script>
+    $(document).on('click','#asset_code',function () {
+        $id = $(this).val();
+        $.ajax({
+            type: "GET",
+            url: "/search_asset_code",
+            data: {asset_code:$id},
+            dataType: "JSOn",
+            success: function (response) {
+               var info = response.info;
+               var remarks = response.remarks;
+               console.log(remarks);
+
+                $('#code').append(`<span>`+info.asset_code+`</span>`);
+                $('#asname').append(`<span>`+info.asset_name+`</span>`);
+                $('.asset_code').val(info.asset_code);
+
+                $('.remarks-container').empty();
+
+            // Append each remark to the container
+            remarks.forEach(function(remark) {
+                var remarkHTML = `<div class="remark-item">
+                    <div>Operator</div>
+                    <span class="badge rounded-pill bg-primary" style="font-size: 12px;">${remark.operator}</span><br><br>
+                      Phone No<br>
+                      <span class="badge rounded-pill bg-primary" style="font-size: 12px;">${ remark.phone }</span><br><br>
+                      Contract<br>
+                      <span class="badge rounded-pill bg-primary" style="font-size: 12px;">${ remark.contract }</span><br><br>
+
+                      <textarea class="form-control" style="height: 100px" name="remark"
+                      id="remark${ remark.id }" onblur="remarkUpdate(${ remark.id })">${ remark.remark }</textarea><br>
+
+                      <i class="bi bi-x-circle btn btn-danger"
+                      onclick='deleteRemark("${remark.id}")'style="font-size:10px;color:fff;width:80px;float:right;">
+                      Delete</i>
+                      <hr>
+                    </div>`;
+                $('.remarks-container').append(remarkHTML);
+            });
+                $('#assetCodeModal').addClass('d-block');
+            }
+        });
+    });
 
 function remarkUpdate(id) {
     var remark = $('#remark' + id).val();
@@ -294,15 +447,12 @@ function remarkUpdate(id) {
         "lengthMenu": [10, 20, 50, 100, 200],
         "pageLength": 20,
         "deferRender": true,
-        "lengthChange": true,
+        "lengthChange": false,
         "searching": true,
         "searchHighlight": true,
 
         buttons: [
-            {
-                extend: 'copy',
-                text: 'Copy to Clipboard'
-            },
+
             {
                 extend: 'excel',
                 text: 'Export to Excel',
@@ -313,14 +463,7 @@ function remarkUpdate(id) {
                 extend: 'csv',
                 text: 'Export to CSV'
             },
-            {
-                extend: 'pdf',
-                text: 'Export to PDF'
-            },
-            {
-                extend: 'print',
-                text: 'Print'
-            },
+
             'colvis'
         ],
 
@@ -355,10 +498,30 @@ function remarkUpdate(id) {
             filterColumn( $(this).parents('div').attr('data-column') );
         } );
         });
-
-
-
-
 </script>
 
+<script>
+    $(document).ready(function(){
+        $('#col1_filter').select2({
+            theme       : 'bootstrap-5',
+            placeholder : 'Choose Your  branch',
+            width: '100%'
+        });
+
+        $('#col2_filter').select2({
+            theme       : 'bootstrap-5',
+            placeholder : 'Choose Department  branch',
+            width: '100%'
+        });
+
+        $('#col3_filter').select2({
+            theme       : 'bootstrap-5',
+            placeholder : 'Choose Asset Type',
+            width: '100%'
+        });
+
+
+
+    });
+</script>
 @endsection

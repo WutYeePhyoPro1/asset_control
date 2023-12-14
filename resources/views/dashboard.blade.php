@@ -41,39 +41,211 @@
             <script src="https://code.highcharts.com/modules/exporting.js"></script>
             <script src="https://code.highcharts.com/modules/export-data.js"></script>
             <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-        <div class="col-lg-12">
-            <div class="card">
-            <div class="card-body">
+                <div class="col-lg-6">
+                    <div class="card">
+                    <div class="card-body">
 
-            <h5 class="card-title">By Department</h5>
-            <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
-            <div id="container-bar-department"></div>
-            </div>
+                    <h5 class="card-title">Laptop</h5>
+                    <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
 
-            </div>
-            </div>
+                    <div id="container-pi"></div>
+                    <p id="totalAssetCount"></p>
+                    </div>
+
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                    <div class="card-body">
+
+                    <h5 class="card-title">Handset</h5>
+                    <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+
+                    <div id="container-pi-h"></div>
+                    <p id="totalAssetCounth"></p>
+                    </div>
+
+                    </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-12">
+                    <div class="card">
+                    <div class="card-body">
+                    <div class="row" style="border:1px solid blue;border-radius:20px;padding:10px;">
+                        <h5 class="card-title">Laptop, Handset and Operator(ph)</h5>
+                        <div class="col-md-12">
+
+                        <div id="container-fix-lh" style="height: 600px;"></div>
+
+                        </div>
+
+                    </div>
+
+
+                    </div>
+                    </div>
+                </div>
+
+
         </div>
 
-        <div class="col-lg-12">
-            <div class="card">
-            <div class="card-body">
+        {{-- <div class="row">
+            <script src="https://code.highcharts.com/highcharts.js"></script>
+             <script src="https://code.highcharts.com/modules/exporting.js"></script>
+             <script src="https://code.highcharts.com/modules/export-data.js"></script>
+             <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+                 <div class="col-lg-6">
+                     <div class="card">
+                     <div class="card-body">
 
-            <h5 class="card-title">By Branch</h5>
-            <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+                     <h5 class="card-title">By Department</h5>
+                     <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+                     <div id="container-bar-department"></div>
+                     </div>
+
+                     </div>
+                     </div>
+                 </div>
+
+                 <div class="col-lg-6">
+                     <div class="card">
+                     <div class="card-body">
+
+                     <h5 class="card-title">By Branch</h5>
+                     <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
 
 
-            <div id="container-bar-branch"></div>
-            </div>
+                     <div id="container-bar-branch"></div>
+                     </div>
 
-            </div>
-            </div>
-        </div>
-</div>
+                     </div>
+                     </div>
+                 </div>
+         </div> --}}
+
 </section>
 
 
 @endsection
 @section('js')
+<script>
+  var mergedData = @json($mergedData);
+
+var categories = mergedData.map(function(item) {
+    return item.branch;
+});
+
+var laptopCounts = mergedData.map(function(item) {
+    return item.asset_type_count.Laptop || 0;
+});
+
+var handsetCounts = mergedData.map(function(item) {
+    return item.asset_type_count.Handset || 0;
+});
+
+var operatorCounts = mergedData.map(function(item) {
+    return item.phone_count || 0;
+});
+
+Highcharts.chart('container-fix-lh', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Laptop, Handset, and Phone By Branch'
+    },
+    xAxis: {
+        categories: categories,
+        crosshair: true,
+        labels: {
+            rotation: -45,
+            align: 'right',
+            style: {
+                fontSize: '12px',
+                fontFamily: 'Arial, sans-serif'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Counts'
+
+        }
+    },
+    series: [{
+        name: 'Laptop',
+        data: laptopCounts,
+        dataLabels: {
+            enabled: true,
+            formatter: function() {
+                return this.y !== 0 ? this.y : null;
+            }
+        }
+    }, {
+        name: 'Handset',
+        data: handsetCounts,
+        dataLabels: {
+            enabled: true,
+            formatter: function() {
+                return this.y !== 0 ? this.y : null;
+            }
+        }
+    }, {
+        name: 'Operator',
+        data: operatorCounts,
+        dataLabels: {
+            enabled: true,
+            formatter: function() {
+                return this.y !== 0 ? this.y : null;
+            }
+        }
+    }]
+});
+</script>
+{{--
+<script>
+
+    var opers = @json($opers);
+
+
+    var branches = [];
+    var phoneCounts = [];
+    opers.forEach(function(item) {
+        branches.push(item.branch);
+        phoneCounts.push(item.phone_count);
+    });
+
+    Highcharts.chart('container-fix-operator', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Phone Count By Branch'
+        },
+        xAxis: {
+            categories: branches,
+            title: {
+                text: 'Branch'
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Phone Count'
+            }
+        },
+        series: [{
+            name: 'Phone Count',
+            data: phoneCounts
+        }]
+    });
+</script> --}}
+
 <script>
     // JavaScript to handle the display and hiding of the toast
     document.addEventListener('DOMContentLoaded', function() {
@@ -158,9 +330,128 @@ $('#department1').select2({
 
 });
 </script>
+
+<script>
+        var assetCounts = @json($assetCounts);
+
+        var data = [];
+        assetCounts.forEach(function(item) {
+            data.push({
+                name: item.branch + ' - '+item.asset_type_count,
+                y: item.asset_type_count
+            });
+        });
+
+        Highcharts.chart('container-pi', {
+            chart: {
+                type: 'pie'
+            },
+            title: {
+                text: 'Laptop By Branch'
+            },
+            series: [{
+                name: 'Laptop',
+                data: data
+            }]
+        });
+
+
+    var totalCount = assetCounts.reduce(function(total, item) {
+        return total + item.asset_type_count;
+    }, 0);
+
+    document.getElementById('totalAssetCount').innerText = 'Total Laptop: ' + totalCount;
+
+</script>
+
+<script>
+    var assetCounts = @json($assetCounts1);
+
+    var data = [];
+    assetCounts.forEach(function(item) {
+        data.push({
+            name: item.branch + ' - '+item.asset_type_count,
+            y: item.asset_type_count
+        });
+    });
+
+    Highcharts.chart('container-pi-h', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Handset By Branch'
+        },
+        series: [{
+            name: 'Handset',
+            data: data
+        }]
+    });
+
+
+    var totalCount = assetCounts.reduce(function(total, item) {
+        return total + item.asset_type_count;
+    }, 0);
+
+    document.getElementById('totalAssetCounth').innerText = 'Total Handset: ' + totalCount;
+
+</script>
+
+{{-- <script>
+
+var assetCounts = @json($assetCountslh);
+
+var data = {};
+assetCounts.forEach(function(item) {
+    if (!data[item.branch]) {
+        data[item.branch] = {};
+    }
+    // Filter for 'Laptop' and 'Handset' asset types only
+    if (item.asset_type_name === 'Laptop' || item.asset_type_name === 'Handset') {
+        data[item.branch][item.asset_type_name] = item.asset_type_count;
+    }
+});
+
+var seriesData = [];
+Object.keys(data).forEach(function(branch) {
+    var assetTypes = data[branch];
+    var series = {
+        name: branch,
+        data: []
+    };
+
+    ['Laptop', 'Handset'].forEach(function(assetType) {
+        series.data.push(assetTypes[assetType] || 0);
+    });
+    seriesData.push(series);
+});
+
+Highcharts.chart('container-fix-lh', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: ' '
+    },
+    xAxis: {
+        categories: Object.keys(data)
+    },
+    yAxis: {
+        title: {
+            text: 'Asset Count'
+        }
+    },
+    series: seriesData
+});
+
+</script> --}}
+
 <?php
 
+use Illuminate\Support\Facades\DB;
+
 $departments = App\Models\LaptopAssetCode::whereNotNull('department')->distinct('department')->get();
+
 $departmentLaptopCounts = [];
 $departmentPhoneCounts = [];
 $departmentProperties = [];
@@ -218,7 +509,7 @@ Highcharts.chart('container-bar-department', {
         type: 'column'
     },
     title: {
-        text: 'Department-wise Asset Counts'
+        text: 'Asset Counts'
     },
     xAxis: {
         categories: departments.map(department => department.department)
@@ -246,7 +537,7 @@ Highcharts.chart('container-bar-department', {
     plotOptions: {
         column: {
             borderRadius: '25%',
-            colors: ['#007bff', '#ff0000', '#00ff00', '#ffcc00', '#000000'],
+            colors: ['#007bff', '#ff0000', '#00ff00'],
             dataLabels: {
                 enabled: true,
                 format: '{point.y}',
@@ -260,21 +551,25 @@ Highcharts.chart('container-bar-department', {
         name: 'Laptop Counts',
         data: departmentLaptopCounts
     }, {
-        name: 'Phone Counts',
+        name: 'Handset Counts',
         data: departmentPhoneCounts
     }, {
-        name: 'Properties Counts',
+        name: 'Operator Counts',
         data: departmentProperties
-    }, {
-        name: 'Other Counts',
-        data: departmentOther
-    },{
-        name: 'Sim Operator',
-        data: allOperators.map((operatorCounts, index) => ({
-        name: departments[index].department,
-        y: Object.values(operatorCounts).reduce((acc, val) => acc + val, 0)
-    }))
     }
+    // , {
+    //     name: 'Other Counts',
+    //     data: departmentOther
+    // }
+
+    // ,{
+    //     name: 'Sim Operator',
+    //     data: allOperators.map((operatorCounts, index) => ({
+    //     name: departments[index].department,
+    //     y: Object.values(operatorCounts).reduce((acc, val) => acc + val, 0)
+    // }
+    // ))
+    // }
 
 ]
 
@@ -399,4 +694,5 @@ foreach ($branches as $branch) {
     });
 
 </script>
+
 @endsection

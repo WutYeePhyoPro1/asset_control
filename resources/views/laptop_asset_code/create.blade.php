@@ -180,9 +180,9 @@
 
                         <tr>
                             <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Action</label></td>
-                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Type</label></td>
-                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code</label></td>
-                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Name</label></td>
+                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Type <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font></label></td>
+                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font></label></td>
+                            <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Name <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font></label></td>
                             <td id="operatorFieldf" style="display: none;"><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Operator</label></td>
                             <td id="operatorFields" style="display: none;"><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Phone No:</label></td>
                             <td><label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Upload</label></td>

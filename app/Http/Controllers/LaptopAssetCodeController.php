@@ -8,6 +8,7 @@ use App\Models\LaptopAssetCode;
 use App\Models\Assetfile;
 use App\Models\AssetType;
 use App\Models\Remark;
+use App\Models\Operator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -77,9 +78,9 @@ class LaptopAssetCodeController extends Controller
             $doc_no = 'ACSEM' . $date . '-' . $data;
         }
 
-        if($request){
+        // if($request){
 
-        }
+        // }
 
         $asset=LaptopAssetCode::create([
             'user_id'=>$request->userid,
@@ -253,11 +254,32 @@ class LaptopAssetCodeController extends Controller
     }
 
     public function deletRemark($id){
-        // dd('hi');
-        Remark::find($id)->delete($id);
-        return back()->with('success','Successfully Deleted.');
+
+        $remark = Remark::find($id);
+        if($remark){
+            $remark->delete();
+            return response()->json(['message' => 'Successfully Deleted'], 200);
+        }else{
+
+        }
+        return respose()->json(['messagge'=>'Operator and Contract not found',404]);
 
     }
+
+    public function deleteOperator($id)
+    {
+        $operator = Operator::find($id);
+
+        // dd($operator);
+
+        if ($operator) {
+            $operator->delete();
+            return response()->json(['message' => 'Successfully Deleted'], 200);
+        } else {
+            return response()->json(['message' => 'Operator not found'], 404);
+        }
+    }
+
 
     public function deletUpload($id){
         // dd('hi');
@@ -484,6 +506,8 @@ class LaptopAssetCodeController extends Controller
 
     public function fix_asset() {
         $conn = DB::connection('Fixasset');
+        $departments=Department::all();
+        $branches=Branch::all();
         $query = "SELECT
             fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
             fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date, fxdt.fxstatus AS status
@@ -508,23 +532,61 @@ class LaptopAssetCodeController extends Controller
         // $slice = array_slice($results, $offset, $perPage);
         // $fix_assets = new LengthAwarePaginator($slice, count($results), $perPage, $currentPage);
 
-        return view('laptop_asset_code.fix_asset', compact('fix_assets'));
+        return view('laptop_asset_code.fix_asset', compact('fix_assets','departments','branches'));
     }
 
 
     public function reMark(Request $request)
     {
-        // dd($reques);
+        // dd($request->all());
+        $asset_code = $request->asset_code;
+        $department = $request->department;
+        $branch = $request->branch;
 
         Remark::create([
             'asset_code' => $request->input('asset_code'),
-            'name' => $request->input('name'),
+            'contract' => $request->input('contract'),
             'remark' => $request->input('remark'),
         ]);
 
+        for ($i = 0; $i < count($request->phone); $i++) {
+            $addasset = [
+                'asset_code' => $asset_code,
+                'department' => $department,
+                'branch' => $branch,
+                'operator' => $request->operator[$i],
+                'phone' => $request->phone[$i],
 
-        return redirect()->route('laptop_asset_code.fix_asset')->with('success', 'Data inserted successfully!');
+            ];
+
+            DB::table('operators')->insert($addasset);
+        }
+
+        return back()->with('success', 'Data inserted successfully!');
     }
+
+    public function OpNew(Request $request)
+    {
+        // dd($request->all());
+        $asset_code = $request->asset_code;
+        $department = $request->department;
+        $branch = $request->branch;
+
+        for ($i = 0; $i < count($request->phone); $i++) {
+            $addasset = [
+                'asset_code' => $asset_code,
+                'department' => $department,
+                'branch' => $branch,
+                'operator' => $request->operator[$i],
+                'phone' => $request->phone[$i],
+            ];
+
+            DB::table('operators')->insert($addasset);
+        }
+
+        return back()->with('success', 'Data inserted successfully!');
+    }
+
 
 
     public function updateRemark($id, Request $request){
@@ -603,6 +665,76 @@ class LaptopAssetCodeController extends Controller
         return back()->with('success','Successfully your created.');
     }
 
+    public function search_asset_code(Request $request)
+    {
+        $asset_code = $request->asset_code;
+        $conn = DB::connection('Fixasset');
+        $query = $conn->select("SELECT fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+        fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date, fxdt.fxstatus AS status
+        FROM asset.fxassetdetail fxdt
+        LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+        LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+        LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+        LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+        LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+        LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+        LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+        WHERE fxdt.fxassetdetailcode ='$asset_code'");
+        $remarks = getRemark($asset_code);
+        $data = ['info'=>$query[0],'remarks'=>$remarks];
+
+       return response()->json($data, 200);
+
+    }
+
+    public function fix_detail($asset_code)
+    {
+        $conn = DB::connection('Fixasset');
+        $query = $conn->select("SELECT fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+        fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date, fxdt.fxstatus AS status
+        FROM asset.fxassetdetail fxdt
+        LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+        LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+        LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+        LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+        LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+        LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+        LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+        WHERE fxdt.fxassetdetailcode ='$asset_code'");
+        // dd($query);
+        $remark = getRemark($asset_code);
+        $operators = getOperator($asset_code);
+        return view('laptop_asset_code.fixasset_detail', compact('query','remark','operators'));
+    }
+
+    public function update_operator(Request $request,$id){
+        $updateop=Operator::find($id);
+        $updateop->operator=$request->operator;
+        $updateop->phone=$request->phone;
+        $updateop->update();
+        return back()->with('success','Successfully your updated.');
+
+    }
+
+    public function update_contract(Request $request, $id) {
+        $updatecon = Remark::find($id);
+
+        if (!$updatecon) {
+            return back()->with('error', 'Record not found.');
+        }
+
+        if ($request->contract === 'No' || $request->contract === 'Yes') {
+            $updatecon->contract = $request->contract;
+        } else {
+
+            $updatecon->contract = $request->contract_edit;
+        }
+
+        $updatecon->remark = $request->remark;
+        $updatecon->save();
+
+        return back()->with('success', 'Successfully updated.');
+    }
 
 
 

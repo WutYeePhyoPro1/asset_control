@@ -34,6 +34,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.3.1/echarts.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
   input[type="text"]::placeholder {
   color: #999; /* Change the color of the placeholder text */
@@ -155,6 +156,22 @@ body {
 
 }
 
+#fixasset_filter{
+    display: none;
+}
+
+/* Ensure the table header remains fixed */
+.table-responsive {
+    overflow: auto;
+}
+
+/* Style for the fixed table header */
+#fixasset thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #fff; /* Background color for the fixed header */
+}
 
 </style>
 </head>

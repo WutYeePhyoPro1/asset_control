@@ -1,7 +1,7 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
     <div class="pagetitle">
-      <h1>Employee Asset Control System</h1><br>
+      <h1>Asset Control System</h1><br>
       {{-- <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="{{route('home')}}" style="color:#000;">Dashboard</a></li>
