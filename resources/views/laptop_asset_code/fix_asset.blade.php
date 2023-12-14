@@ -115,18 +115,48 @@
                         </select>
                     </div>
 
+                    <div class="col-md-3" id="filter_col3" data-column="3">
+                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Clear</label>
+                        <a class="nav-link collapsed" href="{{route('laptop_asset_code.fix_asset')}}">
+                        <button class="btn btn-primary">All</button>
+                        </a>
+                    </div>
+
 <br><br>
             <div class="row"  style="text-wrap: nowrap">
 
                 <div class="col-md-3" id="filter_col4" data-column="4">
                     <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code </label>
-                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Code" id="col4_filter" style="border:1px solid #2809f5;">
+                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Code" id="col4_filter" style="border:1px solid #0d0d0e;">
                 </div>
 
                 <div class="col-md-3" id="filter_col5" data-column="5">
                     <label class="form-label card-title" style="font-size: 15px;">Asset Name</label>
-                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Name" id="col5_filter" style="border:1px solid #2809f5;">
+                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Name" id="col5_filter" style="border:1px solid #1c1c1d;">
                 </div>
+
+                <div class="col-md-3" id="filter_col6" data-column="6">
+                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Operator</label>
+                    <select class="form-select column_filter" aria-label="Default select example" id="col6_filter" name="department">
+                        <option value="">Select Your Operator</option>
+
+                        <option value="ATOM">ATOM</option>
+                        <option value="Ooredoo">Ooredoo</option>
+                        <option value="MPT">MPT</option>
+                        <option value="Mytel">Mytel</option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-3" id="filter_col7" data-column="7">
+                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Contract</label>
+                    <select class="form-select column_filter" aria-label="Default select example" id="col7_filter" name="department">
+                        <option value="">Select Your Contract</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
             </div>
         </form>
 
@@ -145,12 +175,16 @@
                     <th scope="col">Asset Type Name</th>
                     <th scope="col">Asset Code</th>
                     <th scope="col">Asset Name</th>
+                    <th scope="col">Operator/Phone</th>
+                    <th scope="col">Contract</th>
+                    <th scope="col">Remark</th>
                   </tr>
                 </thead>
                 <tbody>
                   @php($no=1)
+
                   @foreach($fix_assets as $data)
-                  {{-- class="clickable-row" data-url="{{ $data->id }}" --}}
+
                   <tr style="text-wrap: nowrap;cursor: pointer;">
                     <td scope="row">{{$no}}.</td>
                     <td>
@@ -161,87 +195,30 @@
                     <td>{{ $data->asset_type_name }}</td>
                     <td>
                         <a href="{{ route('detail_fixasset',$data->asset_code) }}">{{ $data->asset_code }}</a>
-                        {{-- <button type="button" class="btn btn-transparent"  data-toggle="modal" id="asset_code" value="{{ $data->asset_code }}">{{ $data->asset_code }}</button> --}}
+
                     </td>
                     <td>{{ $data->asset_name }}</td>
+                    <td>
+                        @foreach ( getOperator($data->asset_code) as $operator)
+                       {{ $operator->operator }}-
+                        {{ $operator->phone }}/
+                        @endforeach
+                    </td>
+                    <td>
+
+                        @foreach(getRemark1($data->asset_code) as $remark)
+                            {{ $remark->contract }}
+                        @endforeach
+                    </td>
+                    <td>
+
+                        @foreach(getRemark1($data->asset_code) as $remark)
+                            {{ $remark->remark }}
+                        @endforeach
+                    </td>
                   </tr>
                 @php($no++)
 
-                {{-- <div class="modal fade" id="fixasset{{ $data->asset_code }}" tabindex="-1">
-                    <div class="modal-dialog modal-xl">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title">{{ $data->asset_code }}&nbsp;&nbsp;/&nbsp;&nbsp;
-                            {{ $data->asset_name }}
-                          </h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <form action="{{ route('remark-form') }}" method="POST">
-                                        @csrf
-                                        <h5 class="card-title">Operator</h5>
-                                        <input type="hidden" class="form-control" name="asset_code" value="{{  $data->asset_code }}">
-                                        <select class="form-select" aria-label="Default select example" name="operator" style="box-shadow:1px 1px 1px #333;" required>
-                                            <option value="" selected>Select your Operator</option>
-                                            <option value="ATOM">ATOM</option>
-                                            <option value="Ooredoo">Ooredoo</option>
-                                            <option value="MPT">MPT</option>
-                                            <option value="Mytel">Mytel</option>
-                                            </select>
-
-                                        <h5 class="card-title">Ph No:</h5>
-                                        <input type="text" class="form-control" name="phone" style="box-shadow:1px 1px 1px #333;" required>
-
-                                        <h5 class="card-title">Contract</h5>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="contract" id="gridRadios1" value="Yes" required>
-                                            <label class="form-check-label" for="contract">
-                                              Yes
-                                            </label>
-                                          </div>
-                                          <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="contract" id="gridRadios2" value="No" required>
-                                            <label class="form-check-label" for="contract">
-                                              No
-                                            </label>
-                                          </div>
-
-                                        <h5 class="card-title">Remark</h5>
-                                        <textarea class="form-control" style="height: 100px" name="remark"></textarea><br>
-                                        <button type="submit" class="btn btn-primary">Save</button>
-                                    </form>
-
-                                </div>
-                                <div class="col-md-8">
-                                    @foreach ( getRemark($data->asset_code) as $remark)
-                                    Operator<br>
-                                    <span class="badge rounded-pill bg-primary" style="font-size: 12px;">{{ $remark->operator }}</span><br><br>
-                                    Phone No<br>
-                                    <span class="badge rounded-pill bg-primary" style="font-size: 12px;">{{ $remark->phone }}</span><br><br>
-                                    Contract<br>
-                                    <span class="badge rounded-pill bg-primary" style="font-size: 12px;">{{ $remark->contract }}</span><br><br>
-
-                                    <textarea class="form-control" style="height: 100px" name="remark"
-                                    id="remark{{ $remark->id }}" onblur="remarkUpdate({{ $remark->id }})">{{ $remark->remark }}</textarea><br>
-
-                                    <i class="bi bi-x-circle btn btn-danger"
-                                    onclick='deleteRemark("{{ $remark->id }}")'style="font-size:10px;color:fff;width:80px;float:right;">
-                                    Delete</i>
-                                    <hr>
-                                    @endforeach
-                                </div>
-
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div> --}}
                 @endforeach
                 </tbody>
               </table>

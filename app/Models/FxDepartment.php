@@ -9,4 +9,11 @@ class FxDepartment extends Model
 {
     protected $connection = 'Fixasset';
     protected $table = 'asset.fxassetdetail';
+
+//     public function operators(): HasMany
+//     {
+//         return $this->hasMany(Operator::class, 'asset_code', 'fxassetdetailcode');
+//     }
+// }
+
 }

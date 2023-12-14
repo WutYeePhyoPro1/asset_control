@@ -10,16 +10,25 @@ function getRemark($asset_co)
     return $remarks;
 }
 
-function getOperator($asset_co)
+function getRemark1($asset_co)
 {
-    $remarks = Operator::where(['asset_code' => $asset_co])->get();
+    $remarks = Remark::where(['asset_code' => $asset_co])->get();
     // dd($remarks);
     return $remarks;
 }
 
+function getOperator($asset_co)
+{
+    $operators = Operator::where(['asset_code' => $asset_co])->get();
+    // dd($remarks);
+    return $operators;
+}
+
 function getOperatorL($asset_co)
 {
-    $remarks = Operator::where(['asset_code' => $asset_co])->lastet()->limit(1);
+    $operators1 = Operator::where(['asset_code' => $asset_co])->lastet()->limit(1);
     // dd($remarks);
-    return $remarks;
+    return $operators1;
 }
+
+

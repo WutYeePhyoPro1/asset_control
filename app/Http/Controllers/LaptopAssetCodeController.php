@@ -504,7 +504,7 @@ class LaptopAssetCodeController extends Controller
     }
 
 
-    public function fix_asset() {
+    public function fix_asset(Request $asset_code) {
         $conn = DB::connection('Fixasset');
         $departments=Department::all();
         $branches=Branch::all();
@@ -522,15 +522,10 @@ class LaptopAssetCodeController extends Controller
             WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
             ORDER BY purchase_date";
 
-        $fix_assets = $conn->select($query);
-        // dd($fix_assets);
-
-        // $currentPage = request()->input('page', 1);
-        // $perPage = 20;
-        // $offset = ($currentPage - 1) * $perPage;
-
-        // $slice = array_slice($results, $offset, $perPage);
-        // $fix_assets = new LengthAwarePaginator($slice, count($results), $perPage, $currentPage);
+        $fix_assets = collect($conn->select($query));
+       
+        // $remark = getRemark($asset_code);
+        // $operators = getOperator($asset_code);
 
         return view('laptop_asset_code.fix_asset', compact('fix_assets','departments','branches'));
     }
