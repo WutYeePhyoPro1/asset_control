@@ -146,7 +146,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-3" id="filteropera_col7" data-column="8">
+                    <div class="col-md-3" id="filteropera_col8" data-column="8">
                         <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Contract</label>
                         <select class="form-select column_filteropera" aria-label="Default select example" id="col8_filteropera" name="department">
                             <option value="">Select Your Contract</option>
