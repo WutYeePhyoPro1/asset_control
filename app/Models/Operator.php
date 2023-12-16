@@ -10,6 +10,10 @@ class Operator extends Model
     use HasFactory;
     protected $fillable=[
         'asset_code',
+        'branch_name',
+        'department',
+        'asset_type',
+        'asset_name',
         'operator',
         'phone',
     ];

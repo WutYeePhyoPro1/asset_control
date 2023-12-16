@@ -156,7 +156,7 @@ body {
 
 }
 
-#fixasset_filter{
+#fixasset_filter,#opera_filter{
     display: none;
 }
 
@@ -166,13 +166,19 @@ body {
 }
 
 /* Style for the fixed table header */
-#fixasset thead {
+#fixasset thead,#opera thead{
     position: sticky;
     top: 0;
     z-index: 1;
     background-color: #fff; /* Background color for the fixed header */
 }
 
+#opera thead{
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #fff; /* Background color for the fixed header */
+}
 </style>
 </head>
 

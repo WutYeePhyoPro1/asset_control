@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('operators', function (Blueprint $table) {
             $table->id();
             $table->string('asset_code')->nullable();
+            $table->string('asset_name')->nullable();
+            $table->string('asset_type')->nullable();
             $table->string('operator')->nullable();
             $table->string('phone')->nullable();
             $table->string('department')->nullable();

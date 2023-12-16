@@ -523,11 +523,12 @@ class LaptopAssetCodeController extends Controller
             ORDER BY purchase_date";
 
         $fix_assets = collect($conn->select($query));
-       
+
         // $remark = getRemark($asset_code);
         // $operators = getOperator($asset_code);
 
-        return view('laptop_asset_code.fix_asset', compact('fix_assets','departments','branches'));
+        $operators=Operator::all();
+        return view('laptop_asset_code.fix_asset', compact('fix_assets','departments','branches','operators'));
     }
 
 
@@ -537,6 +538,8 @@ class LaptopAssetCodeController extends Controller
         $asset_code = $request->asset_code;
         $department = $request->department;
         $branch = $request->branch;
+        $asset_name = $request->asset_name;
+        $asset_type = $request->asset_type;
 
         Remark::create([
             'asset_code' => $request->input('asset_code'),
@@ -549,6 +552,8 @@ class LaptopAssetCodeController extends Controller
                 'asset_code' => $asset_code,
                 'department' => $department,
                 'branch' => $branch,
+                'asset_name' => $asset_name,
+                'asset_type' => $asset_type,
                 'operator' => $request->operator[$i],
                 'phone' => $request->phone[$i],
 
@@ -566,12 +571,16 @@ class LaptopAssetCodeController extends Controller
         $asset_code = $request->asset_code;
         $department = $request->department;
         $branch = $request->branch;
+        $asset_name = $request->asset_name;
+        $asset_type = $request->asset_type;
 
         for ($i = 0; $i < count($request->phone); $i++) {
             $addasset = [
                 'asset_code' => $asset_code,
                 'department' => $department,
                 'branch' => $branch,
+                'asset_name' => $asset_name,
+                'asset_type' => $asset_type,
                 'operator' => $request->operator[$i],
                 'phone' => $request->phone[$i],
             ];

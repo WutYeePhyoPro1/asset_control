@@ -108,9 +108,9 @@
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{{route('laptop_asset_code.index')}}">
+        {{-- <a class="nav-link collapsed" href="{{route('laptop_asset_code.index')}}">
           <i class="bi bi-menu-button-wide"></i><span>Asset Control</span>
-        </a>
+        </a> --}}
 
         <a class="nav-link collapsed" href="{{route('laptop_asset_code.fix_asset')}}">
             <i class="bi bi-menu-button-wide"></i><span>Fix Asset</span>

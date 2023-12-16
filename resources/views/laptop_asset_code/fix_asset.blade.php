@@ -1,6 +1,6 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
-    <div class="pagetitle">
+    <!-- <div class="pagetitle">
       <h1>Asset Control System</h1><br>
       {{-- <nav>
         <ol class="breadcrumb">
@@ -8,7 +8,8 @@
           <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.create')}}" style="color:#000;">Add New</a></li>
         </ol>
       </nav> --}}
-    </div><!-- End Page Title -->
+    </div>-->
+    <!-- End Page Title -->
 
     @if(Session::has('success'))
       <div class="alert alert-success alert-dismissible fade show outline-animation" role="alert" style="width: 300px; float: right; z-index: 1000; position: absolute; top: 15%; right: 2%;" id="toast">
@@ -72,10 +73,172 @@
     @endif
     <section class="section">
       <div class="row">
+              <div class="modal fade" id="ExtralargeModal" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">All Operators</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="clear">
+                            <div class="row"  style="text-wrap: nowrap">
+                                <div class="col-md-3" id="filteropera_col1" data-column="1">
+                                    <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch</label>
+                                    <select class="form-select column_filteropera" id="col1_filteropera" name="branchcode">
+                                            <option value="">Select Your Branch</option>
+                                            @foreach($branches as $branch)
+                                            <option value="{{$branch->branch_name}} ({{$branch->branch_code}})">{{$branch->branch_name}} ({{$branch->branch_code}})</option>
+                                            @endforeach
+                                    </select>
+                                </div>
+
+                    <div class="col-md-3" id="filteropera_col2" data-column="2">
+                        <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department</label>
+                        <select class="form-select column_filteropera" aria-label="Default select example" id="col2_filteropera" name="department">
+                            <option value="">Select Your Department</option>
+
+                                @foreach($departments as $department)
+                                <option value="{{$department->name}}">{{$department->name}}</option>
+                                @endforeach
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-3" id="filteropera_col3" data-column="3">
+                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Asset Type</label>
+                        <select class="form-select column_filteropera" aria-label="Default select example" id="col3_filteropera" name="department">
+                            <option value="">Select Your Asset Type</option>
+
+                                <option value="Laptop">Laptop</option>
+                                <option value="Handset">Handset</option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Clear</label>
+                        <a class="nav-link collapsed" href="{{route('laptop_asset_code.fix_asset')}}">
+                        <button class="btn btn-primary" style="font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">All</button>
+                        </a>
+                    </div>
+
+                    <div class="col-md-3" id="filteropera_col4" data-column="4">
+                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code </label>
+                        <input type="text" class="form-control column_filteropera" placeholder="Enter Asset Code" id="col4_filteropera" style="border:1px solid #0d0d0e;">
+                    </div>
+
+                    <div class="col-md-3" id="filteropera_col5" data-column="5">
+                        <label class="form-label card-title" style="font-size: 15px;">Asset Name</label>
+                        <input type="text" class="form-control column_filteropera" placeholder="Enter Asset Name" id="col5_filteropera" style="border:1px solid #1c1c1d;">
+                    </div>
+
+                    <div class="col-md-3" id="filteropera_col6" data-column="6">
+                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Operator</label>
+                        <select class="form-select column_filteropera" aria-label="Default select example" id="col6_filteropera" name="department">
+                            <option value="">Select Your Operator</option>
+
+                            <option value="ATOM">ATOM</option>
+                            <option value="Ooredoo">Ooredoo</option>
+                            <option value="MPT">MPT</option>
+                            <option value="Mytel">Mytel</option>
+
+                        </select>
+                    </div>
+
+                    <div class="col-md-3" id="filteropera_col7" data-column="8">
+                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Contract</label>
+                        <select class="form-select column_filteropera" aria-label="Default select example" id="col8_filteropera" name="department">
+                            <option value="">Select Your Contract</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+
+                            </div>
+                        </form>
+                        <div class="table-responsive" style="height: 550px;">
+                            <table class="table table-sm card-title table-hover table-bordered table-fix" style="font-size: 15px;" id="opera">
+                              <thead>
+
+                                <tr class="table-primary" style="text-wrap: nowrap">
+                                  <th scope="col">No</th>
+                                  <th scope="col">Branch Name</th>
+                                  <th scope="col">Department</th>
+                                  <th scope="col">Asset Type Name</th>
+                                  <th scope="col">Asset Code</th>
+                                  <th scope="col">Asset Name</th>
+                                  <th scope="col">Operator</th>
+                                  <th scope="col">Phone</th>
+                                  <th scope="col">Contract</th>
+                                  <th scope="col">Remark</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @php($no=1)
+
+                                @foreach($operators as $data)
+
+                                <tr style="text-wrap: nowrap;cursor: pointer;">
+                                  <td scope="row">{{$no}}.</td>
+                                  <td>
+                                      <a href="{{ route('detail_fixasset',$data->asset_code) }}">
+                                      {{ $data->branch }}</a>
+                                  </td>
+                                  <td>{{ $data->department }}</td>
+                                  <td>{{ $data->asset_type }}</td>
+                                  <td>
+                                      <a href="{{ route('detail_fixasset',$data->asset_code) }}">{{ $data->asset_code }}</a>
+
+                                  </td>
+                                  <td>{{ $data->asset_name }}</td>
+                                  <td>
+                                    {{ $data->operator }}
+                                  </td>
+                                  <td>
+                                    {{ $data->phone }}
+                                  </td>
+                                  <td>
+
+                                      @foreach(getRemark1($data->asset_code) as $remark)
+                                          {{ $remark->contract }}
+                                      @endforeach
+                                  </td>
+                                  <td>
+
+                                      @foreach(getRemark1($data->asset_code) as $remark)
+                                          {{ $remark->remark }}
+                                      @endforeach
+                                  </td>
+                                </tr>
+                              @php($no++)
+
+                              @endforeach
+                              </tbody>
+                            </table>
+                            <!-- End small tables -->
+
+                          </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- End Extra Large Modal-->
 
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10"></div>
+                    <div class="col-md-2">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ExtralargeModal" style="margin: 10px;">
+                    All Operators
+                    </button></div>
+                </div>
+
 
           <form id="clear" style="margin-top: 20px;">
             <div class="row"  style="text-wrap: nowrap">
@@ -118,7 +281,7 @@
                     <div class="col-md-3" id="filter_col3" data-column="3">
                         <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Clear</label>
                         <a class="nav-link collapsed" href="{{route('laptop_asset_code.fix_asset')}}">
-                        <button class="btn btn-primary">All</button>
+                        <button class="btn btn-primary" style="font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">All</button>
                         </a>
                     </div>
 
@@ -200,8 +363,8 @@
                     <td>{{ $data->asset_name }}</td>
                     <td>
                         @foreach ( getOperator($data->asset_code) as $operator)
-                       {{ $operator->operator }}-
-                        {{ $operator->phone }}/
+                       {{ $operator->operator }}
+                        {{ $operator->phone }},
                         @endforeach
                     </td>
                     <td>
@@ -434,6 +597,11 @@ function remarkUpdate(id) {
                 extend: 'excel',
                 text: 'Export to Excel',
 
+                customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                        $('col', sheet).eq(0).attr('width', 20);
+                    }
             },
 
             {
@@ -497,8 +665,90 @@ function remarkUpdate(id) {
             width: '100%'
         });
 
+    });
+</script>
+
+<script>
+     $(document).ready(function() {
+    var table = $('#opera').DataTable({
+        "lengthMenu": [10, 20, 50, 100, 200],
+        "pageLength": 20,
+        "deferRender": true,
+        "lengthChange": false,
+        "searching": true,
+        "searchHighlight": true,
+
+        buttons: [
+
+            {
+                extend: 'excel',
+                text: 'Export to Excel',
+
+                customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                        $('col', sheet).eq(0).attr('width', 20);
+                    }
+            },
+
+            {
+                extend: 'csv',
+                text: 'Export to CSV'
+            },
+
+            'colvis'
+        ],
 
 
     });
+
+
+    table.buttons().container().appendTo('#opera_wrapper .col-md-6:eq(0)');
+
+    function filterColumn ( i ) {
+
+
+        $('#opera').DataTable().column( i ).search(
+            $('#col'+i+'_filteropera').val()
+        ).draw();
+        }
+
+        $(document).ready(function() {
+        $('#opera').DataTable();
+
+        $('input.global_filteropera').on( 'keyup click', function () {
+            filterGlobal();
+        } );
+
+        $('input.column_filteropera').on( 'keyup click', function () {
+            filterColumn( $(this).parents('div').attr('data-column') );
+        } );
+        } );
+
+        $('select.column_filteropera').on('change', function () {
+            filterColumn( $(this).parents('div').attr('data-column') );
+        } );
+        });
+
+    //     $(document).ready(function(){
+    //     $('#col1_filteropera').select2({
+    //         theme       : 'bootstrap-5',
+    //         placeholder : 'Choose Your  branch',
+    //         width: '100%'
+    //     });
+
+    //     $('#col2_filteropera').select2({
+    //         theme       : 'bootstrap-5',
+    //         placeholder : 'Choose Department  branch',
+    //         width: '100%'
+    //     });
+
+    //     $('#col3_filteropera').select2({
+    //         theme       : 'bootstrap-5',
+    //         placeholder : 'Choose Asset Type',
+    //         width: '100%'
+    //     });
+
+    // });
 </script>
 @endsection

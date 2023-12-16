@@ -61,7 +61,8 @@
                                     <input type="hidden" class="form-control asset_code" name="asset_code" value="{{ $item->asset_code }}">
                                     <input type="hidden" class="form-control asset_code" name="department" value="{{ $item->department }}">
                                     <input type="hidden" class="form-control asset_code" name="branch" value="{{ $item->branch_name }}({{ $item->branch_code }})">
-
+                                    <input type="hidden" class="form-control asset_code" name="asset_type" value="{{ $item->asset_type_name }}">
+                                    <input type="hidden" class="form-control asset_code" name="asset_name" value="{{ $item->asset_name }}">
                                     <div class="row">
                                         <div class="col-lg-6">
                                         <h5 class="card-title">Operator</h5>
@@ -165,6 +166,9 @@
                             @if($remark!=null && $remark->asset_code)
                         <input type="hidden" class="form-control asset_code" name="asset_code" value="{{ $remark->asset_code }}">
                         <input type="hidden" class="form-control asset_code" name="department" value="{{ $item->department }}">
+                        <input type="hidden" class="form-control asset_code" name="asset_type" value="{{ $item->asset_type_name }}">
+                        <input type="hidden" class="form-control asset_code" name="asset_name" value="{{ $item->asset_name }}">
+
                         <input type="hidden" class="form-control asset_code" name="branch" value="{{ $item->branch_name }}({{ $item->branch_code }})">
                         @endif
                         <h5 class="card-title">Operator</h5>

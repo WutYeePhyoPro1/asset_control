@@ -151,12 +151,15 @@ var operatorCounts = mergedData.map(function(item) {
     return item.phone_count || 0;
 });
 
+// Summing up counts for Laptop, Handset, and Operator
+
+
 Highcharts.chart('container-fix-lh', {
     chart: {
         type: 'column'
     },
     title: {
-        text: 'Laptop, Handset, and Phone By Branch'
+        text: 'Laptop, Handset, and Operator(ph) By Branch'
     },
     xAxis: {
         categories: categories,
@@ -196,7 +199,7 @@ Highcharts.chart('container-fix-lh', {
             }
         }
     }, {
-        name: 'Operator',
+        name: 'Operator Sim(ph)',
         data: operatorCounts,
         dataLabels: {
             enabled: true,
