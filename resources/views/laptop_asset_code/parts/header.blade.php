@@ -128,6 +128,9 @@
           </li>
 
         </ul> --}}
+        <a class="nav-link collapsed" href="{{route('laptop_asset_code.nonasset_operator')}}">
+            <i class="bi bi-menu-button-wide"></i><span>Non Asset Code Operator</span>
+        </a>
       </li><!-- End Components Nav -->
 
       @if(Auth::user()->type=='superadmin')

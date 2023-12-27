@@ -5,20 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Remark extends Model
+class NonRemark extends Model
 {
     use HasFactory;
     protected $fillable=[
-        'asset_code',
-        'operator',
-        'phone',
+        'doc_no',
+        'emp_id',
+        'name',
+        'branch',
+        'department',
         'contract',
         'remark',
-        'rank'
+        'rank',
+        'date'
     ];
-
-    public function Remarkelq(){
-        return $this->belongsTo(Operator::class,'asset_code')->withDefault();
-    }
-
 }

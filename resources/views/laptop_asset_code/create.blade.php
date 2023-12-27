@@ -66,6 +66,7 @@
                         Please choose your employee or department.
                         </p>
                     </div>
+
                     <div class="form-check col-md-2 col-lg-2">
                       <font style="font-size: 15px;font-weight: 500;color: #f10b0b;font-family: Poppins, sans-serif;"> *</font>
                       <input class="form-check-input" type="radio" name="type" id="gridRadios2" value="Dept" required>

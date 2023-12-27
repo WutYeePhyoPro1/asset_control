@@ -84,84 +84,62 @@
         <div class="card">
             <div class="card-body">
             <div class="row g-3">
-            <div class="col-md-10 col-lg-10"></div>
+            <div class="col-md-10 col-lg-10">
+                <h5 class="card-title" style="padding-top: 20px;">Non Asset Code Operator</h5></div>
             <div class="col-md-2 col-lg-2">
 
             <div>
                 <button class="btn">
-                    <a href="{{route('laptop_asset_code.create')}}">
+                    <a href="{{route('laptop_asset_code.create_non_op')}}">
                     <i class="bi bi-plus-square-fill" style="color:##1c88fc;font-size:33px;"></i></a></button>
-            {{-- <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import" type="button">
-            <font class="card-title" style="color:#fff;font-size: 13px;">
-            <i class="ri-file-excel-2-line" style="font-size: 12px;"></i> Excel Import</font></button> --}}
+
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import_non" type="button">
+                        <font class="card-title" style="color:#fff;font-size: 13px;">
+                        <i class="ri-file-excel-2-line" style="font-size: 12px;"></i> Excel Import</font></button>
+                          <!--------------------------------excel import-------------------------------------------------------------->
+  <div class="modal fade" id="import_non" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" style="font-weight: 500;color: #012970;font-family: Poppins, sans-serif;"><i class="ri-file-excel-2-line" style="font-size: 20px;"></i> Excel Import</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h5 style="font-size:15px;;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
+          <a href="{{asset('assets/img/nonassetoperatorimport.xlsx')}}" download><u>Download Sample Excel File</u></a></h5>
+          <form action="{{route('nonassetoperator.import')}}" class="needs-validation" method="POST" enctype="multipart/form-data" novalidate>
+            @csrf
+       <br>
+        <label for="my_import">
+
+        <i class="bi bi-upload btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Employee asset code import excel click the button."></i>
+
+        </label>
+        <input type="file" id="my_import" style="display: none;" name="file" required />
+        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+            Please import your excel file.
+        </div>
+
+        <div id="file_name" class="file-name" style="font-size: 13px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;margin-top:10px;"></div>
+
+        <!-- <div id="excel_preview" class="excel-preview"></div> -->
+
+        <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
+
+        </div>
+        <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Import</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Close</button>
+
+        </form>
+        </div>
+      </div>
+    </div>
+  </div><!-- End Vertically centered Modal-->
             </div><hr>
 
             </div>
             </div>
-
-            {{-- <form method="POST" action="{{route('employee_benefic.search')}}">
-              @csrf
-            <div class="row g-3">
-                    <div class="col-md-2 col-lg-2">
-                      <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">Document No</label>
-                      <input type="text" class="form-control" id="validationCustom01" name="doc_no"  style="box-shadow:1px 1px 1px #333;">
-                    </div>
-
-                    <div class="col-md-2 col-lg-2">
-                      <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">Employee Name</label>
-                      <input type="text" class="form-control" id="validationCustom01" name="empname"  style="box-shadow:1px 1px 1px #333;">
-                    </div>
-
-                    <div class="col-md-2 col-lg-2">
-                      <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">Employee ID</label>
-                      <input type="text" class="form-control" id="validationCustom01" name="empcode"  style="box-shadow:1px 1px 1px #333;">
-                    </div>
-
-                    <div class="col-md-2 col-lg-2">
-                      <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">Department</label>
-                      <select class="form-control" id="department1" name="department">
-                          <option value="">Select Your Department</option>
-                            @foreach($departments as $department)
-                            <option value="{{$department->name}}">{{$department->name}}</option>
-                            @endforeach
-                      </select>
-                    </div>
-
-                    <div class="col-md-2 col-lg-2">
-                      <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">Branch</label>
-                      <select class="form-control" id="branches1" name="branch">
-                          <option value="">Select Your Branch</option>
-                          <option value="0">All Branch</option>
-                            @foreach($branches as $branch)
-                            <option value="{{$branch->branch_name}}">{{$branch->branch_name}}</option>
-                            @endforeach
-                      </select>
-                    </div>
-
-                    <div class="col-md-2 col-lg-2">
-                      <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">By Department/Employee</label>
-                      <select class="form-control" id="dept" name="type">
-                          <option value="">By Department/Employee</option>
-                          <option value="Dept">By Department</option>
-                          <option value="Emp">By Employee</option>
-                      </select>
-                    </div>
-
-                    <div class="col-md-2 col-lg-2">
-                      <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">Laptop/Handset/Phone(No)<i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="You can search laptop asset code or handset asset code or sim number."></i></label>
-                      <input type="text" class="form-control" id="validationCustom01" placeholder="Asset code Laptop/Handset/Phone(No)" name="laptop"  style="box-shadow:1px 1px 1px #333;">
-                    </div>
-
-                    <div class="col-md-2 col-lg-2">
-                    <label for="validationCustom01" class="form-label" style="font-size: 12px;padding:0px;"><br></label><br>
-                    <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 13px;">Search</font></button>
-
-
-
-                    <a href="{{ route('laptop-asset-code.export', request()->all()) }}" class="btn btn-success">Export</a>
-
-            </div>
-            </form> --}}
 
             <div class="modal fade" id="import" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
@@ -188,109 +166,154 @@
 
                     <div id="file_name" class="file-name" style="font-size: 13px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;margin-top:10px;"></div>
 
-                    <!-- <div id="excel_preview" class="excel-preview"></div> -->
-
-                    <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
-
                     </div>
                     <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Import</button>
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Close</button>
-
                     </form>
                     </div>
                   </div>
                 </div>
               </div><!-- End Vertically centered Modal-->
             <br>
-            {{-- <form action="/limit_rows" method="get">
-                <label for="per_page" style="font-weight: 500;color: #000;font-family: Poppins, sans-serif;font-size:13px;">Showing Rows:</label>
-                <select name="per_page" id="per_page">
-                    <option value=""></option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="100">100</option>
-                </select>
-            </form> --}}
+
+            <form id="clear">
+                <div class="row"  style="text-wrap: nowrap">
+
+                    <div class="col-md-3" id="filter_col2" data-column="2">
+                        <label class="form-label card-title" style="font-size: 15px;">Document No:</label>
+                        <input type="text" class="form-control column_filter" placeholder="Enter Doc No" id="col2_filter" style="border:1px solid #1c1c1d;">
+                    </div>
+
+                    <div class="col-md-3" id="filter_col3" data-column="3">
+                        <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch</label>
+                        <select class="form-select column_filter" id="col3_filter" name="branchcode">
+                                <option value="">Select Your Branch</option>
+                                @foreach($branches as $branch)
+                                <option value="{{$branch->branch_name}} ({{$branch->branch_code}})">{{$branch->branch_name}} ({{$branch->branch_code}})</option>
+                                @endforeach
+                        </select>
+                    </div>
+
+        <div class="col-md-3" id="filter_col4" data-column="4">
+            <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department</label>
+            <select class="form-select column_filter" aria-label="Default select example" id="col4_filter" name="department">
+                <option value="">Select Your Department</option>
+                    @foreach($departments as $department)
+                    <option value="{{$department->name}}">{{$department->name}}</option>
+                    @endforeach
+            </select>
+        </div>
+
+
+        <div class="col-md-3" id="filter_col5" data-column="5">
+            <label class="form-label card-title" style="font-size: 15px;">Employee ID</label>
+            <input type="text" class="form-control column_filter" placeholder="Enter Emp ID" id="col5_filter" style="border:1px solid #1c1c1d;">
+        </div>
+
+
+        <div class="col-md-3" id="filter_col6" data-column="6">
+            <label class="form-label card-title" style="font-size: 15px;">Employee Name</label>
+            <input type="text" class="form-control column_filter" placeholder="Enter Emp Name" id="col6_filter" style="border:1px solid #1c1c1d;">
+        </div>
+
+
+        <div class="col-md-3" id="filter_col7" data-column="7">
+            <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Operator</label>
+            <select class="form-select column_filter" aria-label="Default select example" id="col7_filter" name="department">
+                <option value="">Select Your Operator</option>
+                <option value="ATOM">ATOM</option>
+                <option value="Ooredoo">Ooredoo</option>
+                <option value="MPT">MPT</option>
+                <option value="Mytel">Mytel</option>
+            </select>
+        </div>
+
+        <div class="col-md-3" id="filter_col8" data-column="8">
+            <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Phone </label>
+            <input type="text" class="form-control column_filter" placeholder="Enter Asset Code" id="col8_filter" style="border:1px solid #0d0d0e;">
+        </div>
+
+        <div class="col-md-3" id="filter_col9" data-column="9">
+            <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Contract</label>
+            <select class="form-select column_filter" aria-label="Default select example" id="col9_filter" name="department">
+                <option value="">Select Your Contract</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Clear</label>
+            <a class="nav-link collapsed" href="{{route('laptop_asset_code.fix_asset')}}">
+            <button class="btn btn-primary" style="font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">All</button>
+            </a>
+        </div>
+
+                </div>
+            </form>
+
             <div class="table-responsive" style="margin: 10px;">
               <table class="table table-sm card-title table-hover table-bordered table-fix" style="font-size: 15px;" id="fixasset">
                 <thead>
-                    <form id="clear">
-                        <tr  style="text-wrap: nowrap">
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                            <th scope="col">
-                                <div class="col-md-3" id="filter_col2" data-column="2">
-                                    <input type="text" class="form-control column_filter" placeholder="Enter Doc No" id="col2_filter" style="border:1px solid #2809f5;width:250px;">
-                                </div>
-                            </th>
-                            <th scope="col">
-                                <div class="col-md-3" id="filter_col3" data-column="3">
-                                    <input type="text" class="form-control column_filter" placeholder="Enter Employee Name" id="col3_filter" style="border:1px solid #2809f5;width:250px;">
-                                </div>
-                            </th>
-                            <th scope="col">
-                                <div class="col-md-3" id="filter_col4" data-column="4">
-                                    <input type="text" class="form-control column_filter" placeholder="Enter By Dep/Emp" id="col4_filter" style="border:1px solid #2809f5;width:250px;">
-                                </div>
-                            </th>
-                            <th scope="col">
-                                <div class="col-md-3" id="filter_col5" data-column="5">
-                                    <input type="text" class="form-control column_filter" placeholder="Enter Department" id="col5_filter" style="border:1px solid #2809f5;width:250px;">
-                                </div>
-                            </th>
 
-                            <th scope="col">
-                                <div class="col-md-3" id="filter_col6" data-column="6">
-                                    <input type="text" class="form-control column_filter" placeholder="Enter Branch" id="col6_filter" style="border:1px solid #2809f5;width:250px;">
-                                </div>
-                            </th>
-
-                        </tr>
-                    </form>
                   <tr class="table-primary" style="text-wrap: nowrap">
                     <th scope="col">#</th>
                     <th scope="col">Action</th>
                     <th scope="col">Document No</th>
-                    <th scope="col">Employee Name</th>
-                    <th scope="col">By Dep/Emp</th>
-                    <th scope="col">Department</th>
                     <th scope="col">Branch</th>
-                    <th scope="col">Receipt Date</th>
+                    <th scope="col">Department</th>
+                    <th scope="col">Employee ID</th>
+                    <th scope="col">Employee Name</th>
+                    <th scope="col">Operator</th>
+                    <th scope="col">Phone No:</th>
+                    <th scope="col">Contract</th>
+                    <th scope="col">Remark</th>
+                    <th scope="col">Created Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   @php($no=1)
-                  @foreach($datas as $data)
+                  @foreach($nonoperators as $data)
                   <tr style="text-wrap: nowrap">
                     <th scope="row">{{$no}}.</th>
-                    <td><center>
-                    @if(Auth::user()->type=='superadmin')<i class="bi bi-trash-fill pointer" data-bs-toggle="modal" data-bs-target="#del{{ $data->id }}" style="font-size: 15px;"></i> | @endif
-                      <a href="{{route('laptop_asset_code.show',$data->id)}}"><i class="bi bi-eye-fill pointer"></i></a></center>
-                    </td>
-                    <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->doc_no}}</a></td>
                     <td>
-                        <a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">
-                            @if($data->emp_name==null)
-                            -
-                            @else
-                            {{$data->emp_name}}
-                            @endif
-                        </a>
+                        <center>
+                        @if(Auth::user()->type=='superadmin')<i class="bi bi-trash-fill pointer" data-bs-toggle="modal" data-bs-target="#del{{ $data->id }}" style="font-size: 15px;"></i> | @endif
+                        <a href="{{ route('detail_non_asset_detail',$data->doc_no) }}"><i class="bi bi-eye-fill pointer"></i></a></center>
                     </td>
-                    <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">
-                    @if($data->type=='Dept')
-                    By Department
-                    @else
-                    By Employee
-                    @endif
-                  </a></td>
-                    {{-- <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->emp_code}}</a></td> --}}
-                    <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->department}}</a></td>
-                    <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branch_code}}</a></td>
-					{{-- <td><a href="{{route('laptop_asset_code.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branch_name}}</a></td> --}}
+                    <td>{{ $data->doc_no }}</td>
+                    <td>{{ $data->branch }}</td>
+                    <td>{{ $data->department }}</td>
+                    <td>
+                        {{-- {{ getnonRemark($data->doc_no)->emp_id  }} --}}
 
-                    <td>{{$data->receipt_date}}</td>
+                        @foreach(getnonRemark208($data->doc_no) as $nonremark)
+                        {{$nonremark->emp_id}}
+                        @endforeach
+                    </td>
+                    <td>
+                        {{-- {{ getnonRemark($data->doc_no)->name  }} --}}
+                        @foreach(getnonRemark208($data->doc_no) as $nonremark)
+                        {{$nonremark->name}}
+                        @endforeach
+                    </td>
+                    <td>{{ $data->operator }}</td>
+                    <td>{{ $data->phone }}</td>
+                    <td>
+                        {{-- {{ getnonRemark($data->doc_no)->contract }} --}}
+                        @foreach(getnonRemark208($data->doc_no) as $nonremark)
+                        {{$nonremark->contract}}
+                        @endforeach
+                    </td>
+                    <td>
+                        {{-- {{ getnonRemark($data->doc_no)->remark }} --}}
+                        @foreach(getnonRemark208($data->doc_no) as $nonremark)
+                        {{$nonremark->remark}}
+                        @endforeach
+
+                    </td>
+                    <td>{{ $data->created_at }}</td>
                   </tr>
                 @php($no++)
 
@@ -330,11 +353,6 @@
                 @endforeach
                 </tbody>
               </table>
-              <!-- End small tables -->
-{{--
-           <p class="card-title">
-           {{$datas->links('pagination::bootstrap-5')}}
-           </p> --}}
 
               </div>
             </div>
@@ -381,7 +399,7 @@
                 }
             });
             $.ajax({
-                url: "/employee_benefic/delete_record/" + id,
+                url: "/non_asset_operator/delete_record/" + id,
                 type: 'DELETE',
                 data: {
 
@@ -393,50 +411,6 @@
                 window.location.reload(); // Reload the page on success
             }, 1000);
         }
-
-        $("input[type='file']").change(function() {
-    var fileInput = $(this)[0];
-    var imagePreview = $("#image_preview")[0];
-
-    if (fileInput.files && fileInput.files[0]) {
-        var reader = new FileReader();
-
-        reader.onload = function(e) {
-            imagePreview.innerHTML = '<img src="' + e.target.result + '" style="max-width: 100%; max-height: 100%;">';
-        };
-
-        reader.readAsDataURL(fileInput.files[0]);
-        var fileName = fileInput.files[0].name;
-        $("#file_name").text(fileName);
-    } else {
-        imagePreview.innerHTML = ''; // Clear the image preview
-        $("#file_name").text(""); // Clear the file name
-    }
-});
-
-$("input[type='file']").change(function() {
-    var fileInput = $(this)[0];
-
-    if (fileInput.files && fileInput.files[0]) {
-        var reader = new FileReader();
-
-        reader.onload = function(e) {
-            // Display the selected Excel file preview using an <embed> or other suitable element
-            var excelPreview = $("#excel_preview")[0];
-            excelPreview.innerHTML = '<embed src="' + e.target.result + '" style="width: 100%; height: 400px;">';
-        };
-
-        reader.readAsDataURL(fileInput.files[0]);
-        var fileName = fileInput.files[0].name;
-
-        // Display the selected file name
-        $("#file_name").text(fileName);
-    } else {
-        // Clear the file preview and file name if no file is selected
-        $("#excel_preview").empty();
-        $("#file_name").empty();
-    }
-});
 
 
 $(document).ready(function () {
@@ -480,7 +454,25 @@ $('#department1').select2({
 
 });
 
+$("input[type='file']").change(function() {
+    var fileInput = $(this)[0];
+    var imagePreview = $("#image_preview")[0];
 
+    if (fileInput.files && fileInput.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            imagePreview.innerHTML = '<img src="' + e.target.result + '" style="max-width: 100%; max-height: 100%;">';
+        };
+
+        reader.readAsDataURL(fileInput.files[0]);
+        var fileName = fileInput.files[0].name;
+        $("#file_name").text(fileName);
+    } else {
+        imagePreview.innerHTML = ''; // Clear the image preview
+        $("#file_name").text(""); // Clear the file name
+    }
+});
 
     $(document).ready(function () {
         $('#per_page').change(function () {
@@ -494,18 +486,15 @@ $('#department1').select2({
 <script>
 $(document).ready(function() {
     var table = $('#fixasset').DataTable({
-        "lengthMenu": [10, 20, 50, 100, 200],
-        "pageLength": 20,
+        // "lengthMenu": [10, 20, 50, 100, 200],
+        // "pageLength": 20,
         "deferRender": true,
-        "lengthChange": true,
+        "lengthChange": false,
         "searching": true,
         "searchHighlight": true,
 
         buttons: [
-            {
-                extend: 'copy',
-                text: 'Copy to Clipboard'
-            },
+
             {
                 extend: 'excel',
                 text: 'Export to Excel',
@@ -516,14 +505,7 @@ $(document).ready(function() {
                 extend: 'csv',
                 text: 'Export to CSV'
             },
-            {
-                extend: 'pdf',
-                text: 'Export to PDF'
-            },
-            {
-                extend: 'print',
-                text: 'Print'
-            },
+
             'colvis'
         ],
 
@@ -540,7 +522,6 @@ $(document).ready(function() {
             $('#col'+i+'_filter').val()
         ).draw();
         }
-
 
         $(document).ready(function() {
         $('#fixasset').DataTable();

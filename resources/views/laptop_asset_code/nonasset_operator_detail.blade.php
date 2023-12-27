@@ -41,142 +41,64 @@
           <div class="card">
             <div class="card-body">
 
-            <h5 class="card-title">Fix Asset Detail</h5>
+            <h5 class="card-title">Non Asset Code Operator Detail</h5>
 
         <div class="tab-content pt-2" id="myTabContent">
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
               <!-- Custom Styled Validation -->
               <div class="row">
-                <div class="col-lg-5">
-                    @if(!$remark)
-                        <div class="card remark_card"  style="margin-bottom: 5px;border:1px solid lightgray;padding:10px;border-radius:30px;">
-                            <div class="card-body" style="padding:20px;">
-                                @foreach($query as $item)
 
-                                <form action="{{ route('remark-form') }}" method="POST">
-                                    @csrf
-                                    <p class="card-title">{{ $item->asset_code }} <br> {{ $item->asset_name }}</p>
-                                    <hr>
 
-                                    <input type="hidden" class="form-control asset_code" name="asset_code" value="{{ $item->asset_code }}">
-                                    <input type="hidden" class="form-control asset_code" name="department" value="{{ $item->department }}">
-                                    <input type="hidden" class="form-control asset_code" name="branch"
-                                    value="{{ $item->branch_name }}({{ $item->branch_code }})">
-                                    <input type="hidden" class="form-control asset_code" name="asset_type" value="{{ $item->asset_type_name }}">
-                                    <input type="hidden" class="form-control asset_code" name="asset_name" value="{{ $item->asset_name }}">
-                                    <div class="row">
-
-                                        <div class="col-lg-12">
-                                            <h5 class="card-title">Rank</h5>
-                                            <select class="form-select" aria-label="Default select example" name="rank" style="box-shadow:1px 1px 1px #333;" required>
-                                            <option value="" selected>Select your rank</option>
-                                            <option value="R1">R1</option>
-                                            <option value="R2">R2</option>
-                                            <option value="R3">R3</option>
-                                            <option value="R4">R4</option>
-                                            <option value="R5">R5</option>
-                                            <option value="R6">R6</option>
-                                            <option value="R7">R7</option>
-                                            <option value="R8">R8</option>
-                                            <option value="R9">R9</option>
-                                            </select>
-                                            </div>
-
-                                        <div class="col-lg-6">
-                                        <h5 class="card-title">Operator</h5>
-                                        <select class="form-select" aria-label="Default select example" name="operator[]" style="box-shadow:1px 1px 1px #333;" required>
-                                        <option value="" selected>Select your Operator</option>
-                                        <option value="ATOM">ATOM</option>
-                                        <option value="Ooredoo">Ooredoo</option>
-                                        <option value="MPT">MPT</option>
-                                        <option value="Mytel">Mytel</option>
-                                        </select>
-                                        </div>
-
-                                    <div class="col-lg-6">
-                                    <h5 class="card-title">Ph No:</h5>
-                                    <input type="text" class="form-control" name="phone[]" maxlength="11" style="box-shadow:1px 1px 1px #333;" required>
-
-                                    </div>
-                                    </div>
-                                    <i class="bi bi-plus-square-fill" style="color:#1c88fc;font-size:33px;" id="addbtn"></i></a>
-
-                                    <div class="row" id="showope">
-
-                                    </div>
-
-                                    <h5 class="card-title">Contract</h5>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="contract" id="gridRadios1" value="Yes" required>
-                                        <label class="form-check-label" for="contract">
-                                        Yes
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="contract" id="gridRadios2" value="No" required>
-                                        <label class="form-check-label" for="contract">
-                                        No
-                                        </label>
-                                    </div>
-
-                                    <h5 class="card-title">Remark</h5>
-                                    <textarea class="form-control" style="height: 100px" name="remark"></textarea><br>
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                                </form>
-                                @endforeach
-                            </div>
-                        </div>
-
-                    @else
                     <div class="col-lg-5">
                         <div class="card remark_card"  style="margin-bottom: 5px;border:1px solid lightgray;width:400px;">
                             <div class="card-body">
-                        @foreach($query as $item)
+
+                        <p class="card-title" style="font-size: 15px;line-height:2;">
+                        <font style="color:blue;">Document No:</font><br>
+                        {{ $getnonRemark->doc_no }}<hr>
+                        </p>
 
                         <p class="card-title" style="font-size: 15px;line-height:2;">
                         <font style="color:blue;">Branch</font><br>
-                        {{ $item->branch_name }} ({{ $item->branch_code }})<hr>
+                        {{ $getnonRemark->branch }}<hr>
                         </p>
 
                         <p class="card-title" style="font-size: 15px;line-height:2;">
                         <font style="color:blue;">Department</font><br>
-                        {{ $item->department }}<hr>
+                        {{ $getnonRemark->department }}<hr>
                         </p>
 
                         <p class="card-title" style="font-size: 15px;line-height:2;">
                             <font style="color:blue;">Rank</font><br>
-                            @if($remark!=null && $remark->asset_code)
-                            {{ $remark->rank }}
+                            @if( $getnonRemark!=null &&  $getnonRemark->doc_no)
+                            {{ $getnonRemark->rank }}
                             @endif
-                           <hr>
-                        </p>
-
-
+                            <hr>
+                            </p>
 
                         <p class="card-title" style="font-size: 15px;line-height:2;">
-                        <font style="color:blue;">Asset Type Name</font><br>
-                        {{ $item->asset_type_name }}<hr>
-                        </p>
-
-
-                        <p class="card-title" style="font-size: 15px;line-height:2;">
-                        <font style="color:blue;">Asset Code</font><br>
-                        {{ $item->asset_code }}<hr>
+                        <font style="color:blue;">Employee ID</font><br>
+                        {{ $getnonRemark->emp_id }}<hr>
                         </p>
 
                         <p class="card-title" style="font-size: 15px;line-height:2;">
-                        <font style="color:blue;">Asset Name</font><br>
-                        {{ $item->asset_name }}
+                        <font style="color:blue;">Name</font><br>
+                        {{ $getnonRemark->name }}<hr>
                         </p>
 
-                        @endforeach
+                        <p class="card-title" style="font-size: 15px;line-height:2;">
+                        <font style="color:blue;">Remark</font><br>
+                        {{ $getnonRemark->remark }}
+                        </p>
+
+
                     </div>
                     </div>
                 </div>
-                    @endif
-    </div>
+
      <div class="col-lg-7">
-        @if($remark!=null && $remark->asset_code)
+
+        @if($getnonRemark!=null && $getnonRemark->doc_no)
         <font style="float:right;"><i class="bi bi-plus-square-fill" style="color:#1c88fc;font-size:33px;" data-bs-toggle="modal" data-bs-target="#addoperator"></i></font>
         @endif
 
@@ -188,16 +110,17 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('operator-form') }}" method="POST">
+                    <form action="{{ route('operator-form-non') }}" method="POST">
                         @csrf
                     <div class="row">
                         <div class="col-lg-6">
-                            @if($remark!=null && $remark->asset_code)
-                        <input type="hidden" class="form-control asset_code" name="asset_code" value="{{ $remark->asset_code }}">
-                        <input type="hidden" class="form-control asset_code" name="department" value="{{ $item->department }}">
-                        <input type="hidden" class="form-control asset_code" name="asset_type" value="{{ $item->asset_type_name }}">
-                        <input type="hidden" class="form-control asset_code" name="asset_name" value="{{ $item->asset_name }}">
-                        <input type="hidden" class="form-control asset_code" name="branch" value="{{ $item->branch_name }}({{ $item->branch_code }})">
+                            @if($getnonRemark!=null && $getnonRemark->doc_no)
+                        <input type="hidden" class="form-control asset_code" name="doc_no" value="{{ $getnonRemark->doc_no }}">
+                        <input type="hidden" class="form-control asset_code" name="department" value="{{ $getnonRemark->department }}">
+                        <input type="hidden" class="form-control asset_code" name="emp_id" value="{{ $getnonRemark->emp_id }}">
+                        <input type="hidden" class="form-control asset_code" name="name" value="{{ $getnonRemark->name }}">
+
+                        <input type="hidden" class="form-control asset_code" name="branch" value="{{ $getnonRemark->branch }}">
                         @endif
                         <h5 class="card-title">Operator</h5>
                         <select class="form-select" aria-label="Default select example" name="operator[]" style="box-shadow:1px 1px 1px #333;" required>
@@ -232,7 +155,7 @@
         <br>
 
 
-            @foreach ($operators as $operator)
+            @foreach ($getnonOperator as $operator)
             <p class="card-title" style="color: #fff;">
             <span class="badge rounded-pill bg-primary" style="font-size: 15px;color:#fff;">{{ $operator->operator }}</span><br>
             <span class="badge rounded-pill bg-primary" style="font-size: 15px;color:#fff;">{{ $operator->phone }}</span>
@@ -251,16 +174,15 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title">Edit Operator</h5>
+                      <h5 class="modal-title">Edit Non Asset Code Operator</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('update_operator',$operator->id) }}" method="POST">
+                        <form action="{{ route('update_operator_non',$operator->id) }}" method="POST">
                             @csrf
                             @method("PUT")
 
                         <div class="row">
-
                             <div class="col-lg-6">
                             <h5 class="card-title">Operator</h5>
                             <select class="form-select" aria-label="Default select example" name="operator" style="box-shadow:1px 1px 1px #333;" required>
@@ -288,28 +210,29 @@
                 </div>
               </div><!-- End Vertically centered Modal-->
             @endforeach
-        @if($remark!=null && $remark->asset_code)
+        @if( $getnonRemark!=null &&  $getnonRemark->doc_no)
         <p style="font-size: 15px;color:#000;">Rank</p>
-        <span class="badge rounded-pill bg-primary" style="font-size: 15px;">{{ $remark->rank }}</span><br><br>
+        <span class="badge rounded-pill bg-primary" style="font-size: 15px;">{{  $getnonRemark->rank }}</span><br><br>
         <p style="font-size: 15px;color:#000;">Contract</p>
-        <span class="badge rounded-pill bg-primary" style="font-size: 15px;">{{ $remark->contract }}</span><br><br>
+        <span class="badge rounded-pill bg-primary" style="font-size: 15px;">{{  $getnonRemark->contract }}</span><br><br>
         <p style="font-size: 15px;color:#000;">Remark</p>
         <textarea class="form-control" style="height: 100px" name="remark"
-        id="remark{{ $remark->id }}" onblur="remarkUpdate({{ $remark->id }})">{{ $remark->remark }}</textarea><br>
+        id="remark{{  $getnonRemark->id }}" onblur="remarkUpdate({{  $getnonRemark->id }})">{{  $getnonRemark->remark }}</textarea><br>
 
-    @if($operators->count() <= 0 )
+
+    @if($getnonOperator->count() <= 0 )
 
     @if(Auth::user()->type=='superadmin')
         <i class="bi bi-x-circle btn btn-danger"
-        onclick='deleteRemark("{{ $remark->id }}")'style="font-size:10px;color:fff;width:80px;float:right;margin:5px;">
+        data-bs-toggle="modal" data-bs-target="#delnon{{ $getnonRemark->id }}" style="font-size:10px;color:fff;width:80px;float:right;margin:5px;">
         Delete</i>
         @endif
     @endif
-        <i data-bs-toggle="modal" data-bs-target="#editremark{{ $remark->id }}" class="bi bi-pencil-square btn btn-primary" style="font-size:10px;color:rgb(243, 244, 248);width:80px;float:right;cursor: pointer;margin:5px;">
+        <i data-bs-toggle="modal" data-bs-target="#editremark{{  $getnonRemark->id }}" class="bi bi-pencil-square btn btn-primary" style="font-size:10px;color:rgb(243, 244, 248);width:80px;float:right;cursor: pointer;margin:5px;">
             Edit</i>
         <hr>
 
-        <div class="modal fade" id="editremark{{ $remark->id }}" tabindex="-1">
+        <div class="modal fade" id="editremark{{  $getnonRemark->id }}" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
@@ -317,15 +240,16 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('update_contract',$remark->id) }}" method="POST">
+                    <form action="{{ route('update_contract_non', $getnonRemark->id) }}" method="POST">
                         @csrf
                         @method("PUT")
 
                     <div class="row">
+
                         <div class="col-lg-4">
                             <h5 class="card-title">Rank</h5>
                                             <select class="form-select" aria-label="Default select example" name="rank" style="box-shadow:1px 1px 1px #333;" required>
-                                            <option value="{{ $remark->rank }}" selected>{{ $remark->rank }}</option>
+                                            <option value="{{ $getnonRemark->rank }}" selected>{{ $getnonRemark->rank }}</option>
                                             <option value="R1">R1</option>
                                             <option value="R2">R2</option>
                                             <option value="R3">R3</option>
@@ -338,16 +262,17 @@
                                             </select></div>
                     <div class="col-lg-2">
                         <h5 class="card-title">Contract</h5>
-                        <span class="badge rounded-pill bg-primary" style="font-size: 15px;">{{ $remark->contract }}</span><br><br>
+                        <span class="badge rounded-pill bg-primary" style="font-size: 15px;">{{  $getnonRemark->contract }}</span><br><br>
 
-                        <input type="hidden" name="contract_edit" value="{{ $remark->contract }}">
-                        @if($remark->contract=='Yes')
+                        <input type="hidden" name="contract_edit" value="{{  $getnonRemark->contract }}">
+                        @if( $getnonRemark->contract=='Yes')
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="contract" id="gridRadios1" value="No">
                             <label class="form-check-label" for="contract">
                              No
                             </label>
                           </div>
+
                           @else
                           <div class="form-check">
                             <input class="form-check-input" type="radio" name="contract" id="gridRadios2" value="Yes">
@@ -360,7 +285,7 @@
 
                     <div class="col-lg-6">
                         <h5 class="card-title">Remark</h5>
-                        <textarea class="form-control" style="height: 100px" name="remark" >{{ $remark->remark }}</textarea>
+                        <textarea class="form-control" style="height: 100px" name="remark" >{{  $getnonRemark->remark }}</textarea>
                         </div>
                     </div>
 
@@ -379,6 +304,38 @@
 
      </div>
 
+     <div class="modal fade" id="delnon{{ $getnonRemark->id }}" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 col-12">
+                            <center>
+                                <img
+                                    src="https://img.icons8.com/external-kmg-design-outline-color-kmg-design/52/000000/external-warning-maps-navigation-kmg-design-outline-color-kmg-design.png" />
+                                <p style="color:#000;">Do you want to
+                                    delete?</p>
+                                <i class="bi bi-x-circle btn btn-danger"
+                                    onclick='deleteRecordnon("{{ $getnonRemark->id }}")'
+                                    style="font-size:20px;color:fff;width:200px;">
+                                    Yes, delete it!</i>
+                                <button type="button"
+                                    class="btn btn-light-secondary"
+                                    data-bs-dismiss="modal">
+                                    <i
+                                        class="bx bx-x d-block d-sm-none"></i>
+                                    <span
+                                        class="d-none d-sm-block">Cancel</span>
+                                </button>
+                            </center>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
     </div>
     </div>
      </div>
@@ -387,51 +344,48 @@
 </div>
 </section>
 
+
+
 @endsection
 @section('js')
 <script>
-function deleteRemark(id) {
-    Swal.fire({
-        title: 'Are you sure?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                url: "/remark/delete_remark/" + id,
-                type: 'get',
-                data: {
-                    "id": id,
-                },
-                success: function () {
-                    Swal.fire(
-                        'Deleted!',
-                        'The operator and phone and contract has been deleted.',
-                        'success'
-                    ).then(() => {
-                        window.location.reload();
-                    });
-                },
-                error: function () {
-                    Swal.fire(
-                        'Error!',
-                        'There was an error deleting the operator and phone and contract.',
-                        'error'
-                    );
-                }
-            });
+function deleteRecordnon(id) {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
+
+    $.ajax({
+        url: "/non-remark/delete_remark/" + id,
+        type: 'DELETE',
+        data: {
+            "id": id,
+        },
+        success: function (data) {
+            console.log('Success! Data deleted.');
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'The operator and phone and contract has been deleted.',
+                icon: 'success'
+            }).then(() => {
+                // Redirect to the URL provided in the JSON response after a delay
+                setTimeout(function() {
+                    window.location.href = data.redirect;
+                }, 1000);
+            });
+        },
+        error: function () {
+            console.log('Error! Unable to delete data.');
+            Swal.fire(
+                'Error!',
+                'There was an error deleting the operator and phone and contract.',
+                'error'
+            );
         }
+    });
+}
+
 </script>
 
 <script>
@@ -452,7 +406,7 @@ function deleteOperator(id) {
                 }
             });
             $.ajax({
-                url: "/operator/delete_operator/" + id,
+                url: "/non-operator/delete_operator/" + id,
                 type: 'get',
                 data: {
                     "id": id,

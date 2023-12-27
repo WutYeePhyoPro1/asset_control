@@ -5,17 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Operator extends Model
+class NonOperator extends Model
 {
     use HasFactory;
     protected $fillable=[
-        'asset_code',
+        'doc_no',
         'branch',
         'department',
-        'asset_type',
-        'asset_name',
         'operator',
         'phone',
     ];
-
 }

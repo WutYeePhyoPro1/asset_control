@@ -29,12 +29,13 @@
   <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
   <style>
     body{
+        /* background:url('assets/img/bglogin.png'); */
         background:url('assets/img/bglogin.png');
         background-position: fix;
         background-repeat: no-repeat;
         background-size: cover;
         background-attachment: fixed;
-        
+
     }
 </style>
 
@@ -51,16 +52,16 @@
             <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
 
               <div class="d-flex justify-content-center py-4">
-              
+
               </div><!-- End Logo -->
 
               <div class="card mb-3">
 
                 <div class="card-body">
-      
+
                   <div class="pt-4 pb-2">
                   <center>
-                <img src="{{asset('assets/img/logo.png')}}" alt="Pro 1 Global Home Center" class="img-fluid" style="width:100px;margin:10px;"></center> 
+                <img src="{{asset('assets/img/logo.png')}}" alt="Pro 1 Global Home Center" class="img-fluid" style="width:100px;margin:10px;"></center>
                     <h5 class="card-title text-center pb-0 fs-4" style="font-size: 18px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">Asset Control System</h5>
                     <p class="text-center small" style="font-size: 13px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">Login to Your Account</p>
                   </div>
@@ -94,14 +95,14 @@
                     <div class="col-12">
                       <button class="btn btn-primary w-100" type="submit" style="font-size: 15px; font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">Login</button>
                     </div>
-                    
+
                   </form>
 
                 </div>
               </div>
 
               <div class="credits">
-          
+
               </div>
 
             </div>

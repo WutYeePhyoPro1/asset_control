@@ -78,7 +78,11 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title">All Operators</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import_operator" type="button">
+                        <font class="card-title" style="color:#fff;font-size: 13px;">
+                        <i class="ri-file-excel-2-line" style="font-size: 12px;"></i> Excel Import</font></button>
+
                     </div>
                     <div class="modal-body">
                         <form id="clear">
@@ -97,11 +101,9 @@
                         <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department</label>
                         <select class="form-select column_filteropera" aria-label="Default select example" id="col2_filteropera" name="department">
                             <option value="">Select Your Department</option>
-
                                 @foreach($departments as $department)
                                 <option value="{{$department->name}}">{{$department->name}}</option>
                                 @endforeach
-
                         </select>
                     </div>
 
@@ -109,10 +111,8 @@
                         <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Asset Type</label>
                         <select class="form-select column_filteropera" aria-label="Default select example" id="col3_filteropera" name="department">
                             <option value="">Select Your Asset Type</option>
-
                                 <option value="Laptop">Laptop</option>
                                 <option value="Handset">Handset</option>
-
                         </select>
                     </div>
 
@@ -137,7 +137,6 @@
                         <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Operator</label>
                         <select class="form-select column_filteropera" aria-label="Default select example" id="col6_filteropera" name="department">
                             <option value="">Select Your Operator</option>
-
                             <option value="ATOM">ATOM</option>
                             <option value="Ooredoo">Ooredoo</option>
                             <option value="MPT">MPT</option>
@@ -201,13 +200,13 @@
                                   </td>
                                   <td>
 
-                                      @foreach(getRemark1($data->asset_code) as $remark)
+                                      @foreach(getRemark208($data->asset_code) as $remark)
                                           {{ $remark->contract }}
                                       @endforeach
                                   </td>
                                   <td>
 
-                                      @foreach(getRemark1($data->asset_code) as $remark)
+                                      @foreach(getRemark208($data->asset_code) as $remark)
                                           {{ $remark->remark }}
                                       @endforeach
                                   </td>
@@ -278,20 +277,14 @@
                         </select>
                     </div>
 
-                    <div class="col-md-3" id="filter_col3" data-column="3">
-                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Clear</label>
-                        <a class="nav-link collapsed" href="{{route('laptop_asset_code.fix_asset')}}">
-                        <button class="btn btn-primary" style="font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">All</button>
-                        </a>
+                    <div class="col-md-3" id="filter_col4" data-column="4">
+                        <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code </label>
+                        <input type="text" class="form-control column_filter" placeholder="Enter Asset Code" id="col4_filter" style="border:1px solid #0d0d0e;">
                     </div>
+
 
 <br><br>
             <div class="row"  style="text-wrap: nowrap">
-
-                <div class="col-md-3" id="filter_col4" data-column="4">
-                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code </label>
-                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Code" id="col4_filter" style="border:1px solid #0d0d0e;">
-                </div>
 
                 <div class="col-md-3" id="filter_col5" data-column="5">
                     <label class="form-label card-title" style="font-size: 15px;">Asset Name</label>
@@ -299,8 +292,20 @@
                 </div>
 
                 <div class="col-md-3" id="filter_col6" data-column="6">
-                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Operator</label>
+                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Status</label>
                     <select class="form-select column_filter" aria-label="Default select example" id="col6_filter" name="department">
+                        <option value="">Status</option>
+                        <option value="Ongoing">Ongoing</option>
+                        <option value="Transfered">Transfered</option>
+                        <option value="Sold">Sold</option>
+                        <option value="Cancel">Cancel</option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-3" id="filter_col7" data-column="7">
+                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Operator</label>
+                    <select class="form-select column_filter" aria-label="Default select example" id="col7_filter" name="department">
                         <option value="">Select Your Operator</option>
 
                         <option value="ATOM">ATOM</option>
@@ -311,14 +316,22 @@
                     </select>
                 </div>
 
-                <div class="col-md-3" id="filter_col7" data-column="7">
+                <div class="col-md-3" id="filter_col8" data-column="8">
                     <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Contract</label>
-                    <select class="form-select column_filter" aria-label="Default select example" id="col7_filter" name="department">
+                    <select class="form-select column_filter" aria-label="Default select example" id="col8_filter" name="department">
                         <option value="">Select Your Contract</option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>
                     </select>
                 </div>
+
+                <div class="col-md-3" id="filter_col3" data-column="3">
+                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Clear</label>
+                    <a class="nav-link collapsed" href="{{route('laptop_asset_code.fix_asset')}}">
+                    <button class="btn btn-primary" style="font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">All</button>
+                    </a>
+                </div>
+
 
             </div>
         </form>
@@ -338,6 +351,7 @@
                     <th scope="col">Asset Type Name</th>
                     <th scope="col">Asset Code</th>
                     <th scope="col">Asset Name</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Operator/Phone</th>
                     <th scope="col">Contract</th>
                     <th scope="col">Remark</th>
@@ -361,6 +375,9 @@
 
                     </td>
                     <td>{{ $data->asset_name }}</td>
+
+                    <td>{{ $data->status }}</td>
+
                     <td>
                         @foreach ( getOperator($data->asset_code) as $operator)
                        {{ $operator->operator }}
@@ -369,13 +386,13 @@
                     </td>
                     <td>
 
-                        @foreach(getRemark1($data->asset_code) as $remark)
+                        @foreach(getRemark208($data->asset_code) as $remark)
                             {{ $remark->contract }}
                         @endforeach
                     </td>
                     <td>
 
-                        @foreach(getRemark1($data->asset_code) as $remark)
+                        @foreach(getRemark208($data->asset_code) as $remark)
                             {{ $remark->remark }}
                         @endforeach
                     </td>
@@ -445,7 +462,6 @@
 
                   </div>
                   <div class="col-md-8">
-
                       <div class="remarks-container">
                       </div>
                   </div>
@@ -455,11 +471,51 @@
           </div>
           <div class="modal-footer">
             <button type="button" id="closeModalBtn" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
-
           </div>
         </div>
       </div>
   </div>
+
+  <!--------------------------------excel import-------------------------------------------------------------->
+  <div class="modal fade" id="import_operator" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" style="font-weight: 500;color: #012970;font-family: Poppins, sans-serif;"><i class="ri-file-excel-2-line" style="font-size: 20px;"></i> Excel Import</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h5 style="font-size:15px;;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
+          <a href="{{asset('assets/img/operatorImportsample.xlsx')}}" download><u>Download Sample Excel File</u></a></h5>
+          <form action="{{route('assetoperator.import')}}" class="needs-validation" method="POST" enctype="multipart/form-data" novalidate>
+            @csrf
+       <br>
+        <label for="my_import">
+
+        <i class="bi bi-upload btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Employee asset code import excel click the button."></i>
+
+        </label>
+        <input type="file" id="my_import" style="display: none;" name="file" required />
+        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+            Please import your excel file.
+        </div>
+
+        <div id="file_name" class="file-name" style="font-size: 13px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;margin-top:10px;"></div>
+
+        <!-- <div id="excel_preview" class="excel-preview"></div> -->
+
+        <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
+
+        </div>
+        <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Import</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Close</button>
+
+        </form>
+        </div>
+      </div>
+    </div>
+  </div><!-- End Vertically centered Modal-->
 </section>
 <style>
 
@@ -478,6 +534,26 @@
 
         });
     });
+
+    $("input[type='file']").change(function() {
+    var fileInput = $(this)[0];
+    var imagePreview = $("#image_preview")[0];
+
+    if (fileInput.files && fileInput.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            imagePreview.innerHTML = '<img src="' + e.target.result + '" style="max-width: 100%; max-height: 100%;">';
+        };
+
+        reader.readAsDataURL(fileInput.files[0]);
+        var fileName = fileInput.files[0].name;
+        $("#file_name").text(fileName);
+    } else {
+        imagePreview.innerHTML = ''; // Clear the image preview
+        $("#file_name").text(""); // Clear the file name
+    }
+});
 </script>
 <script>
     $(document).on('click','#asset_code',function () {

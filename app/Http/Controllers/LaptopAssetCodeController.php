@@ -7,6 +7,8 @@ use App\Models\Department;
 use App\Models\LaptopAssetCode;
 use App\Models\Assetfile;
 use App\Models\AssetType;
+use App\Models\NonOperator;
+use App\Models\NonRemark;
 use App\Models\Remark;
 use App\Models\Operator;
 use Carbon\Carbon;
@@ -509,28 +511,34 @@ class LaptopAssetCodeController extends Controller
         $departments=Department::all();
         $branches=Branch::all();
         $query = "SELECT
-            fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
-            fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date, fxdt.fxstatus AS status
-            FROM asset.fxassetdetail fxdt
-            LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
-            LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
-            LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
-            LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
-            LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
-            LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
-            LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
-            WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
-            ORDER BY purchase_date";
+        fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+        fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
+        case
+        when fxdt.fxstatus = 'C' then 'Cancelled'
+        when fxdt.fxstatus = 'T' then 'Transfered'
+        when fxdt.fxstatus = 'S' then 'Sold'
+        else 'Ongoing'
+        end AS status
+        FROM asset.fxassetdetail fxdt
+        LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+        LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+        LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+        LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+        LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+        LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+        LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+        WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
+        ORDER BY purchase_date";
 
         $fix_assets = collect($conn->select($query));
-
+        // $remarks11 = Remark::where(['asset_code' => $asset_code])->first();
         // $remark = getRemark($asset_code);
         // $operators = getOperator($asset_code);
 
+        // dd($fix_assets);
         $operators=Operator::all();
         return view('laptop_asset_code.fix_asset', compact('fix_assets','departments','branches','operators'));
     }
-
 
     public function reMark(Request $request)
     {
@@ -543,6 +551,7 @@ class LaptopAssetCodeController extends Controller
 
         Remark::create([
             'asset_code' => $request->input('asset_code'),
+            'rank' => $request->input('rank'),
             'contract' => $request->input('contract'),
             'remark' => $request->input('remark'),
         ]);
@@ -551,11 +560,13 @@ class LaptopAssetCodeController extends Controller
             $addasset = [
                 'asset_code' => $asset_code,
                 'department' => $department,
-                'branch' => $branch,
+                'branch'     => $branch,
                 'asset_name' => $asset_name,
                 'asset_type' => $asset_type,
-                'operator' => $request->operator[$i],
-                'phone' => $request->phone[$i],
+                'operator'   => $request->operator[$i],
+                'phone'      => $request->phone[$i],
+                'created_at' => now(),
+                'updated_at' => now(),
 
             ];
 
@@ -583,6 +594,8 @@ class LaptopAssetCodeController extends Controller
                 'asset_type' => $asset_type,
                 'operator' => $request->operator[$i],
                 'phone' => $request->phone[$i],
+                'created_at' => now(),
+                'updated_at' => now(),
             ];
 
             DB::table('operators')->insert($addasset);
@@ -720,6 +733,7 @@ class LaptopAssetCodeController extends Controller
 
     }
 
+
     public function update_contract(Request $request, $id) {
         $updatecon = Remark::find($id);
 
@@ -734,10 +748,173 @@ class LaptopAssetCodeController extends Controller
             $updatecon->contract = $request->contract_edit;
         }
 
+        $updatecon->rank = $request->rank;
         $updatecon->remark = $request->remark;
         $updatecon->save();
 
         return back()->with('success', 'Successfully updated.');
+    }
+
+
+    public function non_asset_operator(){
+        $nonoperators=NonOperator::all();
+        $departments=Department::all();
+        $branches=Branch::all();
+        return view('laptop_asset_code.nonasset_operator',compact('nonoperators','branches','departments'));
+    }
+
+    public function nonasset_operator_create(){
+        $departments=Department::all();
+        $branches=Branch::all();
+        return view('laptop_asset_code.nonasset_op_create',compact('departments','branches'));
+    }
+
+    public function NonOpCreate(Request $request)
+    {
+
+        // dd($request->all());
+        $date = Carbon::parse($request->date)->format('Ymd');
+
+
+        $today = NonRemark::whereDate('created_at', Carbon::today())->distinct('doc_no')->get();
+        $suffix = $today->isEmpty() ? 1 : $today->count() + 1;
+
+        $data = sprintf("%'.04d", $suffix);
+
+        $doc_no = 'NASOP' . $date . '-' . $data;
+        // dd($doc_no);
+
+        $nonremark = NonRemark::create([
+            'doc_no' => $doc_no,
+            'emp_id' => $request->emp_id,
+            'branch' => $request->branch,
+            'department' => $request->department,
+            'name' => $request->name,
+            'contract' => $request->contract,
+            'remark' => $request->remark,
+            'rank' => $request->rank,
+            'date' => $request->date,
+        ]);
+
+
+        $operators = $request->operator;
+        $phones = $request->phone;
+
+        foreach ($phones as $i => $phone) {
+            $addnon = [
+                'doc_no' => $nonremark->doc_no,
+                'branch' => $nonremark->branch,
+                'department' => $nonremark->department,
+                'operator' => $operators[$i],
+                'phone' => $phone,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+
+
+            NonOperator::create($addnon);
+        }
+
+        return redirect('detail_non_asset_code/'.$nonremark->doc_no);
+    }
+
+    public function deletRecordNon($id){
+        // dd('hi');
+        NonOperator::find($id)->delete($id);
+        return back()->with('success','Successfully Deleted.');
+
+    }
+
+    public function getEditnonOp($doc_no){
+
+        $getnonRemark=getnonRemark($doc_no);
+        $getnonOperator=getnonOperator($doc_no);
+        return view('laptop_asset_code.nonasset_operator_detail',compact('getnonOperator','getnonRemark'));
+    }
+
+    public function OpNonNew(Request $request)
+    {
+        // dd($request->all());
+        $doc_no = $request->doc_no;
+        $phone = $request->phone;
+        $name = $request->name;
+        $department = $request->department;
+        $branch = $request->branch;
+
+        for ($i = 0; $i < count($request->phone); $i++) {
+            $addnon = [
+                'doc_no' => $doc_no,
+                'department' => $department,
+                'branch' => $branch,
+                'operator' => $request->operator[$i],
+                'phone' => $request->phone[$i],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+
+            DB::table('non_operators')->insert($addnon);
+        }
+
+        return back()->with('success', 'Data inserted successfully!');
+    }
+
+    public function update_operator_non(Request $request,$id){
+        $updateop=NonOperator::find($id);
+        $updateop->operator=$request->operator;
+        $updateop->phone=$request->phone;
+        $updateop->update();
+        return back()->with('success','Successfully your updated.');
+    }
+
+
+    public function update_contract_non(Request $request, $id) {
+        $updatecon = NonRemark::find($id);
+
+        if (!$updatecon) {
+            return back()->with('error', 'Record not found.');
+        }
+
+        if ($request->contract === 'No' || $request->contract === 'Yes') {
+            $updatecon->contract = $request->contract;
+        } else {
+
+            $updatecon->contract = $request->contract_edit;
+        }
+
+        $updatecon->rank = $request->rank;
+        $updatecon->remark = $request->remark;
+        $updatecon->save();
+
+        return back()->with('success', 'Successfully updated.');
+    }
+
+    public function deletRemarknon($id)
+    {
+
+        // dd('hi');
+        $remark = NonRemark::find($id);
+
+        if ($remark) {
+            $remark->delete();
+            return response()->json(['message' => 'Successfully Deleted', 'redirect' => route('laptop_asset_code.nonasset_operator')], 200);
+        }
+
+        return response()->json(['message' => 'Record not found'], 404);
+    }
+
+
+    public function deleteOperatornon($id)
+    {
+        $operator = NonOperator::find($id);
+
+        // dd($operator);
+
+        if ($operator) {
+            $operator->delete();
+            return response()->json(['message' => 'Successfully Deleted'], 200);
+        } else {
+            return response()->json(['message' => 'Operator not found'], 404);
+        }
     }
 
 
