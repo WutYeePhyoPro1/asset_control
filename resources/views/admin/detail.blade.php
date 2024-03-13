@@ -176,13 +176,14 @@
                         <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Department</label>
 
                         <select class="form-select mb-3" aria-label=".form-select-lg example" name="department" style="box-shadow:1px 1px 1px #333;" required>
-                        <option value="System Development" {{$user->status=='System Development'?'selected':''}}>System Development</option>
-                        <option value="HR" {{$user->status=='HR'?'selected':''}}>HR</option>
+                        <option value="System Development" {{$user->department=='System Development'?'selected':''}}>System Development</option>
+                        <option value="HR" {{$user->department=='HR'?'selected':''}}>HR</option>
                         </select>
 
                         <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                         Please enter your department.
                         </div>
+
                         </div>
 
                         <div class="col-md-6 col-lg-6">
@@ -202,10 +203,16 @@
                         <div class="col-md-6 col-lg-6">
                         <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Status</label>
 
+                        @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Admin' )
+                        <input type="hidden" name="status" value="{{ $user->status }}" class="form-control" style="box-shadow:1px 1px 1px #333;">
+                        <input type="text" value="{{ $user->status=='1'?'Active':'Inactive' }}" class="form-control" style="box-shadow:1px 1px 1px #333;" readonly>
+                        @else
                         <select class="form-select mb-3" aria-label=".form-select-lg example" name="status" style="box-shadow:1px 1px 1px #333;" required>
                         <option value="1" {{$user->status=='1'? 'selected':''}}>Active</option>
                         <option value="0" {{$user->status=='0'? 'selected':''}}>Inactive</option>
                         </select>
+
+                        @endif
                         <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                          Please select user status.
                         </div>
@@ -213,6 +220,10 @@
 
                         <div class="col-md-6 col-lg-6">
                         <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">User Type</label>
+
+                        @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Admin' )
+                        <input type="text" value="{{ $user->type}}" name="type" class="form-control" style="box-shadow:1px 1px 1px #333;" readonly>
+                        @else
                         <select class="form-select mb-3" aria-label=".form-select-lg example" name="type" style="box-shadow:1px 1px 1px #333;" required>
                         <option value="admin" {{$user->type=='admin'?'selected':''}}>Admin</option>
                         <option value="superadmin" {{$user->type=='superadmin'?'selected':''}}>Superadmin</option>
@@ -220,6 +231,8 @@
                         <option value="Manager" {{$user->type=='Manager'?'selected':''}}>Manager</option>
                         @endif
                         </select>
+                        @endif
+
 
                         <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                             Please select your user type.

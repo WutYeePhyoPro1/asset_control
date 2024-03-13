@@ -254,10 +254,10 @@
           <form id="clear" style="margin-top: 20px;">
             <div class="row"  style="text-wrap: nowrap">
 
-                    <div class="col-md-3" id="filter_col1" data-column="1">
+                    <div class="col-md-3" id="filter_col2" data-column="2">
 
                     <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Branch</label>
-                    <select class="form-select column_filter" id="col1_filter" name="branchcode">
+                    <select class="form-select column_filter" id="col2_filter" name="branchcode">
                             <option value="">Select Your Branch</option>
                             @foreach($branches as $branch)
                             <option value="{{$branch->branch_name}} ({{$branch->branch_code}})">{{$branch->branch_name}} ({{$branch->branch_code}})</option>
@@ -266,9 +266,9 @@
 
                     </div>
 
-                    <div class="col-md-3" id="filter_col2" data-column="2">
+                    <div class="col-md-3" id="filter_col3" data-column="3">
                         <label for="validationCustom03" class="form-label card-title" style="font-size: 15px;">Department</label>
-                        <select class="form-select column_filter" aria-label="Default select example" id="col2_filter" name="department">
+                        <select class="form-select column_filter" aria-label="Default select example" id="col3_filter" name="department">
                             <option value="">Select Your Department</option>
 
                                 @foreach($departments as $department)
@@ -278,59 +278,49 @@
                         </select>
                     </div>
 
-                    <div class="col-md-3" id="filter_col3" data-column="3">
+                    <div class="col-md-3" id="filter_col4" data-column="4">
                         <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Asset Type</label>
-                        <select class="form-select column_filter" aria-label="Default select example" id="col3_filter" name="department">
+                        <select class="form-select column_filter" aria-label="Default select example" id="col4_filter" name="department">
                             <option value="">Select Your Asset Type</option>
-
                                 <option value="Laptop">Laptop</option>
                                 <option value="Handset">Handset</option>
 
                         </select>
                     </div>
 
-                    <div class="col-md-3" id="filter_col4" data-column="4">
+                    <div class="col-md-3" id="filter_col5" data-column="5">
                         <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Asset Code </label>
-                        <input type="text" class="form-control column_filter" placeholder="Enter Asset Code" id="col4_filter" style="border:1px solid #0d0d0e;">
+                        <input type="text" class="form-control column_filter" placeholder="Enter Asset Code" id="col5_filter" style="border:1px solid #0d0d0e;">
                     </div>
 
 
 <br><br>
             <div class="row"  style="text-wrap: nowrap">
 
-                <div class="col-md-3" id="filter_col5" data-column="5">
+                <div class="col-md-3" id="filter_col6" data-column="6">
                     <label class="form-label card-title" style="font-size: 15px;">Asset Name</label>
-                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Name" id="col5_filter" style="border:1px solid #1c1c1d;">
+                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Name" id="col6_filter" style="border:1px solid #1c1c1d;">
                 </div>
 
-                <div class="col-md-3" id="filter_col6" data-column="6">
+                <div class="col-md-3" id="filter_col7" data-column="7">
                     <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Status</label>
-                    <select class="form-select column_filter" aria-label="Default select example" id="col6_filter" name="department">
+                    <select class="form-select column_filter" aria-label="Default select example" id="col7_filter" name="department">
                         <option value="">Status</option>
                         <option value="Ongoing">Ongoing</option>
                         <option value="Transfered">Transfered</option>
                         <option value="Sold">Sold</option>
                         <option value="Cancel">Cancel</option>
-
-                    </select>
-                </div>
-
-                <div class="col-md-3" id="filter_col7" data-column="7">
-                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Operator</label>
-                    <select class="form-select column_filter" aria-label="Default select example" id="col7_filter" name="department">
-                        <option value="">Select Your Operator</option>
-
-                        <option value="ATOM">ATOM</option>
-                        <option value="Ooredoo">Ooredoo</option>
-                        <option value="MPT">MPT</option>
-                        <option value="Mytel">Mytel</option>
-
                     </select>
                 </div>
 
                 <div class="col-md-3" id="filter_col8" data-column="8">
+                    <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Operator or Phone No:</label>
+                    <input type="text" class="form-control column_filter" placeholder="Enter Asset Name" id="col8_filter" style="border:1px solid #1c1c1d;">
+                </div>
+
+                <div class="col-md-3" id="filter_col8" data-column="9">
                     <label for="validationCustom05" class="form-label card-title" style="font-size: 15px;">Select Contract</label>
-                    <select class="form-select column_filter" aria-label="Default select example" id="col8_filter" name="department">
+                    <select class="form-select column_filter" aria-label="Default select example" id="col9_filter" name="department">
                         <option value="">Select Your Contract</option>
                         <option value="Yes">Yes</option>
                         <option value="No">No</option>

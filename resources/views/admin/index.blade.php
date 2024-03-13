@@ -90,11 +90,22 @@
                     </div>
 
                     <div class="col-md-2 col-lg-2">
+                        <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">Branch</label>
+                    <select class="form-select column_filter" id="branc_id" name="branch">
+                        <option value="">Select Your Branch</option>
+                        @foreach($branches as $branch)
+                        <option value="{{$branch->id}}">{{$branch->branch_name}} ({{$branch->branch_code}})</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                    <div class="col-md-2 col-lg-2">
                     <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">User Type</label>
                     <select class="form-select mb-3" id="type" name="type" style="box-shadow:1px 1px 1px #333;">
                         <option value="" selected>Select Your User Type</option>
                         <option value="admin">Admin</option>
                         <option value="superadmin">Superadmin</option>
+                        <option value="Manager">Manager</option>
                         </select>
                     </div>
 
@@ -441,6 +452,11 @@ $('#type').select2({
 $('#status').select2({
     theme       : 'bootstrap-5',
     placeholder : 'Choose Your user status',
+});
+
+$('#branc_id').select2({
+    theme       : 'bootstrap-5',
+    placeholder : 'Choose Your user Branch',
 });
 
 });

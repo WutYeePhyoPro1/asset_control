@@ -91,6 +91,7 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $request->validate([
             'profile' => 'mimes:jpeg,jpg,png,gif,webp|max:3300',
         ], [
@@ -146,13 +147,17 @@ class UserController extends Controller
     {
 
         $query = User::query();
-
+        $branches=Branch::all();
         if ($request->filled('username')) {
             $query->where('name', 'LIKE', '%' . $request->input('username') . '%');
         }
 
         if ($request->filled('empcode')) {
             $query->where('emp_code', 'LIKE', '%' . $request->input('empcode') . '%');
+        }
+
+        if ($request->filled('branch')) {
+            $query->where('branch_id', 'LIKE', '%' . $request->input('branch') . '%');
         }
 
         if ($request->filled('department')) {
@@ -170,7 +175,7 @@ class UserController extends Controller
         $users = $query->latest()->paginate(20);
         // $datas->appends($request->all());
 
-        return view('admin.index', compact('users'));
+        return view('admin.index', compact('users','branches'));
     }
 
     public function changePassword(Request $request,$id){
