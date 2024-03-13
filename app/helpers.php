@@ -17,6 +17,7 @@ function getRemark208($asset_co)
     return $remarks;
 }
 
+
 function getRemark1($asset_co)
 {
     $remarks = Remark::where(['asset_code' => $asset_co])->get();

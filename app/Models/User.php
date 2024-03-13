@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use App\Models\{Branch,Department};
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'profile',
         'type',
+        'branch_id',
     ];
 
     /**
@@ -46,4 +47,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function branches()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id')->withDefault();
+    }
+    public function getBranch()
+    {
+        return $this->hasOne(Branch::class,'id','branch_id');
+    }
 }

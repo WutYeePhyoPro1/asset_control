@@ -133,7 +133,7 @@
         </a>
       </li><!-- End Components Nav -->
 
-      @if(Auth::user()->type=='superadmin')
+      @if(Auth::user()->type=='Manager')
       <li class="nav-heading"><hr></li>
 
       <li class="nav-item">

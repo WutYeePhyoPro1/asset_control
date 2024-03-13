@@ -3,7 +3,7 @@
     <div class="pagetitle">
       <h1>Employee Asset Control System</h1><br>
       <nav>
-    
+
         <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{route('home')}}" style="color:#000;">Dashboard</a></li>
         <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.index')}}" style="color:#000;">Asset</a></li>
@@ -42,14 +42,14 @@
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              
+
             <h5 class="card-title">User Accounts</h5>
 
 
 <!-- Default Tabs -->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true"> 
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
             <font class="card-title" style="font-size: 15px;">User Accounts</font></button>
         </li>
         <li class="nav-item" role="presentation">
@@ -65,11 +65,11 @@
             <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <div class="card">
                 <div class="card-body"><br>
-                
+
 <form method="POST" action="{{route('all_user.search')}}">
               @csrf
             <div class="row g-3">
-        
+
                     <div class="col-md-2 col-lg-2">
                       <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">User Name</label>
                       <input type="text" class="form-control" id="validationCustom01" name="username"  style="box-shadow:1px 1px 1px #333;">
@@ -102,8 +102,8 @@
                     <label for="validationCustom01" class="form-label card-title" style="font-size: 12px;padding:0px;">Status</label>
                         <select class="form-select mb-3"  name="status" id="status" style="box-shadow:1px 1px 1px #333;">
                         <option value="" selected>Select Your Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
                         </select>
                     </div>
 
@@ -124,6 +124,7 @@
                     <th scope="col">User Name</th>
                     <th scope="col">Employee ID</th>
                     <th scope="col">Department</th>
+                    <th scope="col">Branch</th>
                     <th scope="col">User Type</th>
                     <th scope="col">Status</th>
                     <th scope="col">Created at</th>
@@ -144,8 +145,11 @@
                     <td><a href="{{route('all_user.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->name}}</a></td>
                     <td><a href="{{route('all_user.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->emp_code}}</a></td>
                     <td><a href="{{route('all_user.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->department}}</a></td>
+                    <td><a href="{{route('all_user.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->branches->branch_name}}</a></td>
                     <td><a href="{{route('all_user.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->type}}</a></td>
-					<td><a href="{{route('all_user.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->status}}</a></td>
+					<td><a href="{{route('all_user.show',$data->id)}}" style="text-decoration:none;color:#000">
+                        {{$data->status=='1'? 'Active':'Inactive'}}
+                    </a></td>
                     <td>{{$data->created_at}}</td>
                     <td>{{$data->updated_at}}</td>
                   </tr>
@@ -192,7 +196,7 @@
            <p class="card-title">
            {{$users->links('pagination::bootstrap-5')}}
            </p>
-                 
+
               </div>
                 </div>
                 </div>
@@ -205,7 +209,7 @@
                     <div class="col-md-3 col-lg-3"></div>
                     <div class="col-md-6 col-lg-6">
                     <div class="card">
-                   
+
                     <div class="card-body"><br>
                         <div class="row g-3">
                         <div class="col-md-12 col-lg-12">
@@ -224,9 +228,9 @@
                         <div id="image_preview" style="width: 100px;"></div>
                         <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
                         </div>
-                
+
                         </div>
-        
+
                         </div>
                         </div>
 
@@ -239,7 +243,7 @@
                         <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                             Please enter your user name.
                         </div>
-                     
+
                         </div>
 
                         <div class="col-md-6 col-lg-6">
@@ -260,17 +264,32 @@
 
                         <div class="col-md-6 col-lg-6">
                         <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Department</label>
-                      
+
                         <select class="form-select mb-3" aria-label=".form-select-lg example" name="department" style="box-shadow:1px 1px 1px #333;" required>
                         <option value="" selected>Select Your Department</option>
                         <option value="System Development">System Development</option>
                         <option value="HR">HR</option>
                         </select>
-                    
+
                         <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                        Please enter your department.
+                        Please Select your department.
                         </div>
                         </div>
+
+                        <div class="col-md-6 col-lg-6">
+                            <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Branch</label>
+
+                            <select class="form-select mb-3" aria-label=".form-select-lg example" name="branch_id" style="box-shadow:1px 1px 1px #333;" required>
+                            <option value="" selected>Select Your Branch</option>
+                            @foreach ($branches as $branch)
+                            <option value="{{$branch->id}}" selected>{{$branch->branch_name}}</option>
+                            @endforeach
+                            </select>
+
+                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                            Please Select your branch.
+                            </div>
+                            </div>
 
                         <div class="col-md-6 col-lg-6">
                         <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">User Type</label>
@@ -278,12 +297,27 @@
                         <option value="" selected>Select Your User Type</option>
                         <option value="admin">Admin</option>
                         <option value="superadmin">Superadmin</option>
+                        <option value="Manager">Manager</option>
                         </select>
-                   
+
                         <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
                             Please select your user type.
                         </div>
                         </div>
+
+
+                        <div class="col-md-6 col-lg-6">
+                            <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Status</label>
+
+                            <select class="form-select mb-3" aria-label=".form-select-lg example" name="status" style="box-shadow:1px 1px 1px #333;" required>
+                            <option value="" selected>Select Your Status</option>
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                            </select>
+                            <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
+                             Please select user status.
+                            </div>
+                            </div>
 
                         <div class="col-md-6 col-lg-6">
                         <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Password</label>
@@ -311,31 +345,17 @@
                         </div> -->
                         </div>
 
-                        
-                        <div class="col-md-6 col-lg-6">
-                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Status</label>
-                      
-                        <select class="form-select mb-3" aria-label=".form-select-lg example" name="status" style="box-shadow:1px 1px 1px #333;" required>
-                        <option value="" selected>Select Your Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                        </select>
-                        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                         Please select user status.
-                        </div>
-                        </div>
-
 
                         <div class="col-md-6 col-lg-6" style="padding-top: 65px;">
-                     
+
                         <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 15px;">Save</font></button>
                         <button class="btn btn-warning" type="reset"> <font class="card-title" style="color:#fff;font-size: 15px;">Cancel</font></button>
                         </div>
 
                         </div>
-                      
+
                     </div>
-            
+
                     </div>
                     </div>
                     <div class="col-md-3 col-lg-3"></div>
@@ -376,7 +396,7 @@
                 url: "/all_user/delete_record/" + id,
                 type: 'DELETE',
                 data: {
-                  
+
                     "id": id,
                 }
             });

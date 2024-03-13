@@ -181,6 +181,7 @@
 
                                 <tr style="text-wrap: nowrap;cursor: pointer;">
                                   <td scope="row">{{$no}}.</td>
+
                                   <td>
                                       <a href="{{ route('detail_fixasset',$data->asset_code) }}">
                                       {{ $data->branch }}</a>
@@ -233,9 +234,20 @@
                 <div class="row">
                     <div class="col-md-10"></div>
                     <div class="col-md-2">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ExtralargeModal" style="margin: 10px;">
-                    All Operators
-                    </button></div>
+                        <br>
+                        @if (Auth::user()->type=='Manager')
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ExtralargeModal" style="margin: 10px;">
+                            All Operators
+                            </button>
+
+                        @else
+
+                      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import_operator" type="button">
+                        <font class="card-title" style="color:#fff;font-size: 13px;">
+                        <i class="ri-file-excel-2-line" style="font-size: 12px;"></i> Excel Import</font></button>
+                        @endif
+
+                </div>
                 </div>
 
 
@@ -346,6 +358,7 @@
 
                   <tr class="table-primary" style="text-wrap: nowrap">
                     <th scope="col">No</th>
+                    <th scope="col">Action</th>
                     <th scope="col">Branch Name</th>
                     <th scope="col">Department</th>
                     <th scope="col">Asset Type Name</th>
@@ -364,6 +377,9 @@
 
                   <tr style="text-wrap: nowrap;cursor: pointer;">
                     <td scope="row">{{$no}}.</td>
+                    <td scope="row">
+                        <center><a href="{{ route('detail_fixasset',$data->asset_code) }}"><i class="bi bi-eye-fill pointer"></i></a></center>
+                        </td>
                     <td>
                         <a href="{{ route('detail_fixasset',$data->asset_code) }}">
                         {{ $data->branch_name }} ({{ $data->branch_code }})</a>

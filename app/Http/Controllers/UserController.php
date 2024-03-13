@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Department;
 use App\Models\LaptopAssetCode;
 use App\Models\User;
@@ -16,9 +17,10 @@ class UserController extends Controller
      */
     public function index()
     {
-       
+
         $users = User::latest()->paginate(10);
-        return view('admin.index', compact('users'));
+        $branches =Branch::all();
+        return view('admin.index', compact('users','branches'));
     }
 
     /**
@@ -43,9 +45,10 @@ class UserController extends Controller
             'status'=>'required',
             'password' => 'required|confirmed',
             'type'=>'required',
+            'branch_id'=>'required',
         ],['emp_code'=>'Employee ID has already been taken.']
     );
-        
+
 
         $file=rand(0,999999)."_".$request->file('profile')->getClientOriginalName();
         $pathfile= Storage::putFileAs('public/profile',$request->file('profile'),$file);
@@ -57,8 +60,9 @@ class UserController extends Controller
             'emp_code' => $request['emp_code'],
             'status' => $request['status'],
             'type' => $request['type'],
+            'branch_id' => $request['branch_id'],
             'password' => Hash::make($request['password']),
-            
+
         ]);
 
         return back()->with('success','Successfully saved...');
@@ -70,7 +74,8 @@ class UserController extends Controller
     public function show($id)
     {
         $user=User::find($id);
-        return view('admin.detail',compact('user'));
+        $branches =Branch::all();
+        return view('admin.detail',compact('user','branches'));
     }
 
     /**
@@ -99,11 +104,12 @@ class UserController extends Controller
         $user->department=$request->department;
         $user->status=$request->status;
         $user->type=$request->type;
+        $user->branch_id=$request->branch_id;
         if($request->hasfile('profile'))
         {
 
             //dd("Testing True... ");
-            
+
             $destnation ='app/public/profile/'.$user->file;
             if(Storage::exists($destnation)){
                 unlink(storage_path('app/public/profile/'.$user->file));
@@ -120,11 +126,11 @@ class UserController extends Controller
             $user->profile=$request->curr_file;
         }
 
-       
+
         $user->update();
 
         return back()->with('success','successfully updated...');
-        
+
     }
 
     /**
@@ -140,30 +146,30 @@ class UserController extends Controller
     {
 
         $query = User::query();
-    
+
         if ($request->filled('username')) {
             $query->where('name', 'LIKE', '%' . $request->input('username') . '%');
         }
-    
+
         if ($request->filled('empcode')) {
             $query->where('emp_code', 'LIKE', '%' . $request->input('empcode') . '%');
         }
-    
+
         if ($request->filled('department')) {
             $query->where('department', 'LIKE', '%' . $request->input('department') . '%');
         }
-    
+
         if ($request->filled('type')) {
             $query->where('type', 'LIKE', '%' . $request->input('type') . '%');
         }
-    
+
         if ($request->filled('status')) {
             $query->where('status', 'LIKE', '%' . $request->input('status') . '%');
         }
-    
+
         $users = $query->latest()->paginate(20);
         // $datas->appends($request->all());
-   
+
         return view('admin.index', compact('users'));
     }
 

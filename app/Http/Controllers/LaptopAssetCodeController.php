@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 
 class LaptopAssetCodeController extends Controller
 {
@@ -510,34 +511,56 @@ class LaptopAssetCodeController extends Controller
         $conn = DB::connection('Fixasset');
         $departments=Department::all();
         $branches=Branch::all();
-        $query = "SELECT
-        fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
-        fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
-        case
-        when fxdt.fxstatus = 'C' then 'Cancelled'
-        when fxdt.fxstatus = 'T' then 'Transfered'
-        when fxdt.fxstatus = 'S' then 'Sold'
-        else 'Ongoing'
-        end AS status
-        FROM asset.fxassetdetail fxdt
-        LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
-        LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
-        LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
-        LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
-        LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
-        LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
-        LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
-        WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
-        ORDER BY purchase_date";
+        $branch_id=Auth::user()->getBranch->branch_code;
+        // dd($branch_id);
+        if(Auth::user()->type=='Manager'){
+            $query = "SELECT
+            fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+            fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
+            case
+            when fxdt.fxstatus = 'C' then 'Cancelled'
+            when fxdt.fxstatus = 'T' then 'Transfered'
+            when fxdt.fxstatus = 'S' then 'Sold'
+            else 'Ongoing'
+            end AS status
+            FROM asset.fxassetdetail fxdt
+            LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+            LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+            LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+            LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+            LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+            LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+            LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+            WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
+            ORDER BY purchase_date";
 
-        $fix_assets = collect($conn->select($query));
-        // $remarks11 = Remark::where(['asset_code' => $asset_code])->first();
-        // $remark = getRemark($asset_code);
-        // $operators = getOperator($asset_code);
+            $fix_assets = collect($conn->select($query));
+            }elseif($branch_id){
+                $query = "SELECT
+                fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+                fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
+                case
+                when fxdt.fxstatus = 'C' then 'Cancelled'
+                when fxdt.fxstatus = 'T' then 'Transfered'
+                when fxdt.fxstatus = 'S' then 'Sold'
+                else 'Ongoing'
+                end AS status
+                FROM asset.fxassetdetail fxdt
+                LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+                LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+                LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+                LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+                LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+                LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+                LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+                WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
+                AND fxbr.fxbranchcode = :fxbranchcode
+                ORDER BY purchase_date";
 
-        // dd($fix_assets);
-        $operators=Operator::all();
-        return view('laptop_asset_code.fix_asset', compact('fix_assets','departments','branches','operators'));
+                $fix_assets = collect($conn->select($query, ['fxbranchcode' => $branch_id]));
+                }
+                $operators=Operator::all();
+                return view('laptop_asset_code.fix_asset', compact('fix_assets','departments','branches','operators'));
     }
 
     public function reMark(Request $request)
@@ -567,7 +590,6 @@ class LaptopAssetCodeController extends Controller
                 'phone'      => $request->phone[$i],
                 'created_at' => now(),
                 'updated_at' => now(),
-
             ];
 
             DB::table('operators')->insert($addasset);
@@ -757,7 +779,12 @@ class LaptopAssetCodeController extends Controller
 
 
     public function non_asset_operator(){
-        $nonoperators=NonOperator::all();
+        $branch_id=Auth::user()->getBranch->branch_code;
+        if(Auth::user()->type=='Manager'){
+        $nonoperators = NonOperator::all();
+        }elseif($branch_id){
+            $nonoperators = NonOperator::where('branch', 'like', "%$branch_id%")->get();
+        }
         $departments=Department::all();
         $branches=Branch::all();
         return view('laptop_asset_code.nonasset_operator',compact('nonoperators','branches','departments'));

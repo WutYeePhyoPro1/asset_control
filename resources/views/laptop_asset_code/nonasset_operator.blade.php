@@ -279,7 +279,7 @@
                     <th scope="row">{{$no}}.</th>
                     <td>
                         <center>
-                        @if(Auth::user()->type=='superadmin')<i class="bi bi-trash-fill pointer" data-bs-toggle="modal" data-bs-target="#del{{ $data->id }}" style="font-size: 15px;"></i> | @endif
+                        @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Manager')<i class="bi bi-trash-fill pointer" data-bs-toggle="modal" data-bs-target="#del{{ $data->id }}" style="font-size: 15px;"></i> | @endif
                         <a href="{{ route('detail_non_asset_detail',$data->doc_no) }}"><i class="bi bi-eye-fill pointer"></i></a></center>
                     </td>
                     <td>{{ $data->doc_no }}</td>
