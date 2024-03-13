@@ -200,7 +200,6 @@
                                     {{ $data->phone }}
                                   </td>
                                   <td>
-
                                       @foreach(getRemark208($data->asset_code) as $remark)
                                           {{ $remark->contract }}
                                       @endforeach
@@ -235,17 +234,17 @@
                     <div class="col-md-10"></div>
                     <div class="col-md-2">
                         <br>
-                        @if (Auth::user()->type=='Manager')
+                        {{-- @if (Auth::user()->type=='Manager') --}}
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ExtralargeModal" style="margin: 10px;">
                             All Operators
-                            </button>
+                        </button>
 
-                        @else
+                        {{-- @else
 
                       <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import_operator" type="button">
                         <font class="card-title" style="color:#fff;font-size: 13px;">
                         <i class="ri-file-excel-2-line" style="font-size: 12px;"></i> Excel Import</font></button>
-                        @endif
+                        @endif --}}
 
                 </div>
                 </div>
@@ -368,7 +367,9 @@
                   <tr style="text-wrap: nowrap;cursor: pointer;">
                     <td scope="row">{{$no}}.</td>
                     <td scope="row">
-                        <center><a href="{{ route('detail_fixasset',$data->asset_code) }}"><i class="bi bi-eye-fill pointer"></i></a></center>
+                        <center>
+                            <a href="{{ route('detail_fixasset',$data->asset_code) }}"><i class="bi bi-eye-fill pointer"></i></a>
+                        </center>
                         </td>
                     <td>
                         <a href="{{ route('detail_fixasset',$data->asset_code) }}">

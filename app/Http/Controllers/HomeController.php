@@ -35,58 +35,10 @@ class HomeController extends Controller
 
                     $assetCounts = $conn->select("
                     SELECT branch_name || '(' || branch_code || ')' AS branch,
-                        asset_type_name,
-                        COUNT(asset_type_name) AS asset_type_count
-                    FROM (
-                        SELECT
-                        fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
-                        fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date, fxdt.fxstatus AS status
-                        FROM asset.fxassetdetail fxdt
-                        LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
-                        LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
-                        LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
-                        LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
-                        LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
-                        LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
-                        LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
-                        WHERE fxtp.fxassettypename IN ('Laptop')
-                        AND fxdt.fxstatus <> 'sold'
-                        ORDER BY purchase_date
-                    ) xx
-                    GROUP BY branch_code, branch_name, asset_type_name
-                    ORDER BY branch_code
-                ");
-
-            $assetCounts1 = $conn->select("
-                SELECT branch_name || '(' || branch_code || ')' AS branch,
-                    asset_type_name,
-                    COUNT(asset_type_name) AS asset_type_count
-                FROM (
-                    SELECT
-                    fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
-                    fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date, fxdt.fxstatus AS status
-                    FROM asset.fxassetdetail fxdt
-                    LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
-                    LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
-                    LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
-                    LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
-                    LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
-                    LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
-                    LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
-                    WHERE fxtp.fxassettypename IN ('Handset')
-                    AND fxdt.fxstatus <> 'sold'
-                    ORDER BY purchase_date
-                ) xx
-                GROUP BY branch_code, branch_name, asset_type_name
-                ORDER BY branch_code
-            ");
-
-
-                $assetCountslh = $conn->select("
-                SELECT branch_name || '(' || branch_code || ')' AS branch,
                 asset_type_name,
                 COUNT(asset_type_name) AS asset_type_count
-         FROM (
+         FROM
+		 (
              SELECT fxdt.fxbranchcode AS branch_code,
                     fxbr.fxbranchname AS branch_name,
                     fxdp.fxdepartmentname AS department,
@@ -95,7 +47,70 @@ class HomeController extends Controller
                     fxdt.fxassetdetailname AS asset_name,
                     fxdt.fxdatebuy AS purchase_date,
                     fxdt.fxenddatecal AS stop_cal_date,
-                    fxdt.fxstatus AS status
+			 	COALESCE(fxdt.fxstatus, 'A') AS status
+             FROM asset.fxassetdetail fxdt
+             LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+             LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+             LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+             LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+             LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+             LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+             LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+             WHERE fxtp.fxassettypename IN ('Laptop')
+             ORDER BY purchase_date
+         ) xx
+		 where xx.status not in ('S','T','C')
+         GROUP BY branch_code, branch_name, asset_type_name
+         ORDER BY branch_code;
+                ");
+
+            $assetCounts1 = $conn->select("
+            SELECT branch_name || '(' || branch_code || ')' AS branch,
+            asset_type_name,
+            COUNT(asset_type_name) AS asset_type_count
+     FROM
+     (
+         SELECT fxdt.fxbranchcode AS branch_code,
+                fxbr.fxbranchname AS branch_name,
+                fxdp.fxdepartmentname AS department,
+                fxtp.fxassettypename AS asset_type_name,
+                fxdt.fxassetdetailcode AS asset_code,
+                fxdt.fxassetdetailname AS asset_name,
+                fxdt.fxdatebuy AS purchase_date,
+                fxdt.fxenddatecal AS stop_cal_date,
+             COALESCE(fxdt.fxstatus, 'A') AS status
+         FROM asset.fxassetdetail fxdt
+         LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+         LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+         LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+         LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+         LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+         LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+         LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+         WHERE fxtp.fxassettypename IN ('Handset')
+         ORDER BY purchase_date
+     ) xx
+     where xx.status not in ('S','T','C')
+     GROUP BY branch_code, branch_name, asset_type_name
+     ORDER BY branch_code;
+            ");
+
+
+                $assetCountslh = $conn->select("
+                SELECT branch_name || '(' || branch_code || ')' AS branch,
+                asset_type_name,
+                COUNT(asset_type_name) AS asset_type_count
+         FROM
+		 (
+             SELECT fxdt.fxbranchcode AS branch_code,
+                    fxbr.fxbranchname AS branch_name,
+                    fxdp.fxdepartmentname AS department,
+                    fxtp.fxassettypename AS asset_type_name,
+                    fxdt.fxassetdetailcode AS asset_code,
+                    fxdt.fxassetdetailname AS asset_name,
+                    fxdt.fxdatebuy AS purchase_date,
+                    fxdt.fxenddatecal AS stop_cal_date,
+			 	COALESCE(fxdt.fxstatus, 'A') AS status
              FROM asset.fxassetdetail fxdt
              LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
              LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
@@ -105,9 +120,9 @@ class HomeController extends Controller
              LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
              LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
              WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
-               AND fxdt.fxstatus <> 'sold'
              ORDER BY purchase_date
          ) xx
+		 where xx.status not in ('S','T','C')
          GROUP BY branch_code, branch_name, asset_type_name
          ORDER BY branch_code;
                 ");

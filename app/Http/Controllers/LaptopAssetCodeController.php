@@ -559,7 +559,12 @@ class LaptopAssetCodeController extends Controller
 
                 $fix_assets = collect($conn->select($query, ['fxbranchcode' => $branch_id]));
                 }
-                $operators=Operator::all();
+                if(Auth::user()->type=='Manager'){
+                    $operators=Operator::all();
+                }else{
+                    $operators=Operator::where('branch', 'like', "%$branch_id%")->get();
+                }
+
                 return view('laptop_asset_code.fix_asset', compact('fix_assets','departments','branches','operators'));
     }
 

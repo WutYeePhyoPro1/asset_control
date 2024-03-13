@@ -231,13 +231,12 @@
           </div><!-- End Vertically centered Modal-->
         <br>
 
-
             @foreach ($operators as $operator)
             <p class="card-title" style="color: #fff;">
             <span class="badge rounded-pill bg-primary" style="font-size: 15px;color:#fff;">{{ $operator->operator }}</span><br>
             <span class="badge rounded-pill bg-primary" style="font-size: 15px;color:#fff;">{{ $operator->phone }}</span>
             <br>
-            @if(Auth::user()->type=='superadmin')
+            @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Manager')
             <i class="bi bi-x-circle"
             onclick='deleteOperator("{{ $operator->id }}")' style="font-size:14px;color:red;width:80px;float:right;cursor: pointer;">
             Delete</i>
@@ -299,7 +298,7 @@
 
     @if($operators->count() <= 0 )
 
-    @if(Auth::user()->type=='superadmin')
+    @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Manager')
         <i class="bi bi-x-circle btn btn-danger"
         onclick='deleteRemark("{{ $remark->id }}")'style="font-size:10px;color:fff;width:80px;float:right;margin:5px;">
         Delete</i>

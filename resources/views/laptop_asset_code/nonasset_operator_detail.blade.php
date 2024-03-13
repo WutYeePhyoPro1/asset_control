@@ -160,7 +160,7 @@
             <span class="badge rounded-pill bg-primary" style="font-size: 15px;color:#fff;">{{ $operator->operator }}</span><br>
             <span class="badge rounded-pill bg-primary" style="font-size: 15px;color:#fff;">{{ $operator->phone }}</span>
             <br>
-            @if(Auth::user()->type=='superadmin')
+            @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Manager')
             <i class="bi bi-x-circle"
             onclick='deleteOperator("{{ $operator->id }}")' style="font-size:14px;color:red;width:80px;float:right;cursor: pointer;">
             Delete</i>
@@ -222,7 +222,7 @@
 
     @if($getnonOperator->count() <= 0 )
 
-    @if(Auth::user()->type=='superadmin')
+    @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Manager')
         <i class="bi bi-x-circle btn btn-danger"
         data-bs-toggle="modal" data-bs-target="#delnon{{ $getnonRemark->id }}" style="font-size:10px;color:fff;width:80px;float:right;margin:5px;">
         Delete</i>
