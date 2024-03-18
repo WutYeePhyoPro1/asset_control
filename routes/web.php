@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Auth;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/user_login/{employee_id}/{password}', function($employee_id, $password){
+    return view('auth.user_login', compact('employee_id', 'password'));
+})->name('user_login');
 Auth::routes(['verify' => true]);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::group(['middleware' => ['auth']], function () {
