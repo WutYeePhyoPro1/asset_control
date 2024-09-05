@@ -149,9 +149,10 @@
                     <th scope="row">{{$no}}.</th>
                     <td>
                         <center>
-                        @if(Auth::user()->type=='superadmin')
+                        @if(Auth::user()->type=='Manager')
                         <i class="bi bi-trash-fill pointer" data-bs-toggle="modal" data-bs-target="#del{{ $data->id }}" style="font-size: 15px;"></i> | @endif
-                        <a href="{{route('all_user.show',$data->id)}}"><i class="bi bi-eye-fill pointer"></i></a></center>
+                        <a href="{{route('all_user.show',$data->id)}}">
+                            <i class="bi bi-eye-fill pointer"></i></a></center>
                     </td>
                     <td><a href="{{route('all_user.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->name}}</a></td>
                     <td><a href="{{route('all_user.show',$data->id)}}" style="text-decoration:none;color:#000">{{$data->emp_code}}</a></td>

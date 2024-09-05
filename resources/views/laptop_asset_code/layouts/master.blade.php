@@ -11,8 +11,8 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- Favicons -->
-  <link href="{{asset('assets/img/title.ico')}}" rel="icon">
-  <link href="{{asset('assets/img/title.ico')}}" rel="apple-touch-icon">
+  <link href="{{asset('assets/img/title.png')}}" rel="icon">
+  <link href="{{asset('assets/img/title.png')}}" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
   <link href="https://fonts.gstatic.com" rel="preconnect">
