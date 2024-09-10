@@ -786,9 +786,9 @@ class LaptopAssetCodeController extends Controller
     public function non_asset_operator(){
         $branch_id=Auth::user()->getBranch->branch_code;
         if(Auth::user()->type=='Manager'){
-        $nonoperators = NonOperator::all();
+        $nonoperators = NonRemark::latest()->get();
         }elseif($branch_id){
-            $nonoperators = NonOperator::where('branch', 'like', "%$branch_id%")->get();
+            $nonoperators = NonRemark::where('branch', 'like', "%$branch_id%")->get();
         }
         $departments=Department::all();
         $branches=Branch::all();
@@ -806,7 +806,6 @@ class LaptopAssetCodeController extends Controller
 
         // dd($request->all());
         $date = Carbon::parse($request->date)->format('Ymd');
-
 
         $today = NonRemark::whereDate('created_at', Carbon::today())->distinct('doc_no')->get();
         $suffix = $today->isEmpty() ? 1 : $today->count() + 1;
@@ -858,7 +857,6 @@ class LaptopAssetCodeController extends Controller
     }
 
     public function getEditnonOp($doc_no){
-
         $getnonRemark=getnonRemark($doc_no);
         $getnonOperator=getnonOperator($doc_no);
         return view('laptop_asset_code.nonasset_operator_detail',compact('getnonOperator','getnonRemark'));
@@ -949,6 +947,52 @@ class LaptopAssetCodeController extends Controller
         }
     }
 
+
+    public function moveAsset(Request $request, $id)
+{
+    // dd($nonRemark);
+    $assetCode = $request->input('asset_code');
+
+    $nonCode = $request->input('none_code');
+    $non = NonOperator::where('doc_no', $nonCode)->get();
+    // dd($non);
+    // dd($nonRemark);
+    $query = DB::connection('Fixasset')
+        ->select("SELECT fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+            fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date, fxdt.fxstatus AS status
+            FROM asset.fxassetdetail fxdt
+            LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+            LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+            LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+            LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+            LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+            LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+            LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+            WHERE fxdt.fxassetdetailcode = '$assetCode'");
+
+            if (count($query) > 0) {
+                $nonRemark = NonRemark::find($id);
+                // dd($nonRemark);
+                if ($nonRemark) {
+                    $nonRemark->doc_no = $assetCode;
+                    $nonRemark->update();
+                }
+
+
+                if ($non->count() > 0) {
+                    foreach ($non as $item) {
+                        $item->doc_no = $assetCode;
+                        $item->update();
+                    }
+                }
+
+                return back()->with('success', 'Successfully updated.');
+            } else {
+                return back()->with('error', 'Your asset code does not exist in the Fixasset database.');
+            }
+
+
+    }
 
 
 }

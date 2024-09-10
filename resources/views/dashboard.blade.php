@@ -1,5 +1,14 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
+
+ <script src="{{ asset('assets/js/highcharts.js') }}"></script>
+
+<script src="{{ asset('assets/js/exporting.js') }}"></script>
+
+<script src="{{ asset('assets/js/export-data.js') }}"></script>
+
+<script src="{{ asset('assets/js/accessibility.js') }}"></script>
+
     <div class="pagetitle">
       <h1>Asset Control System</h1><br>
       <nav>
@@ -37,10 +46,7 @@
     @endif
     <section class="section">
       <div class="row">
-           <script src="https://code.highcharts.com/highcharts.js"></script>
-            <script src="https://code.highcharts.com/modules/exporting.js"></script>
-            <script src="https://code.highcharts.com/modules/export-data.js"></script>
-            <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
                 <div class="col-lg-6">
                     <div class="card">
                     <div class="card-body">
@@ -71,12 +77,41 @@
                     </div>
                 </div>
 
+                <div class="col-lg-8">
+                    <div class="card">
+                    <div class="card-body">
+
+                    <h5 class="card-title">Handset and Asset Code Operator</h5>
+                    <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+
+                    <div id="container-pi-h-o" style="height:600px;"></div>
+                    <p id="totalHandsetAsset"></p>
+                    </div>
+
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                    <div class="card-body">
+
+                    <h5 class="card-title">Non Asset Code Operator</h5>
+                    <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+
+                    <div id="container-pi-non"></div>
+                    <p style="margin: 10px 0px 10px 100px;">Total Operators:{{ $totalPhoneCount }}</p>
+                    </div>
+
+                    </div>
+                    </div>
+                </div>
 
                 <div class="col-lg-12">
                     <div class="card">
                     <div class="card-body">
                     <div class="row" style="border:1px solid blue;border-radius:20px;padding:10px;">
-                        <h5 class="card-title">Laptop, Handset and Operator(ph)</h5>
+                        <h5 class="card-title">Laptop, Handset, Operator and  Non Asset Code Operator</h5>
                         <div class="col-md-12">
 
                         <div id="container-fix-lh" style="height: 600px;"></div>
@@ -89,7 +124,6 @@
                     </div>
                     </div>
                 </div>
-
 
         </div>
 
@@ -133,7 +167,7 @@
 @endsection
 @section('js')
 <script>
-  var mergedData = @json($mergedData);
+var mergedData = @json($mergedData);
 
 var categories = mergedData.map(function(item) {
     return item.branch;
@@ -148,18 +182,20 @@ var handsetCounts = mergedData.map(function(item) {
 });
 
 var operatorCounts = mergedData.map(function(item) {
-    return item.phone_count || 0;
+    return item.operator_count || 0;
+});
+
+var nonoperatorCounts = mergedData.map(function(item) {
+    return item.non_operator_count || 0;
 });
 
 // Summing up counts for Laptop, Handset, and Operator
-
-
 Highcharts.chart('container-fix-lh', {
     chart: {
         type: 'column'
     },
     title: {
-        text: 'Laptop, Handset, and Operator(ph) By Branch'
+        text: 'Laptop, Handset, Operator and Non Asset Code Operator By Branch'
     },
     xAxis: {
         categories: categories,
@@ -177,7 +213,6 @@ Highcharts.chart('container-fix-lh', {
         min: 0,
         title: {
             text: 'Counts'
-
         }
     },
     series: [{
@@ -207,8 +242,18 @@ Highcharts.chart('container-fix-lh', {
                 return this.y !== 0 ? this.y : null;
             }
         }
+    }, {
+        name: 'Non Asset Code Operator Sim(ph)',
+        data: nonoperatorCounts,
+        dataLabels: {
+            enabled: true,
+            formatter: function() {
+                return this.y !== 0 ? this.y : null;
+            }
+        }
     }]
 });
+
 </script>
 {{--
 <script>
@@ -668,7 +713,7 @@ foreach ($branches as $branch) {
                 colors: ['#007bff', '#ff0000', '#00ff00', '#ffcc00', '#000000'],
                 dataLabels: {
                     enabled: true,
-                    format: '{point.y}', // Display the value on top of the bar
+                    format: '{point.y}',
                     style: {
                         color: 'black'
                     }
@@ -697,5 +742,125 @@ foreach ($branches as $branch) {
     });
 
 </script>
+<script>
 
+var categories = mergedData.map(function(item) {
+    return item.branch;
+});
+
+var handsetCounts = mergedData.map(function(item) {
+    return item.asset_type_count.Handset || 0;
+});
+
+var operatorCounts = mergedData.map(function(item) {
+    return item.operator_count || 0;
+});
+
+var totalHandsets = handsetCounts.reduce(function(acc, count) {
+    return acc + count;
+}, 0);
+
+var totalOperators = operatorCounts.reduce(function(acc, count) {
+    return acc + count;
+}, 0);
+
+Highcharts.chart('container-pi-h-o', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: 'Handset and Operator Counts By Branch'
+    },
+    subtitle: {
+        text: `Total Handsets: ${totalHandsets} | Total Operators: ${totalOperators}`
+    },
+    xAxis: {
+        categories: categories,
+        title: {
+            text: 'Branch'
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Counts',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true,
+                style: {
+                    fontSize: '10px',
+                    fontWeight: 'bold'
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Handsets',
+        data: handsetCounts,
+        color: '#1f77b4'  // Optional: Color for Handsets
+    }, {
+        name: 'Operators',
+        data: operatorCounts,
+        color: '#ff7f0e'  // Optional: Color for Operators
+    }],
+    credits: {
+        enabled: false
+    },
+    legend: {
+        reversed: true  // Optional: Reverse the legend order
+    }
+});
+
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+            var phoneData = @json($nonopers);
+
+
+            var pieData = phoneData.map(function(item) {
+                return {
+                    name: item.branch,
+                    y: parseInt(item.phone_count)
+                };
+            });
+
+            Highcharts.chart('container-pi-non', {
+                chart: {
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Non Asset Code Operator by Branch'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.y} ({point.percentage:.1f}%)'
+                        }
+                    }
+                },
+                series: [{
+                    name: 'None Asset Code Operators',
+                    colorByPoint: true,
+                    data: pieData
+                }],
+                credits: {
+                    enabled: false
+                }
+            });
+        });
+</script>
 @endsection

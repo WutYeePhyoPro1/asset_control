@@ -95,7 +95,6 @@ class HomeController extends Controller
      ORDER BY branch_code;
             ");
 
-
                 $assetCountslh = $conn->select("
                 SELECT branch_name || '(' || branch_code || ')' AS branch,
                 asset_type_name,
@@ -130,29 +129,62 @@ class HomeController extends Controller
                 // dd($assetCountslh);
 
                 $opers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM operators GROUP BY branch");
+                $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
+                $totalPhoneCount = collect($nonopers)->sum('phone_count');
 
+                // dd($nonopers);
 
                 $mergedData = [];
+
                 foreach ($assetCountslh as $asset) {
                     $mergedData[$asset->branch]['branch'] = $asset->branch;
                     $mergedData[$asset->branch]['asset_type_count'][$asset->asset_type_name] = $asset->asset_type_count;
                 }
 
+                foreach ($assetCounts1 as $asset) {
+                    $branch = $asset->branch;
+                    $mergedData[$branch]['branch'] = $branch;
+                    $mergedData[$branch]['handset_count'] = $asset->asset_type_count;
+                }
+
+
                 foreach ($opers as $oper) {
                     $branch = $oper->branch;
                     if (isset($mergedData[$branch])) {
-                        $mergedData[$branch]['phone_count'] = $oper->phone_count;
+                        $mergedData[$branch]['operator_count'] = $oper->phone_count;
+                    } else {
+                        $mergedData[$branch] = [
+                            'branch' => $branch,
+                            'handset_count' => 0,
+                            'operator_count' => $oper->phone_count,
+                        ];
+                    }
+                }
+
+                foreach ($opers as $oper) {
+                    $branch = $oper->branch;
+                    if (isset($mergedData[$branch])) {
+                        $mergedData[$branch]['operator_count'] = $oper->phone_count;
                     } else {
                         $mergedData[$branch]['branch'] = $branch;
-                        $mergedData[$branch]['phone_count'] = $oper->phone_count;
+                        $mergedData[$branch]['operator_count'] = $oper->phone_count;
+                    }
+                }
+
+                foreach ($nonopers as $nonoper) {
+                    $branch = $nonoper->branch;
+                    if (isset($mergedData[$branch])) {
+                        $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
+                    } else {
+
+                        $mergedData[$branch]['branch'] = $branch;
+                        $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
                     }
                 }
 
                 $mergedData = array_values($mergedData);
 
-                // dd($mergedData);
-        return view('dashboard',compact('datas','branches','departments','assetCounts','assetCounts1','mergedData'));
-        // return view('laptop_asset_code.index');
+        return view('dashboard',compact('datas','branches','departments','assetCounts','assetCounts1','mergedData','nonopers','totalPhoneCount'));
     }
 
    public function logout()

@@ -85,6 +85,7 @@ Route::delete('/non-remark/delete_remark/{id}',[LaptopAssetCodeController::class
 Route::get('/non-operator/delete_operator/{id}',[LaptopAssetCodeController::class,'deleteOperatornon']);
 Route::post('/assetoperator_import', [AssetOperatorController::class, 'import'])->name('assetoperator.import');
 Route::post('/assetnonoperator_import', [NonAssetImportController::class, 'import'])->name('nonassetoperator.import');
+Route::put('/nonoperator_move_assetoperator/{id}', [LaptopAssetCodeController::class, 'moveAsset'])->name('asset.move');
 });
 
 Route::post('/logout', [App\Http\Controllers\HomeController::class, 'logout'])->name('logout');

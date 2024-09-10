@@ -8,8 +8,8 @@
   <title>Asset Control System</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+  {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
+  <script src="{{ asset('assets/js/jq-min.js') }}"></script>
   <!-- Favicons -->
   <link href="{{asset('assets/img/title.png')}}" rel="icon">
   <link href="{{asset('assets/img/title.png')}}" rel="apple-touch-icon">

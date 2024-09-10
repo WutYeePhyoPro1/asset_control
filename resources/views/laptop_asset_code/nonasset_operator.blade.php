@@ -254,6 +254,18 @@
             </form>
 
             <div class="table-responsive" style="margin: 10px;">
+                <div class="table-responsive" style="margin: 10px;">
+                    @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
               <table class="table table-sm card-title table-hover table-bordered table-fix" style="font-size: 15px;" id="fixasset">
                 <thead>
 
@@ -265,8 +277,6 @@
                     <th scope="col">Department</th>
                     <th scope="col">Employee ID</th>
                     <th scope="col">Employee Name</th>
-                    <th scope="col">Operator</th>
-                    <th scope="col">Phone No:</th>
                     <th scope="col">Contract</th>
                     <th scope="col">Remark</th>
                     <th scope="col">Created Date</th>
@@ -280,7 +290,9 @@
                     <td>
                         <center>
                         @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Manager')<i class="bi bi-trash-fill pointer" data-bs-toggle="modal" data-bs-target="#del{{ $data->id }}" style="font-size: 15px;"></i> | @endif
-                        <a href="{{ route('detail_non_asset_detail',$data->doc_no) }}"><i class="bi bi-eye-fill pointer"></i></a></center>
+                        <a href="{{ route('detail_non_asset_detail',$data->doc_no) }}"><i class="bi bi-eye-fill pointer"></i></a>
+                        | <a href="" data-bs-toggle="modal" data-bs-target="#move{{ $data->id }}">Move</a>
+                    </center>
                     </td>
                     <td>{{ $data->doc_no }}</td>
                     <td>{{ $data->branch }}</td>
@@ -298,8 +310,7 @@
                         {{$nonremark->name}}
                         @endforeach
                     </td>
-                    <td>{{ $data->operator }}</td>
-                    <td>{{ $data->phone }}</td>
+
                     <td>
                         {{-- {{ getnonRemark($data->doc_no)->contract }} --}}
                         @foreach(getnonRemark208($data->doc_no) as $nonremark)
@@ -344,6 +355,34 @@
                                                                                 </center>
                                                                             </div>
 
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="modal fade" id="move{{ $data->id }}"
+                                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-body">
+                                                                        <div class="row">
+                                                                            <div class="col-md-12 col-12">
+                                                                            <form action="{{route('asset.move',$data->id)}}" method="post">
+                                                                            @METHOD('PUT')
+                                                                             @csrf
+                                                                     <h5>Move To Fix asset</h5>
+                                                                     Doc: No {{ $data->doc_no }}
+                                                                     <hr>
+                                                                     <label>Asset Code</label><br><br>
+                                                                     <input type="hidden" class="form-control" placeholder="Enter Asset Code" style="border:1px solid #1c1c1d;" name="none_code" value="{{$data->doc_no}}">
+                                                                        <input type="text" class="form-control" placeholder="Enter Asset Code" style="border:1px solid #1c1c1d;" name="asset_code" value="{{request()->asset_code}}" required>
+                                                                        <hr>
+                                                                         <button type="submit" class="btn btn-primary" style="font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">Move</button>
+                                                                        </form>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
 

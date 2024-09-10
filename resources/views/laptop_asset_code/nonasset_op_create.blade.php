@@ -63,7 +63,7 @@
                                             <select class="form-select" id="branch" name="branch" style="box-shadow:1px 1px 1px #333;" required>
                                                 <option value="">Select Your Branch</option>
                                                 @foreach($branches as $branch)
-                                                <option value="{{$branch->branch_name}} ({{$branch->branch_code}})">{{$branch->branch_name}} ({{$branch->branch_code}})</option>
+                                                <option value="{{$branch->branch_name}}({{$branch->branch_code}})">{{$branch->branch_name}} ({{$branch->branch_code}})</option>
                                                 @endforeach
                                         </select>
                                         </div>

@@ -664,7 +664,6 @@ function remarkUpdate(id) {
             }, 1000);
         }
 
-
     $(document).ready(function() {
     var table = $('#fixasset').DataTable({
         "lengthMenu": [10, 20, 50, 100, 200],
