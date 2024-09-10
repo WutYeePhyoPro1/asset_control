@@ -848,7 +848,7 @@ Highcharts.chart('container-pi-h-o', {
                         cursor: 'pointer',
                         dataLabels: {
                             enabled: true,
-                            format: '<b>{point.name}</b>: {point.y} ({point.percentage:.1f}%)'
+                            format: '<b>{point.name}</b>: {point.y}'
                         }
                     }
                 },
