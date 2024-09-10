@@ -171,16 +171,16 @@ class HomeController extends Controller
                     }
                 }
 
-                foreach ($nonopers as $nonoper) {
-                    $branch = $nonoper->branch;
-                    if (isset($mergedData[$branch])) {
-                        $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
-                    } else {
+                // foreach ($nonopers as $nonoper) {
+                //     $branch = $nonoper->branch;
+                //     if (isset($mergedData[$branch])) {
+                //         $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
+                //     } else {
 
-                        $mergedData[$branch]['branch'] = $branch;
-                        $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
-                    }
-                }
+                //         $mergedData[$branch]['branch'] = $branch;
+                //         $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
+                //     }
+                // }
 
                 $mergedData = array_values($mergedData);
 
