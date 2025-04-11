@@ -77,7 +77,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-8">
+                <div class="col-lg-6">
                     <div class="card">
                     <div class="card-body">
 
@@ -92,7 +92,7 @@
                     </div>
                 </div>
 
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="card">
                     <div class="card-body">
 
@@ -111,7 +111,7 @@
                     <div class="card">
                     <div class="card-body">
                     <div class="row" style="border:1px solid blue;border-radius:20px;padding:10px;">
-                        <h5 class="card-title">Laptop, Handset, Operator and  Non Asset Code Operator</h5>
+                        <h5 class="card-title">Laptop, Handset, Operator </h5>
                         <div class="col-md-12">
 
                         <div id="container-fix-lh" style="height: 600px;"></div>
@@ -185,9 +185,9 @@ var operatorCounts = mergedData.map(function(item) {
     return item.operator_count || 0;
 });
 
-var nonoperatorCounts = mergedData.map(function(item) {
-    return item.non_operator_count || 0;
-});
+// var nonoperatorCounts = mergedData.map(function(item) {
+//     return item.non_operator_count || 0;
+// });
 
 // Summing up counts for Laptop, Handset, and Operator
 Highcharts.chart('container-fix-lh', {
@@ -195,7 +195,7 @@ Highcharts.chart('container-fix-lh', {
         type: 'column'
     },
     title: {
-        text: 'Laptop, Handset, Operator and Non Asset Code Operator By Branch'
+        text: 'Laptop, Handset, Operator By Branch'
     },
     xAxis: {
         categories: categories,
@@ -236,15 +236,6 @@ Highcharts.chart('container-fix-lh', {
     }, {
         name: 'Operator Sim(ph)',
         data: operatorCounts,
-        dataLabels: {
-            enabled: true,
-            formatter: function() {
-                return this.y !== 0 ? this.y : null;
-            }
-        }
-    }, {
-        name: 'Non Asset Code Operator Sim(ph)',
-        data: nonoperatorCounts,
         dataLabels: {
             enabled: true,
             formatter: function() {

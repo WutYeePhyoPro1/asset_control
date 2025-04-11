@@ -181,6 +181,7 @@ class HomeController extends Controller
                 //         $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
                 //     }
                 // }
+                
 
                 $mergedData = array_values($mergedData);
 
