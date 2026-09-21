@@ -1493,7 +1493,7 @@
 
                         <h5 class="detail-heading"><i class="bi bi-laptop"></i> Fix Asset Detail</h5>
 
-                        @if ($remark && $item)
+                        @if ($item)
                             <div class="asset-hero-card">
                                 <div class="asset-icon-box">
                                     <i
@@ -1510,7 +1510,9 @@
                                     </div>
                                 </div>
                             </div>
+                        @endif
 
+                        @if ($remark && $item)
                             @if ($assetHistories->isNotEmpty())
                                 <div class="history-card">
                                     <div class="history-heading">
@@ -1556,10 +1558,12 @@
                                     <span class="assignment-heading-title">
                                         <i class="bi bi-bookmark-check-fill"></i> Currently Assigned To
                                     </span>
+                                    @if($statusLabel == 'Ongoing')
                                     <button type="button" class="btn btn-sm search-employee-btn" data-bs-toggle="modal"
                                         data-bs-target="#changeEmployeeModal">
                                         <i class="bi bi-search me-1"></i>Update Employee
                                     </button>
+                                    @endif
                                 </div>
                                 <div class="assignment-grid">
                                     <div class="assignee-profile">
@@ -1655,11 +1659,6 @@
                                                 <form action="{{ route('remark-form') }}" method="POST"
                                                     class="create-assignment-card">
                                                     @csrf
-                                                    <div class="create-asset-summary">
-                                                        {{ $item->asset_code }}<br>
-                                                        {{ $item->asset_name }}
-                                                    </div>
-
                                                     <input type="hidden" name="asset_code"
                                                         value="{{ $item->asset_code }}">
                                                     <input type="hidden" name="department"
