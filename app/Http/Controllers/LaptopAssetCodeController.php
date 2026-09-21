@@ -482,15 +482,24 @@ class LaptopAssetCodeController extends Controller
         $employeeData = trim($validated['employee_data']);
         $searchTerm = '%' . $employeeData . '%';
 
-        $users = DB::connection('request_document_system')
-            ->table('users')
-            ->select(['emp_id', 'name'])
-            ->where(function ($query) use ($searchTerm) {
-                $query->where('emp_id', 'ILIKE', $searchTerm)
-                    ->orWhere('name', 'ILIKE', $searchTerm);
-            })
-            ->orderBy('name')
-            ->get();
+        $conn = DB::connection('Hremployee');
+        $users = $conn->select("
+            SELECT
+                emp.employeecode AS emp_id,
+                emp.employeename AS name,
+                brch.branch_code,
+                brch.branch_name
+            FROM hremployee.employee emp
+            LEFT JOIN master_data.master_branch brch
+                ON brch.branch_code = emp.brchcode
+            WHERE emp.employeecode ILIKE :employee_id
+               OR emp.employeename ILIKE :employee_name
+            ORDER BY emp.employeename
+            LIMIT 20
+        ", [
+            'employee_id' => $searchTerm,
+            'employee_name' => $searchTerm,
+        ]);
 
         return response()->json([
             'status' => 'success',
