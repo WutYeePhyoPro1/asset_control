@@ -1,33 +1,126 @@
+  <style>
+    .asset-global-search {
+      flex: 1;
+      max-width: 460px;
+      margin: 0 24px;
+    }
+
+    .asset-global-search-form {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      height: 40px;
+      padding: 0 6px 0 14px;
+      background: #f7f9fc;
+      border: 1px solid #d8e1ed;
+      border-radius: 10px;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .asset-global-search-form:focus-within {
+      border-color: #a78bfa;
+      box-shadow: 0 0 0 3px rgba(109, 40, 217, .12);
+    }
+
+    .asset-global-search-form > i {
+      color: #64748b;
+      font-size: 16px;
+    }
+
+    .asset-global-search-form input {
+      min-width: 0;
+      flex: 1;
+      padding: 0;
+      color: #172554;
+      font-size: 13px;
+      font-weight: 700;
+      background: transparent;
+      border: 0;
+      outline: 0;
+    }
+
+    .asset-global-search-form input::placeholder {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .asset-global-search-form button {
+      height: 30px;
+      padding: 0 13px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      background: #6d28d9;
+      border: 0;
+      border-radius: 7px;
+    }
+
+    .asset-global-search-form button:hover {
+      background: #5b21b6;
+    }
+
+    @media (max-width: 767.98px) {
+      .asset-global-search {
+        max-width: none;
+        margin: 0 10px;
+      }
+
+      .asset-global-search-form button {
+        width: 30px;
+        padding: 0;
+        overflow: hidden;
+        font-size: 0;
+      }
+
+      .asset-global-search-form button::after {
+        content: "\f52a";
+        font-family: "bootstrap-icons";
+        font-size: 14px;
+      }
+    }
+
+    .asset-global-alert {
+      position: fixed;
+      top: 76px;
+      right: 24px;
+      z-index: 1100;
+      max-width: min(420px, calc(100vw - 32px));
+      box-shadow: 0 10px 24px rgba(15, 23, 42, .14);
+    }
+  </style>
+
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
 
-    <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between pb-6">
+      <a href="{{route('home')}}" class="logo d-flex align-items-center">
         <img src="{{asset('assets/img/logo.png')}}" alt="" class="img-fluid">
-
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
       {{-- <p style="padding-left:100px;">Asset Control System</p> --}}
     </div><!-- End Logo -->
 
-    <!-- <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="POST" action="">
-        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+    <div class="asset-global-search">
+      <form class="asset-global-search-form" method="GET" action="{{ route('asset.global-search') }}">
+        <i class="bi bi-search"></i>
+        <input type="search" name="asset_code" value="{{ request('asset_code') }}"
+          placeholder="Search asset code..." autocomplete="off" aria-label="Search asset code">
+        <button type="submit">Search</button>
       </form>
-    </div> -->
+    </div>
     <!-- End Search Bar -->
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
 
-        <li class="nav-item dropdown pe-3">
+        <li class="nav-item dropdown pe-5 me-5">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            @if(Auth::user()->profile!=null)
-            <img src="{{asset('storage/profile/'.Auth::user()->profile)}}" alt="Profile" class="rounded-circle">
-            @else
-            @endif
+            @php
+              $profilePath = Auth::user()->profile ? 'profile/' . Auth::user()->profile : null;
+              $hasProfile = $profilePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($profilePath);
+            @endphp
+            <img src="{{ $hasProfile ? asset('storage/' . $profilePath) : asset('assets/img/default-profile.svg') }}" alt="Profile" class="rounded-circle">
             <span class="d-none d-md-block dropdown-toggle ps-2">
               {{Auth::user()->name}}
             </span>
@@ -94,6 +187,13 @@
     </nav><!-- End Icons Navigation -->
 
   </header><!-- End Header -->
+
+  @if (session('error'))
+    <div class="alert alert-warning alert-dismissible fade show asset-global-alert" role="alert">
+      <i class="bi bi-exclamation-circle me-2"></i>{{ session('error') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
 
   <!-- ======= Sidebar ======= -->
   <aside id="sidebar" class="sidebar">

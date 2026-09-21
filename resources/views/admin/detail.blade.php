@@ -1,5 +1,14 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
+    <style>
+        .admin-user-detail { --user-primary: #1d4ed8; --user-ink: #172554; --user-border: #d8e1ed; font-family: "Nunito", sans-serif; }
+        .admin-user-detail .card { border-color: #e4ebf5; box-shadow: 0 10px 28px rgba(15,23,42,.05); }
+        .admin-user-detail .profile-card > img { width: 112px; height: 112px; object-fit: cover; border: 4px solid #fff; box-shadow: 0 8px 20px rgba(15,23,42,.13); }
+        .admin-user-detail form .form-label { margin-bottom: 8px; color: var(--user-ink); font-family: "Nunito", sans-serif; font-size: 14px !important; font-weight: 800; }
+        .admin-user-detail form .form-control, .admin-user-detail form .form-select { min-height: 52px; padding: 11px 14px; color: #334155; font-family: "Nunito", sans-serif; font-size: 14px; font-weight: 600; border: 1px solid var(--user-border) !important; border-radius: 9px; box-shadow: none !important; }
+        .admin-user-detail form .form-control:focus, .admin-user-detail form .form-select:focus { border-color: #60a5fa !important; box-shadow: 0 0 0 .22rem rgba(59,130,246,.13) !important; }
+        .admin-user-detail form .btn { min-height: 46px; padding: 10px 18px; border-radius: 9px; font-family: "Nunito", sans-serif; font-weight: 800; }
+    </style>
     <div class="pagetitle">
       <h1>Employee Asset Control System</h1><br>
       <nav>
@@ -36,14 +45,18 @@
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
     @endif
-    <section class="section profile">
+    <section class="section profile admin-user-detail">
       <div class="row">
         <div class="col-xl-2">
 
           <div class="card">
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-              <img src="{{asset('storage/profile/'.$user->profile)}}" alt="Profile" class="rounded-circle">
+              @php
+                $profilePath = $user->profile ? 'profile/' . $user->profile : null;
+                $hasProfile = $profilePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($profilePath);
+              @endphp
+              <img src="{{ $hasProfile ? asset('storage/' . $profilePath) : asset('assets/img/default-profile.svg') }}" alt="Profile" class="rounded-circle">
               <h2>{{$user->name}}</h2>
               <h3>{{$user->department}}</h3>
             </div>

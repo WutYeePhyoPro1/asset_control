@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 class HomeController extends Controller
 {
     /**
@@ -26,14 +27,31 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
         $conn = DB::connection('Fixasset');
-        $datas=LaptopAssetCode::latest()->paginate(20);
-        $branches=Branch::all();
-        $departments=Department::all();
+        $datas = LaptopAssetCode::latest()->paginate(20);
+        $branches = Branch::all();
+        $departments = Department::all();
+        $selectedMonth = $request->month;
 
-                    $assetCounts = $conn->select("
+        // The month input sends YYYY-MM, for example 2026-09.
+        $selectedMonth = is_string($selectedMonth)
+            && preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $selectedMonth)
+            ? $selectedMonth . '-01'
+            : null;
+        $selectedMonthEnd = $selectedMonth
+            ? (new \DateTimeImmutable($selectedMonth))->modify('+1 month')->format('Y-m-d')
+            : null;
+        $dateFilter = $selectedMonth ? "
+             AND fxdt.fxdatebuy >= CAST(:month_start AS date)
+             AND fxdt.fxdatebuy < CAST(:month_end AS date)" : '';
+        $dateBindings = $selectedMonth ? [
+            'month_start' => $selectedMonth,
+            'month_end' => $selectedMonthEnd,
+        ] : [];
+
+        $assetCounts = $conn->select("
                     SELECT branch_name || '(' || branch_code || ')' AS branch,
                 asset_type_name,
                 COUNT(asset_type_name) AS asset_type_count
@@ -57,14 +75,15 @@ class HomeController extends Controller
              LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
              LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
              WHERE fxtp.fxassettypename IN ('Laptop')
+             {$dateFilter}
              ORDER BY purchase_date
          ) xx
 		 where xx.status not in ('S','T','C')
          GROUP BY branch_code, branch_name, asset_type_name
          ORDER BY branch_code;
-                ");
+                ", $dateBindings);
 
-            $assetCounts1 = $conn->select("
+        $assetCounts1 = $conn->select("
             SELECT branch_name || '(' || branch_code || ')' AS branch,
             asset_type_name,
             COUNT(asset_type_name) AS asset_type_count
@@ -88,14 +107,15 @@ class HomeController extends Controller
          LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
          LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
          WHERE fxtp.fxassettypename IN ('Handset')
+         {$dateFilter}
          ORDER BY purchase_date
      ) xx
      where xx.status not in ('S','T','C')
      GROUP BY branch_code, branch_name, asset_type_name
      ORDER BY branch_code;
-            ");
+            ", $dateBindings);
 
-                $assetCountslh = $conn->select("
+        $assetCountslh = $conn->select("
                 SELECT branch_name || '(' || branch_code || ')' AS branch,
                 asset_type_name,
                 COUNT(asset_type_name) AS asset_type_count
@@ -119,83 +139,86 @@ class HomeController extends Controller
              LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
              LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
              WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
+             {$dateFilter}
              ORDER BY purchase_date
          ) xx
 		 where xx.status not in ('S','T','C')
          GROUP BY branch_code, branch_name, asset_type_name
          ORDER BY branch_code;
-                ");
+                ", $dateBindings);
 
-                // dd($assetCountslh);
+        // dd($assetCountslh);
 
-                $opers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM operators GROUP BY branch");
-                $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
-                $totalPhoneCount = collect($nonopers)->sum('phone_count');
+        $opers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM operators GROUP BY branch");
+        $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
+        
+        $totalPhoneCount = collect($nonopers)->sum('phone_count');
 
-                // dd($nonopers);
+        // dd($nonopers);
 
-                $mergedData = [];
+        $mergedData = [];
 
-                foreach ($assetCountslh as $asset) {
-                    $mergedData[$asset->branch]['branch'] = $asset->branch;
-                    $mergedData[$asset->branch]['asset_type_count'][$asset->asset_type_name] = $asset->asset_type_count;
-                }
+        foreach ($assetCountslh as $asset) {
+            $mergedData[$asset->branch]['branch'] = $asset->branch;
+            $mergedData[$asset->branch]['asset_type_count'][$asset->asset_type_name] = $asset->asset_type_count;
+        }
 
-                foreach ($assetCounts1 as $asset) {
-                    $branch = $asset->branch;
-                    $mergedData[$branch]['branch'] = $branch;
-                    $mergedData[$branch]['handset_count'] = $asset->asset_type_count;
-                }
+        foreach ($assetCounts1 as $asset) {
+            $branch = $asset->branch;
+            $mergedData[$branch]['branch'] = $branch;
+            $mergedData[$branch]['handset_count'] = $asset->asset_type_count;
+        }
 
 
-                foreach ($opers as $oper) {
-                    $branch = $oper->branch;
-                    if (isset($mergedData[$branch])) {
-                        $mergedData[$branch]['operator_count'] = $oper->phone_count;
-                    } else {
-                        $mergedData[$branch] = [
-                            'branch' => $branch,
-                            'handset_count' => 0,
-                            'operator_count' => $oper->phone_count,
-                        ];
-                    }
-                }
+        foreach ($opers as $oper) {
+            $branch = $oper->branch;
+            if (isset($mergedData[$branch])) {
+                $mergedData[$branch]['operator_count'] = $oper->phone_count;
+            } else {
+                $mergedData[$branch] = [
+                    'branch' => $branch,
+                    'handset_count' => 0,
+                    'operator_count' => $oper->phone_count,
+                ];
+            }
+        }
 
-                foreach ($opers as $oper) {
-                    $branch = $oper->branch;
-                    if (isset($mergedData[$branch])) {
-                        $mergedData[$branch]['operator_count'] = $oper->phone_count;
-                    } else {
-                        $mergedData[$branch]['branch'] = $branch;
-                        $mergedData[$branch]['operator_count'] = $oper->phone_count;
-                    }
-                }
+        foreach ($opers as $oper) {
+            $branch = $oper->branch;
+            if (isset($mergedData[$branch])) {
+                $mergedData[$branch]['operator_count'] = $oper->phone_count;
+            } else {
+                $mergedData[$branch]['branch'] = $branch;
+                $mergedData[$branch]['operator_count'] = $oper->phone_count;
+            }
+        }
 
-                // foreach ($nonopers as $nonoper) {
-                //     $branch = $nonoper->branch;
-                //     if (isset($mergedData[$branch])) {
-                //         $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
-                //     } else {
+        // foreach ($nonopers as $nonoper) {
+        //     $branch = $nonoper->branch;
+        //     if (isset($mergedData[$branch])) {
+        //         $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
+        //     } else {
 
-                //         $mergedData[$branch]['branch'] = $branch;
-                //         $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
-                //     }
-                // }
-                
+        //         $mergedData[$branch]['branch'] = $branch;
+        //         $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
+        //     }
+        // }
 
-                $mergedData = array_values($mergedData);
 
-        return view('dashboard',compact('datas','branches','departments','assetCounts','assetCounts1','mergedData','nonopers','totalPhoneCount'));
+        $mergedData = array_values($mergedData);
+
+
+        return view('dashboard', compact('datas', 'branches', 'departments', 'assetCounts', 'assetCounts1', 'mergedData', 'nonopers', 'totalPhoneCount'));
     }
 
-   public function logout()
-        {
-            // Clear all data from the session
-            Session::flush();
+    public function logout()
+    {
+        // Clear all data from the session
+        Session::flush();
 
-            // Log the user out
-            Auth::logout();
+        // Log the user out
+        Auth::logout();
 
-            return redirect()->route('login');
-        }
+        return redirect()->route('login');
+    }
 }

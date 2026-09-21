@@ -6,7 +6,9 @@ use App\Models\Branch;
 use App\Models\Department;
 use App\Models\LaptopAssetCode;
 use App\Models\Assetfile;
+use App\Models\AssetHistory;
 use App\Models\AssetType;
+use App\Models\FixAsset;
 use App\Models\NonOperator;
 use App\Models\NonRemark;
 use App\Models\Remark;
@@ -19,6 +21,7 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class LaptopAssetCodeController extends Controller
 {
@@ -27,11 +30,11 @@ class LaptopAssetCodeController extends Controller
      */
     public function index()
     {
-        $datas=LaptopAssetCode::latest()->get();
-        $branches=Branch::all();
-        $departments=Department::all();
+        $datas = LaptopAssetCode::latest()->get();
+        $branches = Branch::all();
+        $departments = Department::all();
 
-        return view('laptop_asset_code.index',compact('datas','branches','departments'));
+        return view('laptop_asset_code.index', compact('datas', 'branches', 'departments'));
     }
 
     /**
@@ -39,9 +42,9 @@ class LaptopAssetCodeController extends Controller
      */
     public function create()
     {
-        $branches=Branch::all();
-        $departments=Department::all();
-        return view('laptop_asset_code.create',compact('branches','departments'));
+        $branches = Branch::all();
+        $departments = Department::all();
+        return view('laptop_asset_code.create', compact('branches', 'departments'));
     }
 
     /**
@@ -50,21 +53,23 @@ class LaptopAssetCodeController extends Controller
     public function store(Request $request)
     {
 
-        $validatedData = $request->validate([
-            'assettype.*' => 'required',
-            'assetname.*' => 'required',
-            'assetcode.*' => 'required',
-        ],[
-            'assettype.*.required' => 'Asset type ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset type.)',
-            'assetname.*.required' => 'Asset Code ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset code.)',
-            'assetcode.*.required' => 'Asset Name ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset name.)',
+        $validatedData = $request->validate(
+            [
+                'assettype.*' => 'required',
+                'assetname.*' => 'required',
+                'assetcode.*' => 'required',
+            ],
+            [
+                'assettype.*.required' => 'Asset type ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset type.)',
+                'assetname.*.required' => 'Asset Code ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset code.)',
+                'assetcode.*.required' => 'Asset Name ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset name.)',
 
-        ]
+            ]
 
-    );
+        );
 
         $date = Carbon::parse($request->date)->format('Ymd');
-        $today=LaptopAssetCode::where(['date'=>Carbon::parse($request->date)->format('Y-m-d'),'type'=>$request->type])->distinct('doc_no')->get();
+        $today = LaptopAssetCode::where(['date' => Carbon::parse($request->date)->format('Y-m-d'), 'type' => $request->type])->distinct('doc_no')->get();
 
         if ($today->isEmpty()) {
             $suffix = 1;
@@ -85,69 +90,66 @@ class LaptopAssetCodeController extends Controller
 
         // }
 
-        $asset=LaptopAssetCode::create([
-            'user_id'=>$request->userid,
-            'doc_no'=>$doc_no,
-            'type'=>$request->type,
-            'emp_name'=>$request->empname,
-            'emp_code'=>$request->empcode,
-            'branch_code'=>$request->branchcode,
-            'branch_name'=>$request->branchname,
-            'department'=>$request->department,
-            'receipt_date'=>$request->receiptdate,
-            'receipt_type'=>$request->receipttype,
-            'remark'=>$request->remark,
+        $asset = LaptopAssetCode::create([
+            'user_id' => $request->userid,
+            'doc_no' => $doc_no,
+            'type' => $request->type,
+            'emp_name' => $request->empname,
+            'emp_code' => $request->empcode,
+            'branch_code' => $request->branchcode,
+            'branch_name' => $request->branchname,
+            'department' => $request->department,
+            'receipt_date' => $request->receiptdate,
+            'receipt_type' => $request->receipttype,
+            'remark' => $request->remark,
             // 'file'=>$file,
-            'date'=>$request->date
+            'date' => $request->date
         ]);
 
 
-            $assettype                  = $request['assettype'];
-            $assetcode                  = $request['assetcode'];
-            $assetname                  = $request['assetname'];
-            $operator                   = $request['simname'];
-            $phone                      = $request['simnumber'];
+        $assettype                  = $request['assettype'];
+        $assetcode                  = $request['assetcode'];
+        $assetname                  = $request['assetname'];
+        $operator                   = $request['simname'];
+        $phone                      = $request['simnumber'];
 
-            for($i=0;$i<count($assetcode);$i++){
-                $addasset=[
-                    'doc_id'            =>$asset->id,
-                    'department'        =>$asset->department,
-                    'branch'            =>$asset->branch_code,
-                    'assettype'         =>$assettype[$i],
-                    'assetcode'         =>$assetcode[$i],
-                    'assetname'         =>$assetname[$i],
-                    'operator'          =>$operator[$i],
-                    'ph'                =>$phone[$i],
+        for ($i = 0; $i < count($assetcode); $i++) {
+            $addasset = [
+                'doc_id'            => $asset->id,
+                'department'        => $asset->department,
+                'branch'            => $asset->branch_code,
+                'assettype'         => $assettype[$i],
+                'assetcode'         => $assetcode[$i],
+                'assetname'         => $assetname[$i],
+                'operator'          => $operator[$i],
+                'ph'                => $phone[$i],
+            ];
+
+            DB::table('asset_types')->insert($addasset);
+        }
+
+        if (isset($request['file']))
+
+            foreach ($request['file'] as $file) {
+
+                $folderName = "public/asset_upload";
+                $fileName = $file->getClientOriginalName();
+                $originalFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '', $fileName);
+                $savedFileName = $originalFileName . $file->getClientOriginalExtension();
+                $file->storeAs($folderName, $savedFileName);
+                $data_image                 = [
+                    'doc_id'                => $asset->id,
+                    'file'                  => $savedFileName,
+
+                    'created_at'            => Carbon::now(),
+                    'updated_at'            => Carbon::now(),
                 ];
 
-                DB::table('asset_types')->insert($addasset);
-
+                DB::table('assetfiles')->insert($data_image);
             }
 
-        if(isset($request['file']))
 
-                    foreach($request['file'] as $file)
-                    {
-
-                        $folderName = "public/asset_upload";
-                        $fileName = $file->getClientOriginalName();
-                        $originalFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '',$fileName);
-                        $savedFileName = $originalFileName.$file->getClientOriginalExtension();
-                        $file->storeAs($folderName,$savedFileName);
-                        $data_image                 =[
-                            'doc_id'                =>$asset->id,
-                            'file'                  =>$savedFileName,
-
-                            'created_at'            =>Carbon::now(),
-                            'updated_at'            =>Carbon::now(),
-                        ];
-
-                        DB::table('assetfiles')->insert($data_image);
-
-                    }
-
-
-        return redirect('employee_benefic/laptop_asset_code/'.$asset->id)->with('success','Successfully your created.');
+        return redirect('employee_benefic/laptop_asset_code/' . $asset->id)->with('success', 'Successfully your created.');
     }
 
     /**
@@ -155,12 +157,12 @@ class LaptopAssetCodeController extends Controller
      */
     public function show($id)
     {
-        $datas=LaptopAssetCode::find($id);
-        $branches=Branch::all();
-        $files= Assetfile::where('doc_id',$id)->get();
-        $addassets= AssetType::where('doc_id',$id)->get();
-        $departments=Department::all();
-        return view('laptop_asset_code.detail',compact('datas','branches','departments','files','addassets'));
+        $datas = LaptopAssetCode::find($id);
+        $branches = Branch::all();
+        $files = Assetfile::where('doc_id', $id)->get();
+        $addassets = AssetType::where('doc_id', $id)->get();
+        $departments = Department::all();
+        return view('laptop_asset_code.detail', compact('datas', 'branches', 'departments', 'files', 'addassets'));
     }
 
     /**
@@ -186,52 +188,50 @@ class LaptopAssetCodeController extends Controller
 
 
 
-        $datas=LaptopAssetCode::find($id);
-        $datas->doc_no=$request->doc_no;
-        $datas->type=$request->type;
+        $datas = LaptopAssetCode::find($id);
+        $datas->doc_no = $request->doc_no;
+        $datas->type = $request->type;
 
-        if($request->type=='Emp'){
-            $datas->emp_name=$request->empname;
-            $datas->emp_code=$request->empcode;
-        }else{
-            $datas->emp_name='';
-            $datas->emp_code='';
+        if ($request->type == 'Emp') {
+            $datas->emp_name = $request->empname;
+            $datas->emp_code = $request->empcode;
+        } else {
+            $datas->emp_name = '';
+            $datas->emp_code = '';
         }
 
-        $datas->branch_code=$request->branchcode;
-        $datas->branch_name=$request->branchname;
-        $datas->department=$request->department;
-        $datas->receipt_type=$request->receipttype;
-        $datas->receipt_date=$request->receiptdate;
-        $datas->remark=$request->remark;
-        $datas->date=$request->date;
+        $datas->branch_code = $request->branchcode;
+        $datas->branch_name = $request->branchname;
+        $datas->department = $request->department;
+        $datas->receipt_type = $request->receipttype;
+        $datas->receipt_date = $request->receiptdate;
+        $datas->remark = $request->remark;
+        $datas->date = $request->date;
 
 
         $datas->update();
 
-        if(isset($request['file']))
+        if (isset($request['file']))
 
-        foreach($request['file'] as $file)
-        {
+            foreach ($request['file'] as $file) {
 
-            $folderName = "public/asset_upload";
-            $fileName = $file->getClientOriginalName();
-            $originalFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '',$fileName);
-            $savedFileName = $originalFileName.$file->getClientOriginalExtension();
-            $file->storeAs($folderName,$savedFileName);
-            $data_image                 =[
-                'doc_id'                =>$datas->id,
-                'file'                  =>$savedFileName,
+                $folderName = "public/asset_upload";
+                $fileName = $file->getClientOriginalName();
+                $originalFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '', $fileName);
+                $savedFileName = $originalFileName . $file->getClientOriginalExtension();
+                $file->storeAs($folderName, $savedFileName);
+                $data_image                 = [
+                    'doc_id'                => $datas->id,
+                    'file'                  => $savedFileName,
 
-                'created_at'            =>Carbon::now(),
-                'updated_at'            =>Carbon::now(),
-            ];
+                    'created_at'            => Carbon::now(),
+                    'updated_at'            => Carbon::now(),
+                ];
 
-            DB::table('assetfiles')->insert($data_image);
+                DB::table('assetfiles')->insert($data_image);
+            }
 
-        }
-
-        return back()->with('success','successfully updated...');
+        return back()->with('success', 'successfully updated...');
     }
 
     /**
@@ -239,34 +239,33 @@ class LaptopAssetCodeController extends Controller
      */
     public function destroy($id)
     {
-       //
+        //
     }
 
-    public function deletRecord($id){
+    public function deletRecord($id)
+    {
         // dd('hi');
         LaptopAssetCode::find($id)->delete($id);
-        return back()->with('success','Successfully Deleted.');
-
+        return back()->with('success', 'Successfully Deleted.');
     }
 
-    public function deletasset($id){
+    public function deletasset($id)
+    {
         // dd('hi');
         AssetType::find($id)->delete($id);
-        return back()->with('success','Successfully Deleted.');
-
+        return back()->with('success', 'Successfully Deleted.');
     }
 
-    public function deletRemark($id){
+    public function deletRemark($id)
+    {
 
         $remark = Remark::find($id);
-        if($remark){
+        if ($remark) {
             $remark->delete();
             return response()->json(['message' => 'Successfully Deleted'], 200);
-        }else{
-
+        } else {
         }
-        return respose()->json(['messagge'=>'Operator and Contract not found',404]);
-
+        return response()->json(['messagge' => 'Operator and Contract not found', 404]);
     }
 
     public function deleteOperator($id)
@@ -284,11 +283,11 @@ class LaptopAssetCodeController extends Controller
     }
 
 
-    public function deletUpload($id){
+    public function deletUpload($id)
+    {
         // dd('hi');
         Assetfile::find($id)->delete($id);
-        return back()->with('success','Successfully Deleted.');
-
+        return back()->with('success', 'Successfully Deleted.');
     }
 
     public function search1(Request $request)
@@ -356,78 +355,77 @@ class LaptopAssetCodeController extends Controller
 
 
     public function search(Request $request)
-{
-    $branches = Branch::all();
-    $departments = Department::all();
-    $query = LaptopAssetCode::query();
-    $branch = $request->branch;
+    {
+        $branches = Branch::all();
+        $departments = Department::all();
+        $query = LaptopAssetCode::query();
+        $branch = $request->branch;
 
-    if ($branch != 0) {
-        $query->where('branch_name', $branch);
+        if ($branch != 0) {
+            $query->where('branch_name', $branch);
+        }
+
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', 'LIKE', '%' . $request->input('doc_no') . '%');
+        }
+
+        if ($request->filled('assettype')) {
+            $query->where('asset_type', 'LIKE', '%' . $request->input('assettype') . '%');
+        }
+
+        if ($request->filled('empname')) {
+            $query->where('emp_name', 'LIKE', '%' . $request->input('empname') . '%');
+        }
+
+        if ($request->filled('empcode')) {
+            $query->where('emp_code', 'LIKE', '%' . $request->input('empcode') . '%');
+        }
+
+        if ($request->filled('department')) {
+            $query->where('department', 'LIKE', '%' . $request->input('department') . '%');
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', 'LIKE', '%' . $request->input('type') . '%');
+        }
+
+        if ($branch == 0) {
+            $query->latest();
+        }
+
+        if ($request->filled('laptop')) {
+            $query->where(function ($query) use ($request) {
+                $query->orWhere('laptop_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
+                    ->orWhere('handset_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
+                    ->orWhere('sim_phone', 'LIKE', '%' . $request->input('laptop') . '%');
+            });
+        }
+
+
+
+        // Export to Excel
+        if ($request->filled('export') && $request->input('export') === 'excel') {
+            $exportFileName = 'employee_asset_system.xlsx';
+
+            // Export the query results directly
+            return Excel::download(function () use ($query) {
+                return $query->get();
+            }, $exportFileName);
+        }
+
+        $datas = $query->latest()->paginate(20);
+
+        return view('laptop_asset_code.index', compact('datas', 'branches', 'departments'));
     }
-
-    if ($request->filled('doc_no')) {
-        $query->where('doc_no', 'LIKE', '%' . $request->input('doc_no') . '%');
-    }
-
-    if ($request->filled('assettype')) {
-        $query->where('asset_type', 'LIKE', '%' . $request->input('assettype') . '%');
-    }
-
-    if ($request->filled('empname')) {
-        $query->where('emp_name', 'LIKE', '%' . $request->input('empname') . '%');
-    }
-
-    if ($request->filled('empcode')) {
-        $query->where('emp_code', 'LIKE', '%' . $request->input('empcode') . '%');
-    }
-
-    if ($request->filled('department')) {
-        $query->where('department', 'LIKE', '%' . $request->input('department') . '%');
-    }
-
-    if ($request->filled('type')) {
-        $query->where('type', 'LIKE', '%' . $request->input('type') . '%');
-    }
-
-    if ($branch == 0) {
-        $query->latest();
-    }
-
-    if ($request->filled('laptop')) {
-        $query->where(function ($query) use ($request) {
-            $query->orWhere('laptop_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
-                ->orWhere('handset_asset_code', 'LIKE', '%' . $request->input('laptop') . '%')
-                ->orWhere('sim_phone', 'LIKE', '%' . $request->input('laptop') . '%');
-        });
-    }
-
-
-
-    // Export to Excel
-    if ($request->filled('export') && $request->input('export') === 'excel') {
-        $exportFileName = 'employee_asset_system.xlsx';
-
-        // Export the query results directly
-        return Excel::download(function () use ($query) {
-            return $query->get();
-        }, $exportFileName);
-    }
-
-    $datas = $query->latest()->paginate(20);
-
-    return view('laptop_asset_code.index', compact('datas', 'branches', 'departments'));
-}
 
 
     public function export(Request $request)
-        {
-            $query = $this->buildSearchQuery($request); // Create a method to build the query
+    {
+        $query = $this->buildSearchQuery($request); // Create a method to build the query
 
-            $exportFileName = 'laptop_asset_code_export.xlsx';
-            return Excel::download(new \App\Exports\LaptopAssetCodeExport($query), $exportFileName);
-
-        }
+        $exportFileName = 'laptop_asset_code_export.xlsx';
+        return Excel::download(new \App\Exports\LaptopAssetCodeExport($query), $exportFileName);
+    }
 
     private function buildSearchQuery(Request $request)
     {
@@ -439,7 +437,8 @@ class LaptopAssetCodeController extends Controller
 
 
 
-    public function branchSearch($branch_code) {
+    public function branchSearch($branch_code)
+    {
         // Find the branch based on the provided branch_code
         $branch = Branch::where('branch_code', $branch_code)->first();
 
@@ -453,7 +452,8 @@ class LaptopAssetCodeController extends Controller
         return response()->json(['branch_name' => $branchName], 200);
     }
 
-    public function empIDsearch($emp_id){
+    public function empIDsearch($emp_id)
+    {
         $conn    = DB::connection('Hremployee');
         $data = $conn->select("
         SELECT emp.employeecode, emp.employeename, brch.branch_code, brch.branch_name
@@ -461,31 +461,57 @@ class LaptopAssetCodeController extends Controller
         left join master_data.master_branch brch on brch.branch_code = emp.brchcode
         where emp.employeecode = '$emp_id'");
 
-        if(!empty($data)){
+        if (!empty($data)) {
             return response()->json([
                 'status' => 'success',
                 'data' => $data
             ]);
-        }else{
+        } else {
             return response()->json([
                 'status' => 'fail'
             ]);
         }
     }
 
-    public function assetCodesearch($asset_code2){
+    public function search_employee(Request $request)
+    {
+        $validated = $request->validate([
+            'employee_data' => ['required', 'string', 'max:100'],
+        ]);
+
+        $employeeData = trim($validated['employee_data']);
+        $searchTerm = '%' . $employeeData . '%';
+
+        $users = DB::connection('request_document_system')
+            ->table('users')
+            ->select(['emp_id', 'name'])
+            ->where(function ($query) use ($searchTerm) {
+                $query->where('emp_id', 'ILIKE', $searchTerm)
+                    ->orWhere('name', 'ILIKE', $searchTerm);
+            })
+            ->orderBy('name')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $users,
+        ]);
+    }
+
+    public function assetCodesearch($asset_code2)
+    {
         $conn    = DB::connection('Fixasset');
         $data = $conn->select("
         select fxassetdetailcode, fxassetdetailname
         from asset.fxassetdetail
         where fxassetdetailcode = '$asset_code2'");
 
-        if(!empty($data)){
+        if (!empty($data)) {
             return response()->json([
                 'status' => 'success',
                 'data' => $data
             ]);
-        }else{
+        } else {
             return response()->json([
                 'status' => 'fail'
             ]);
@@ -493,7 +519,8 @@ class LaptopAssetCodeController extends Controller
     }
 
 
-    public function paginateData(Request $request) {
+    public function paginateData(Request $request)
+    {
         $perPage = $request->input('per_page', 10);
         $branches = Branch::all();
         $departments = Department::all();
@@ -507,70 +534,169 @@ class LaptopAssetCodeController extends Controller
     }
 
 
-    public function fix_asset(Request $asset_code) {
+    public function fix_asset()
+    {
+        $branch_id = Auth::user()->getBranch->branch_code;
+        $departments = Department::all();
+        $branches = Branch::all();
+        $assetsQuery = FixAsset::query()->orderBy('purchase_date');
+
+        if (Auth::user()->type !== 'Manager') {
+            $assetsQuery->where('branch_code', $branch_id);
+        }
+        // Load all permitted assets so DataTables can filter immediately while typing.
+        $assets = $assetsQuery->get();
+        $assetPaginator = null;
+        $remarks = Remark::whereIn('asset_code', $assets->pluck('asset_code'))
+            ->get()
+            ->keyBy('asset_code');
+
+        $fix_assets = $assets->map(function ($asset) use ($remarks) {
+            $remark = $remarks->get($asset->asset_code);
+
+            return [
+                'asset_code'      => $asset->asset_code,
+                'branch_code'     => $asset->branch_code,
+                'branch_name'     => $asset->branch_name,
+                'department'      => $asset->department,
+                'asset_type_name' => $asset->asset_type_name,
+                'asset_name'      => $asset->asset_name,
+                'purchase_date'   => $asset->purchase_date,
+                'stop_cal_date'   => $asset->stop_cal_date,
+                'status'          => $asset->status,
+                'employee_id'     => $remark?->emp_id,
+                'employee_name'   => $remark?->emp_name,
+                'contract'        => $remark?->contract,
+                'remark'          => $remark?->remark,
+            ];
+        });
+
+        $operatorsQuery = Operator::query()->orderByDesc('id');
+
+        if (Auth::user()->type !== 'Manager') {
+            $operatorsQuery->where('branch', 'like', "%$branch_id%");
+        }
+
+        $operators = (clone $operatorsQuery)
+            ->paginate(900, ['*'], 'operators_page')
+            ->withQueryString();
+        $operatorsByAsset = (clone $operatorsQuery)
+            ->whereIn('asset_code', $assets->pluck('asset_code'))
+            ->get()
+            ->groupBy('asset_code');
+
+        return view('laptop_asset_code.fix_asset', array_merge(
+            compact(
+                'fix_assets',
+                'departments',
+                'branches',
+                'operators',
+                'operatorsByAsset',
+                'assetPaginator'
+            ),
+            ['minimalAssets' => true]
+        ));
+    }
+
+    public function refreshFixAssets()
+    {
         $conn = DB::connection('Fixasset');
-        $departments=Department::all();
-        $branches=Branch::all();
-        $branch_id=Auth::user()->getBranch->branch_code;
-        // dd($branch_id);
-        if(Auth::user()->type=='Manager'){
+        $departments = Department::all();
+        $branches = Branch::all();
+        $branch_id = Auth::user()->getBranch->branch_code;
+        $fix_assets = collect();
+        if (Auth::user()->type == 'Manager') {
             $query = "SELECT
-            fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
-            fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
-            case
-            when fxdt.fxstatus = 'C' then 'Cancelled'
-            when fxdt.fxstatus = 'T' then 'Transfered'
-            when fxdt.fxstatus = 'S' then 'Sold'
-            else 'Ongoing'
-            end AS status
-            FROM asset.fxassetdetail fxdt
-            LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
-            LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
-            LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
-            LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
-            LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
-            LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
-            LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
-            WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
-            ORDER BY purchase_date";
+                    fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+                    fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
+                    case
+                    when fxdt.fxstatus = 'C' then 'Cancelled'
+                    when fxdt.fxstatus = 'T' then 'Transfered'
+                    when fxdt.fxstatus = 'S' then 'Sold'
+                    else 'Ongoing'
+                    end AS status
+                    FROM asset.fxassetdetail fxdt
+                    LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+                    LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+                    LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+                    LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+                    LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+                    LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+                    LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+                    WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
+                    ORDER BY purchase_date";
 
             $fix_assets = collect($conn->select($query));
-            }elseif($branch_id){
-                $query = "SELECT
-                fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
-                fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
-                case
-                when fxdt.fxstatus = 'C' then 'Cancelled'
-                when fxdt.fxstatus = 'T' then 'Transfered'
-                when fxdt.fxstatus = 'S' then 'Sold'
-                else 'Ongoing'
-                end AS status
-                FROM asset.fxassetdetail fxdt
-                LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
-                LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
-                LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
-                LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
-                LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
-                LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
-                LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
-                WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
-                AND fxbr.fxbranchcode = :fxbranchcode
-                ORDER BY purchase_date";
+        } elseif ($branch_id) {
+            $query = "SELECT
+                    fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+                    fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
+                    case
+                    when fxdt.fxstatus = 'C' then 'Cancelled'
+                    when fxdt.fxstatus = 'T' then 'Transfered'
+                    when fxdt.fxstatus = 'S' then 'Sold'
+                    else 'Ongoing'
+                    end AS status
+                    FROM asset.fxassetdetail fxdt
+                    LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
+                    LEFT JOIN asset.fxdepartment fxdp ON fxdt.fxdepartmentcode = fxdp.fxdepartmentcode
+                    LEFT JOIN asset.fxassetgroup fxgp ON fxgp.fxassettypecode = fxdt.fxassettypecode
+                    LEFT JOIN asset.fxassettype fxtp ON fxtp.fxassettypecode = fxdt.fxassettypecode
+                    LEFT JOIN asset.fxassetcategory fxct ON fxct.fxassetcategorycode = fxdt.fxassetcategorycode
+                    LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
+                    LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
+                    WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
+                    AND fxbr.fxbranchcode = :fxbranchcode
+                    ORDER BY purchase_date";
 
-                $fix_assets = collect($conn->select($query, ['fxbranchcode' => $branch_id]));
-                }
-                if(Auth::user()->type=='Manager'){
-                    $operators=Operator::all();
-                }else{
-                    $operators=Operator::where('branch', 'like', "%$branch_id%")->get();
-                }
+            $fix_assets = collect($conn->select($query, ['fxbranchcode' => $branch_id]));
+        }
 
-                return view('laptop_asset_code.fix_asset', compact('fix_assets','departments','branches','operators'));
+        $fix_assets->each(function ($asset) {
+            FixAsset::updateOrCreate(
+                ['asset_code' => $asset->asset_code],
+                [
+                    'branch_code' => $asset->branch_code,
+                    'branch_name' => $asset->branch_name,
+                    'department' => $asset->department,
+                    'asset_type_name' => $asset->asset_type_name,
+                    'asset_name' => $asset->asset_name,
+                    'purchase_date' => $asset->purchase_date,
+                    'stop_cal_date' => $asset->stop_cal_date,
+                    'status' => $asset->status,
+                ]
+            );
+
+            AssetHistory::updateOrCreate(
+                [
+                    'asset_code' => $asset->asset_code,
+                    'asset_name' => $asset->asset_name
+                ]
+            );
+        });
+
+        // for user asset history(from helper.php)
+        syncAssetHistory();
+
+        return redirect()->route('laptop_asset_code.fix_asset');
     }
+
+    // fix asset update data
 
     public function reMark(Request $request)
     {
         // dd($request->all());
+        $request->validate([
+            'emp_id' => ['required', 'string', 'max:100'],
+            'emp_name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'array'],
+            'phone.*' => ['required', 'regex:/^09\d{9}$/'],
+        ], [
+            'emp_id.required' => 'Please search and select an employee.',
+            'emp_name.required' => 'Please search and select an employee.',
+            'phone.*.regex' => 'Phone number must start with 09 and contain 11 digits.',
+        ]);
+
         $asset_code = $request->asset_code;
         $department = $request->department;
         $branch = $request->branch;
@@ -579,6 +705,8 @@ class LaptopAssetCodeController extends Controller
 
         Remark::create([
             'asset_code' => $request->input('asset_code'),
+            'emp_id' => $request->input('emp_id'),
+            'emp_name' => $request->input('emp_name'),
             'rank' => $request->input('rank'),
             'contract' => $request->input('contract'),
             'remark' => $request->input('remark'),
@@ -606,6 +734,13 @@ class LaptopAssetCodeController extends Controller
     public function OpNew(Request $request)
     {
         // dd($request->all());
+        $request->validate([
+            'phone' => ['required', 'array'],
+            'phone.*' => ['required', 'regex:/^09\d{9}$/'],
+        ], [
+            'phone.*.regex' => 'Phone number must start with 09 and contain 11 digits.',
+        ]);
+
         $asset_code = $request->asset_code;
         $department = $request->department;
         $branch = $request->branch;
@@ -633,7 +768,8 @@ class LaptopAssetCodeController extends Controller
 
 
 
-    public function updateRemark($id, Request $request){
+    public function updateRemark($id, Request $request)
+    {
         Remark::where('id', $id)->update($request->all());
         $data = Remark::whereId($id)->first();
         return response()->json(['success' => true, 'data' => $data], 200);
@@ -641,15 +777,17 @@ class LaptopAssetCodeController extends Controller
 
     public function updatestore(Request $request)
     {
-            // dd($request->all());
-            $id=$request->getID;
-            $branch_code=$request->branch_code;
-            $department=$request->department;
-            $validatedData = $request->validate([
+        // dd($request->all());
+        $id = $request->getID;
+        $branch_code = $request->branch_code;
+        $department = $request->department;
+        $validatedData = $request->validate(
+            [
                 'assettype.*' => 'required',
                 'assetname.*' => 'required',
                 'assetcode.*' => 'required',
-            ],[
+            ],
+            [
                 'assettype.*.required' => 'Asset type ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset type.)',
                 'assetname.*.required' => 'Asset Code ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset code.)',
                 'assetcode.*.required' => 'Asset Name ရွေးချယ်ရန်လိုပါသည်။ (Please select at least one Asset name.)',
@@ -658,55 +796,52 @@ class LaptopAssetCodeController extends Controller
 
         );
 
-            // dd($id);
-            $assettype                  = $request['assettype'];
-            $assetcode                  = $request['assetcode'];
-            $assetname                  = $request['assetname'];
-            $operator                   = $request['simname'];
-            $phone                      = $request['simnumber'];
+        // dd($id);
+        $assettype                  = $request['assettype'];
+        $assetcode                  = $request['assetcode'];
+        $assetname                  = $request['assetname'];
+        $operator                   = $request['simname'];
+        $phone                      = $request['simnumber'];
 
-            for($i=0;$i<count($assetcode);$i++){
-                $addasset=[
-                    'doc_id'            =>$id,
-                    'assettype'         =>$assettype[$i],
-                    'department'        =>$department,
-                    'branch'            =>$branch_code[$i],
-                    'assetcode'         =>$assetcode[$i],
-                    'assetname'         =>$assetname[$i],
-                    'operator'          =>$operator[$i],
-                    'ph'                =>$phone[$i],
+        for ($i = 0; $i < count($assetcode); $i++) {
+            $addasset = [
+                'doc_id'            => $id,
+                'assettype'         => $assettype[$i],
+                'department'        => $department,
+                'branch'            => $branch_code[$i],
+                'assetcode'         => $assetcode[$i],
+                'assetname'         => $assetname[$i],
+                'operator'          => $operator[$i],
+                'ph'                => $phone[$i],
+            ];
+
+            DB::table('asset_types')->insert($addasset);
+        }
+
+        if (isset($request['file']))
+
+            foreach ($request['file'] as $file) {
+
+                $folderName = "public/asset_upload";
+                $fileName = $file->getClientOriginalName();
+                $originalFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '', $fileName);
+                $savedFileName = $originalFileName . $file->getClientOriginalExtension();
+                $file->storeAs($folderName, $savedFileName);
+                $data_image                 = [
+                    'doc_id'                => $id,
+                    'file'                  => $savedFileName,
+
+                    'created_at'            => Carbon::now(),
+                    'updated_at'            => Carbon::now(),
                 ];
 
-                DB::table('asset_types')->insert($addasset);
-
+                DB::table('assetfiles')->insert($data_image);
             }
-
-        if(isset($request['file']))
-
-                    foreach($request['file'] as $file)
-                    {
-
-                        $folderName = "public/asset_upload";
-                        $fileName = $file->getClientOriginalName();
-                        $originalFileName = preg_replace('/\\.[^.\\s]{3,4}$/', '',$fileName);
-                        $savedFileName = $originalFileName.$file->getClientOriginalExtension();
-                        $file->storeAs($folderName,$savedFileName);
-                        $data_image                 =[
-                            'doc_id'                =>$id,
-                            'file'                  =>$savedFileName,
-
-                            'created_at'            =>Carbon::now(),
-                            'updated_at'            =>Carbon::now(),
-                        ];
-
-                        DB::table('assetfiles')->insert($data_image);
-
-                    }
 
 
 
         // return back()->with('success','Successfully your created.');
-        return back()->with('success','Successfully your created.');
+        return back()->with('success', 'Successfully your created.');
     }
 
     public function search_asset_code(Request $request)
@@ -725,10 +860,37 @@ class LaptopAssetCodeController extends Controller
         LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
         WHERE fxdt.fxassetdetailcode ='$asset_code'");
         $remarks = getRemark($asset_code);
-        $data = ['info'=>$query[0],'remarks'=>$remarks];
+        $data = ['info' => $query[0], 'remarks' => $remarks];
 
-       return response()->json($data, 200);
+        return response()->json($data, 200);
+    }
 
+    public function globalAssetSearch(Request $request)
+    {
+        $assetCode = trim((string) $request->input('asset_code'));
+
+        if ($assetCode === '') {
+            return back()->with('error', 'Please enter an asset code.');
+        }
+
+        $asset = FixAsset::on('pgsql')
+            ->whereRaw('LOWER(asset_code) = ?', [strtolower($assetCode)])
+            ->first();
+
+        if (!$asset) {
+            $asset = FixAsset::on('pgsql')
+                ->whereRaw('LOWER(asset_code) LIKE ?', ['%' . strtolower($assetCode) . '%'])
+                ->orderBy('asset_code')
+                ->first();
+        }
+
+        if (!$asset) {
+            return back()
+                ->withInput()
+                ->with('error', "Asset code '{$assetCode}' was not found.");
+        }
+
+        return redirect()->route('detail_fixasset', $asset->asset_code);
     }
 
     public function fix_detail($asset_code)
@@ -748,20 +910,38 @@ class LaptopAssetCodeController extends Controller
         // dd($query);
         $remark = getRemark($asset_code);
         $operators = getOperator($asset_code);
-        return view('laptop_asset_code.fixasset_detail', compact('query','remark','operators'));
+        $assetHistories = AssetHistory::query()
+            ->where('asset_code', $asset_code)
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get();
+
+        return view('laptop_asset_code.fixasset_detail', compact(
+            'query',
+            'remark',
+            'operators',
+            'assetHistories'
+        ));
     }
 
-    public function update_operator(Request $request,$id){
-        $updateop=Operator::find($id);
-        $updateop->operator=$request->operator;
-        $updateop->phone=$request->phone;
+    public function update_operator(Request $request, $id)
+    {
+        $request->validate([
+            'phone' => ['required', 'regex:/^09\d{9}$/'],
+        ], [
+            'phone.regex' => 'Phone number must start with 09 and contain 11 digits.',
+        ]);
+
+        $updateop = Operator::find($id);
+        $updateop->operator = $request->operator;
+        $updateop->phone = $request->phone;
         $updateop->update();
-        return back()->with('success','Successfully your updated.');
-
+        return back()->with('success', 'Successfully updated.');
     }
 
 
-    public function update_contract(Request $request, $id) {
+    public function update_contract(Request $request, $id)
+    {
         $updatecon = Remark::find($id);
 
         if (!$updatecon) {
@@ -782,29 +962,57 @@ class LaptopAssetCodeController extends Controller
         return back()->with('success', 'Successfully updated.');
     }
 
+    /**
+     * Replace the employee currently assigned to an asset remark.
+     */
+    public function update_remark_employee(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'emp_id' => ['required', 'string', 'max:100'],
+            'emp_name' => ['required', 'string', 'max:255'],
+        ], [
+            'emp_id.required' => 'Please search and select an employee.',
+            'emp_name.required' => 'Please search and select an employee.',
+        ]);
 
-    public function non_asset_operator(){
-        $branch_id=Auth::user()->getBranch->branch_code;
-        if(Auth::user()->type=='Manager'){
-        $nonoperators = NonRemark::latest()->get();
-        }elseif($branch_id){
-            $nonoperators = NonRemark::where('branch', 'like', "%$branch_id%")->get();
-        }
-        $departments=Department::all();
-        $branches=Branch::all();
-        return view('laptop_asset_code.nonasset_operator',compact('nonoperators','branches','departments'));
+        $remark = Remark::findOrFail($id);
+        $remark->update($validated);
+
+        return back()->with('success', 'Assigned employee updated successfully.');
     }
 
-    public function nonasset_operator_create(){
-        $departments=Department::all();
-        $branches=Branch::all();
-        return view('laptop_asset_code.nonasset_op_create',compact('departments','branches'));
+
+    public function non_asset_operator()
+    {
+        $branch_id = Auth::user()->getBranch->branch_code;
+        if (Auth::user()->type == 'Manager') {
+            $nonoperators = NonRemark::latest()->get();
+        } elseif ($branch_id) {
+            $nonoperators = NonRemark::where('branch', 'like', "%$branch_id%")->get();
+        }
+        $departments = Department::all();
+        $branches = Branch::all();
+        return view('laptop_asset_code.nonasset_operator', compact('nonoperators', 'branches', 'departments'));
+    }
+
+    public function nonasset_operator_create()
+    {
+        $departments = Department::all();
+        $branches = Branch::all();
+        return view('laptop_asset_code.nonasset_op_create', compact('departments', 'branches'));
     }
 
     public function NonOpCreate(Request $request)
     {
 
         // dd($request->all());
+        $request->validate([
+            'phone' => ['required', 'array'],
+            'phone.*' => ['required', 'regex:/^09\d{9}$/'],
+        ], [
+            'phone.*.regex' => 'Phone number must start with 09 and contain 11 digits.',
+        ]);
+
         $date = Carbon::parse($request->date)->format('Ymd');
 
         $today = NonRemark::whereDate('created_at', Carbon::today())->distinct('doc_no')->get();
@@ -846,25 +1054,33 @@ class LaptopAssetCodeController extends Controller
             NonOperator::create($addnon);
         }
 
-        return redirect('detail_non_asset_code/'.$nonremark->doc_no);
+        return redirect('detail_non_asset_code/' . $nonremark->doc_no);
     }
 
-    public function deletRecordNon($id){
+    public function deletRecordNon($id)
+    {
         // dd('hi');
         NonOperator::find($id)->delete($id);
-        return back()->with('success','Successfully Deleted.');
-
+        return back()->with('success', 'Successfully Deleted.');
     }
 
-    public function getEditnonOp($doc_no){
-        $getnonRemark=getnonRemark($doc_no);
-        $getnonOperator=getnonOperator($doc_no);
-        return view('laptop_asset_code.nonasset_operator_detail',compact('getnonOperator','getnonRemark'));
+    public function getEditnonOp($doc_no)
+    {
+        $getnonRemark = getnonRemark($doc_no);
+        $getnonOperator = getnonOperator($doc_no);
+        return view('laptop_asset_code.nonasset_operator_detail', compact('getnonOperator', 'getnonRemark'));
     }
 
     public function OpNonNew(Request $request)
     {
         // dd($request->all());
+        $request->validate([
+            'phone' => ['required', 'array'],
+            'phone.*' => ['required', 'regex:/^09\d{9}$/'],
+        ], [
+            'phone.*.regex' => 'Phone number must start with 09 and contain 11 digits.',
+        ]);
+
         $doc_no = $request->doc_no;
         $phone = $request->phone;
         $name = $request->name;
@@ -888,16 +1104,24 @@ class LaptopAssetCodeController extends Controller
         return back()->with('success', 'Data inserted successfully!');
     }
 
-    public function update_operator_non(Request $request,$id){
-        $updateop=NonOperator::find($id);
-        $updateop->operator=$request->operator;
-        $updateop->phone=$request->phone;
+    public function update_operator_non(Request $request, $id)
+    {
+        $request->validate([
+            'phone' => ['required', 'regex:/^09\d{9}$/'],
+        ], [
+            'phone.regex' => 'Phone number must start with 09 and contain 11 digits.',
+        ]);
+
+        $updateop = NonOperator::find($id);
+        $updateop->operator = $request->operator;
+        $updateop->phone = $request->phone;
         $updateop->update();
-        return back()->with('success','Successfully your updated.');
+        return back()->with('success', 'Successfully updated.');
     }
 
 
-    public function update_contract_non(Request $request, $id) {
+    public function update_contract_non(Request $request, $id)
+    {
         $updatecon = NonRemark::find($id);
 
         if (!$updatecon) {
@@ -949,16 +1173,16 @@ class LaptopAssetCodeController extends Controller
 
 
     public function moveAsset(Request $request, $id)
-{
-    // dd($nonRemark);
-    $assetCode = $request->input('asset_code');
+    {
+        // dd($nonRemark);
+        $assetCode = $request->input('asset_code');
 
-    $nonCode = $request->input('none_code');
-    $non = NonOperator::where('doc_no', $nonCode)->get();
-    // dd($non);
-    // dd($nonRemark);
-    $query = DB::connection('Fixasset')
-        ->select("SELECT fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
+        $nonCode = $request->input('none_code');
+        $non = NonOperator::where('doc_no', $nonCode)->get();
+        // dd($non);
+        // dd($nonRemark);
+        $query = DB::connection('Fixasset')
+            ->select("SELECT fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
             fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date, fxdt.fxstatus AS status
             FROM asset.fxassetdetail fxdt
             LEFT JOIN asset.fxbranch fxbr ON fxdt.fxbranchcode = fxbr.fxbranchcode
@@ -970,29 +1194,25 @@ class LaptopAssetCodeController extends Controller
             LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
             WHERE fxdt.fxassetdetailcode = '$assetCode'");
 
-            if (count($query) > 0) {
-                $nonRemark = NonRemark::find($id);
-                // dd($nonRemark);
-                if ($nonRemark) {
-                    $nonRemark->doc_no = $assetCode;
-                    $nonRemark->update();
-                }
-
-
-                if ($non->count() > 0) {
-                    foreach ($non as $item) {
-                        $item->doc_no = $assetCode;
-                        $item->update();
-                    }
-                }
-
-                return back()->with('success', 'Successfully updated.');
-            } else {
-                return back()->with('error', 'Your asset code does not exist in the Fixasset database.');
+        if (count($query) > 0) {
+            $nonRemark = NonRemark::find($id);
+            // dd($nonRemark);
+            if ($nonRemark) {
+                $nonRemark->doc_no = $assetCode;
+                $nonRemark->update();
             }
 
 
+            if ($non->count() > 0) {
+                foreach ($non as $item) {
+                    $item->doc_no = $assetCode;
+                    $item->update();
+                }
+            }
+
+            return back()->with('success', 'Successfully updated.');
+        } else {
+            return back()->with('error', 'Your asset code does not exist in the Fixasset database.');
+        }
     }
-
-
 }

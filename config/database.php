@@ -77,7 +77,7 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
-            'Hremployee' => [
+        'Hremployee' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
             'host' => env('Hremployee_DB_HOST', '127.0.0.1'),
@@ -91,6 +91,22 @@ return [
             'schema' => 'public',
             'sslmode' => 'prefer',
         ],
+
+        'request_document_system' => [
+            'driver' => 'pgsql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('RDS_DB_HOST', '127.0.0.1'),
+            'port' => env('RDS_DB_PORT', '5432'),
+            'database' => env('RDS_DB_DATABASE', 'forge'),
+            'username' => env('RDS_DB_USERNAME', 'forge'),
+            'password' => env('RDS_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'schema' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
 
         'Fixasset' => [
             'driver' => 'pgsql',
@@ -154,7 +170,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [

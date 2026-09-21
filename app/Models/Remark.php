@@ -10,6 +10,8 @@ class Remark extends Model
     use HasFactory;
     protected $fillable=[
         'asset_code',
+        'emp_id',
+        'emp_name',
         'operator',
         'phone',
         'contract',

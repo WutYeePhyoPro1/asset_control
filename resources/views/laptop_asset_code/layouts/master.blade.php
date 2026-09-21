@@ -14,25 +14,33 @@
   <link href="{{asset('assets/img/title.png')}}" rel="icon">
   <link href="{{asset('assets/img/title.png')}}" rel="apple-touch-icon">
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  @if (empty($minimalAssets))
+    <!-- Local Fonts -->
+    <link href="{{ asset('assets/fonts/nunito.css') }}" rel="stylesheet">
+  @endif
 
   <link href="{{asset('assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
   <link href="{{asset('assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
   <link href="{{asset('assets/vendor/boxicons/css/boxicons.min.css')}}" rel="stylesheet">
-  <link href="{{asset('assets/vendor/quill/quill.snow.css')}}" rel="stylesheet">
-  <link href="{{asset('assets/vendor/quill/quill.bubble.css')}}" rel="stylesheet">
+  @if (empty($minimalAssets))
+    <link href="{{asset('assets/vendor/quill/quill.snow.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/vendor/quill/quill.bubble.css')}}" rel="stylesheet">
+  @endif
   <link href="{{asset('assets/vendor/remixicon/remixicon.css')}}" rel="stylesheet">
-  <link href="{{asset('assets/vendor/simple-datatables/style.css')}}" rel="stylesheet">
+  @if (empty($minimalAssets))
+    <link href="{{asset('assets/vendor/simple-datatables/style.css')}}" rel="stylesheet">
+  @endif
 
   <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+  @if (empty($minimalAssets))
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+  @endif
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.3.1/echarts.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  @if (empty($minimalAssets))
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.min.css">
+  @endif
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
@@ -179,6 +187,236 @@ body {
     z-index: 1;
     background-color: #fff; /* Background color for the fixed header */
 }
+
+/* Shared data-table appearance */
+main .table {
+    margin-bottom: 0;
+    color: #102a5c;
+    font-family: "Nunito", "Poppins", sans-serif;
+    font-size: 14px;
+    border: 1px solid #d9dfeb;
+    border-collapse: collapse !important;
+    background: #fff;
+}
+
+main .table thead th {
+    padding: 10px 12px !important;
+    color: #142a5d;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+    background: #f6f4fc !important;
+    border-color: #d9dfeb !important;
+}
+
+main .table tbody th,
+main .table tbody td {
+    padding: 10px 12px !important;
+    vertical-align: middle;
+    border-color: #d9dfeb !important;
+    background: #fff;
+}
+
+main .table.table-hover tbody tr { transition: background-color .16s ease; }
+main .table.table-hover tbody tr:hover > * { background: #f8fbff !important; }
+main .table a { color: #173fba; font-weight: 700; text-decoration: none; }
+main .table a:hover { color: #0d2c91; text-decoration: underline; }
+
+main .dataTables_wrapper .dt-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 12px;
+}
+
+main .dataTables_wrapper .dt-buttons .btn {
+    margin: 0;
+    padding: 8px 12px;
+    color: #243b72;
+    font-family: "Nunito", "Poppins", sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    background: #f6f4fc;
+    border: 1px solid #d9dfeb;
+    border-radius: 7px;
+    box-shadow: none;
+}
+
+main .dataTables_wrapper .dt-buttons .btn:hover {
+    color: #fff;
+    background: #2047c7;
+    border-color: #2047c7;
+}
+
+main .dataTables_wrapper .dataTables_info {
+    color: #64748b;
+    font-family: "Nunito", "Poppins", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+main .dataTables_wrapper .dataTables_paginate .paginate_button {
+    margin: 0 2px;
+    padding: 7px 11px !important;
+    color: #2047c7 !important;
+    font-family: "Nunito", "Poppins", sans-serif;
+    font-weight: 800;
+    background: #fff !important;
+    border: 1px solid #d9dfeb !important;
+    border-radius: 7px;
+}
+
+main .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+main .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #fff !important;
+    background: #2047c7 !important;
+    border-color: #2047c7 !important;
+}
+
+/* Minimal table variant: keep spacing and hierarchy, remove grid lines. */
+main .table,
+main .table-bordered > :not(caption) > *,
+main .table-bordered > :not(caption) > * > * {
+    border: 0 !important;
+}
+
+main .table thead th,
+main .table tbody th,
+main .table tbody td {
+    border: 0 !important;
+}
+
+main .dataTables_wrapper .dataTables_paginate .paginate_button {
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+main .dataTables_wrapper .dataTables_paginate .paginate_button:not(.current) {
+    background: transparent !important;
+}
+
+/* Clean system theme */
+:root {
+    --system-primary: #6d28d9;
+    --system-primary-dark: #5b21b6;
+    --system-soft: #f7f5ff;
+    --system-page: #f8f9fd;
+    --system-ink: #202342;
+    --system-muted: #718096;
+    --system-border: #e6e7f0;
+}
+
+body {
+    background: var(--system-page) !important;
+    color: var(--system-ink);
+}
+
+#main {
+    padding: 26px 30px;
+}
+
+.header {
+    height: 64px !important;
+    background: rgba(255, 255, 255, .96) !important;
+    border-bottom: 1px solid var(--system-border);
+    box-shadow: 0 4px 18px rgba(54, 44, 105, .06);
+}
+
+.sidebar {
+    top: 64px !important;
+    background: #fff !important;
+    border-right: 1px solid var(--system-border);
+    box-shadow: 5px 0 22px rgba(54, 44, 105, .04);
+}
+
+.sidebar-nav .nav-link {
+    margin: 5px 12px;
+    color: #34375b !important;
+    background: transparent !important;
+    border-radius: 11px;
+}
+
+.sidebar-nav .nav-link i {
+    color: #8b7bbd !important;
+}
+
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link:hover i,
+.sidebar-nav .nav-link.active,
+.sidebar-nav .nav-link.active i {
+    color: var(--system-primary) !important;
+    background: var(--system-soft) !important;
+}
+
+.card,
+.table-responsive,
+.modal-content {
+    border-color: var(--system-border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 28px rgba(54, 44, 105, .06) !important;
+}
+
+.btn-primary,
+.btn-info,
+.back-to-top {
+    background-color: var(--system-primary) !important;
+    border-color: var(--system-primary) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-info:hover,
+.back-to-top:hover {
+    background-color: var(--system-primary-dark) !important;
+    border-color: var(--system-primary-dark) !important;
+}
+
+.form-control,
+.form-select,
+.select2-container--bootstrap-5 .select2-selection {
+    color: var(--system-ink) !important;
+    background-color: #fff !important;
+    border-color: #dfe1ed !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.select2-container--bootstrap-5.select2-container--focus .select2-selection {
+    border-color: #a78bfa !important;
+    box-shadow: 0 0 0 .2rem rgba(109, 40, 217, .12) !important;
+}
+
+main .table thead th {
+    color: #40356e !important;
+    background: var(--system-soft) !important;
+    border-color: var(--system-border) !important;
+}
+
+main .table a {
+    color: var(--system-primary) !important;
+}
+
+main .table a:hover {
+    color: var(--system-primary-dark) !important;
+}
+
+main .dataTables_wrapper .dt-buttons .btn,
+main .dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #554486 !important;
+    background: #fff !important;
+    border-color: var(--system-border) !important;
+}
+
+main .dataTables_wrapper .dt-buttons .btn:hover,
+main .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+main .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #fff !important;
+    background: var(--system-primary) !important;
+    border-color: var(--system-primary) !important;
+}
+
 </style>
 </head>
 
@@ -193,30 +431,71 @@ body {
 
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 <!-- Vendor JS Files -->
-<script src="{{asset('assets/vendor/apexcharts/apexcharts.min.js')}}"></script>
 <script src="{{asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-<script src="{{asset('assets/vendor/chart.js/chart.umd.js')}}"></script>
-<script src="{{asset('assets/vendor/echarts/echarts.min.js')}}"></script>
-<script src="{{asset('assets/vendor/quill/quill.min.js')}}"></script>
-<script src="{{asset('assets/vendor/simple-datatables/simple-datatables.js')}}"></script>
-<script src="{{asset('assets/vendor/tinymce/tinymce.min.js')}}"></script>
-<script src="{{asset('assets/vendor/php-email-form/validate.js')}}"></script>
+@if (empty($minimalAssets))
+  <script src="{{asset('assets/vendor/quill/quill.min.js')}}"></script>
+  <script src="{{asset('assets/vendor/simple-datatables/simple-datatables.js')}}"></script>
+  <script src="{{asset('assets/vendor/tinymce/tinymce.min.js')}}"></script>
+  <script src="{{asset('assets/vendor/php-email-form/validate.js')}}"></script>
+@endif
 <script src="{{asset('assets/js/main.js')}}"></script>
-<script src="https://cdnjs.com/libraries/Chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/js/standalone/selectize.min.js"></script>
+@if (empty($minimalAssets))
+  <script src="{{asset('assets/js/select2.full.min.js')}}"></script>
+  <script src="{{asset('assets/js/selectize.min.js')}}"></script>
+@endif
 
-<link href="https://cdn.datatables.net/buttons/2.3.2/css/buttons.bootstrap5.min.css" rel="stylesheet" type="text/css" />
-<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.bootstrap4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.colVis.min.js"></script>
+<link rel="stylesheet" href="{{ asset('assets/css/buttons.bootstrap5.min.css') }}">
+
+<script src="{{asset('assets/js/jquery.dataTables.min.js')}}"></script>
+
+<script src="{{asset('assets/js/dataTables.bootstrap4.min.js')}}"></script>
+
+<script src="{{asset('assets/js/dataTables.buttons.min.js')}}"></script>
+
+<script src="{{asset('assets/js/buttons.bootstrap4.min.js')}}"></script>
+<script src="{{asset('assets/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/js/buttons.colVis.min.js')}}"></script>
+@if (empty($minimalAssets))
+  <script src="{{asset('assets/js/pdfmake.min.js')}}"></script>
+  <script src="{{asset('assets/js/vfs_fonts.js')}}"></script>
+  <script src="{{asset('assets/js/buttons.print.min.js')}}"></script>
+@endif
+
+
+<script>
+  $(document).ready(function () {
+    function setPhoneInput(input) {
+      var phone = $(input);
+      var digits = phone.val().replace(/\D/g, '');
+      var number = digits.indexOf('09') === 0 ? digits : '09' + digits;
+
+      phone.attr('type', 'tel');
+      phone.attr('inputmode', 'numeric');
+      phone.attr('maxlength', '11');
+      phone.attr('minlength', '11');
+      phone.attr('pattern', '09[0-9]{9}');
+      phone.attr('title', 'Phone number must start with 09 and contain 11 digits.');
+      phone.val(number.substring(0, 11));
+    }
+
+    $('input[name="phone"], input[name="phone[]"]').each(function () {
+      setPhoneInput(this);
+    });
+
+    $(document).on('input', 'input[name="phone"], input[name="phone[]"]', function () {
+      setPhoneInput(this);
+    });
+
+    $(document).on('click', '#addbtn, #addbtn1', function () {
+      setTimeout(function () {
+        $('input[name="phone"], input[name="phone[]"]').each(function () {
+          setPhoneInput(this);
+        });
+      }, 50);
+    });
+  });
+</script>
 
 
 @yield('js')

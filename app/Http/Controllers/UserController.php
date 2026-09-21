@@ -46,12 +46,15 @@ class UserController extends Controller
             'password' => 'required|confirmed',
             'type'=>'required',
             'branch_id'=>'required',
+            'profile' => 'nullable|mimes:jpeg,jpg,png,gif,webp|max:3300',
         ],['emp_code'=>'Employee ID has already been taken.']
     );
 
-
-        $file=rand(0,999999)."_".$request->file('profile')->getClientOriginalName();
-        $pathfile= Storage::putFileAs('public/profile',$request->file('profile'),$file);
+        $file = null;
+        if ($request->hasFile('profile')) {
+            $file = rand(0,999999)."_".$request->file('profile')->getClientOriginalName();
+            Storage::putFileAs('public/profile', $request->file('profile'), $file);
+        }
 
         User::create([
             'profile'=>$file,

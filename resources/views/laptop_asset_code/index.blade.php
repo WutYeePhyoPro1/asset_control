@@ -303,7 +303,7 @@
                                                                             <div class="col-md-12 col-12">
                                                                                 <center>
                                                                                     <img
-                                                                                        src="https://img.icons8.com/external-kmg-design-outline-color-kmg-design/52/000000/external-warning-maps-navigation-kmg-design-outline-color-kmg-design.png" />
+                                                                                        src="{{ asset('assets/img/external-warning.png') }}" />
                                                                                     <p style="color:#000;">Do you want to
                                                                                         delete?</p>
                                                                                     <i class="bi bi-x-circle btn btn-danger"

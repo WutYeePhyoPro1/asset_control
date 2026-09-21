@@ -1,5 +1,29 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
+    <style>
+        .admin-users-page { --user-primary: #1d4ed8; --user-ink: #172554; --user-border: #d8e1ed; font-family: "Nunito", sans-serif; }
+        .admin-users-page .card { border-color: #e4ebf5; box-shadow: 0 10px 28px rgba(15, 23, 42, .05); }
+        .admin-users-page .nav-tabs { border-bottom-color: #dfe7f3; }
+        .admin-users-page .nav-tabs .nav-link { padding: 12px 18px; color: #526580; font-family: "Nunito", sans-serif; font-weight: 800; }
+        .admin-users-page .nav-tabs .nav-link.active { color: var(--user-primary); border-color: #dfe7f3 #dfe7f3 #fff; }
+        .admin-users-page form .form-label { margin-bottom: 8px; color: var(--user-ink); font-family: "Nunito", sans-serif; font-size: 14px !important; font-weight: 800; }
+        .admin-users-page form .form-control, .admin-users-page form .form-select {
+            min-height: 52px; padding: 11px 14px; color: #334155; font-family: "Nunito", sans-serif; font-size: 14px; font-weight: 600;
+            border: 1px solid var(--user-border) !important; border-radius: 9px; box-shadow: none !important;
+        }
+        .admin-users-page form .form-control:focus, .admin-users-page form .form-select:focus { border-color: #60a5fa !important; box-shadow: 0 0 0 .22rem rgba(59,130,246,.13) !important; }
+        .admin-users-page .select2-container--bootstrap-5 .select2-selection { min-height: 52px; padding: 0 42px 0 14px; color: #334155; font-family: "Nunito", sans-serif; font-size: 14px; font-weight: 600; border: 1px solid var(--user-border) !important; border-radius: 9px; box-shadow: none !important; }
+        .admin-users-page .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered { display: flex; align-items: center; height: 50px; padding: 0; color: #334155; }
+        .admin-users-page .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow { top: 14px; right: 13px; }
+        .admin-users-page .select2-container--bootstrap-5.select2-container--focus .select2-selection { border-color: #60a5fa !important; box-shadow: 0 0 0 .22rem rgba(59,130,246,.13) !important; }
+        .admin-users-page .user-register-card { border: 0; border-radius: 18px; box-shadow: 0 14px 32px rgba(15,23,42,.08); }
+        .admin-users-page .user-register-card .card-body { padding: 28px; }
+        .admin-users-page .profile-upload { display: flex; align-items: center; gap: 16px; padding: 14px; background: #f8fbff; border: 1px dashed #b9cbea; border-radius: 12px; }
+        .admin-users-page .profile-preview { width: 72px; height: 72px; overflow: hidden; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 4px 12px rgba(15,23,42,.12); }
+        .admin-users-page .profile-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .admin-users-page .form-actions { display: flex; gap: 10px; align-items: end; height: 100%; padding-top: 27px; }
+        .admin-users-page .form-actions .btn { min-height: 46px; padding: 10px 18px; border-radius: 9px; font-family: "Nunito", sans-serif; font-weight: 800; }
+    </style>
     <div class="pagetitle">
       <h1>Employee Asset Control System</h1><br>
       <nav>
@@ -36,7 +60,7 @@
       </div>
     @endif
 
-    <section class="section">
+    <section class="section admin-users-page">
       <div class="row">
 
         <div class="col-lg-12">
@@ -66,7 +90,7 @@
                 <div class="card">
                 <div class="card-body"><br>
 
-<form method="POST" action="{{route('all_user.search')}}">
+<form method="POST" action="{{route('all_user.search')}}" class="user-search-form">
               @csrf
             <div class="row g-3">
 
@@ -176,7 +200,7 @@
                                                                             <div class="col-md-12 col-12">
                                                                                 <center>
                                                                                     <img
-                                                                                        src="https://img.icons8.com/external-kmg-design-outline-color-kmg-design/52/000000/external-warning-maps-navigation-kmg-design-outline-color-kmg-design.png" />
+                                                                                        src="{{ asset('img/external-warning.png') }}" />
                                                                                     <p style="color:#000;">Do you want to
                                                                                         delete?</p>
                                                                                     <i class="bi bi-x-circle btn btn-danger"
@@ -215,30 +239,29 @@
             </div>
 
             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            <form action="{{route('all_user.store')}}" class="needs-validation" method="POST" enctype="multipart/form-data" novalidate>
+            <form action="{{route('all_user.store')}}" class="needs-validation user-register-form" method="POST" enctype="multipart/form-data" novalidate>
                     @csrf
                 <div class="row">
                     <div class="col-md-3 col-lg-3"></div>
                     <div class="col-md-6 col-lg-6">
-                    <div class="card">
+                    <div class="card user-register-card">
 
                     <div class="card-body"><br>
                         <div class="row g-3">
                         <div class="col-md-12 col-lg-12">
                         <div class="row g-3">
-                        <div class="col-md-4 col-lg-4">
+                        <div class="col-md-12 col-lg-12">
+                        <div class="profile-upload">
+                        <div class="profile-preview" id="image_preview"><img src="{{ asset('assets/img/default-profile.svg') }}" alt="Default profile"></div>
+                        <div>
                         <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> User Profile</label>
                         <label for="my_file">
-                        <i class="bi bi-upload btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="user account profile click the button."></i>
+                        <span class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Upload a user profile image."><i class="bi bi-upload me-1"></i>Upload photo</span>
                         </label>
-                        <input type="file" id="my_file" style="display: none;" name="profile" required />
-                        <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                            Please upload your employee profile.
+                        <input type="file" id="my_file" style="display: none;" name="profile" accept="image/jpeg,image/png,image/gif,image/webp" />
+                        <div class="small text-muted">Optional — a default profile image will be used when empty.</div>
                         </div>
                         </div>
-                        <div class="col-md-4 col-lg-4">
-                        <div id="image_preview" style="width: 100px;"></div>
-                        <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
                         </div>
 
                         </div>
@@ -294,7 +317,7 @@
                             <select class="form-select mb-3" aria-label=".form-select-lg example" name="branch_id" style="box-shadow:1px 1px 1px #333;" required>
                             <option value="" selected>Select Your Branch</option>
                             @foreach ($branches as $branch)
-                            <option value="{{$branch->id}}" selected>{{$branch->branch_name}}</option>
+                            <option value="{{$branch->id}}">{{$branch->branch_name}}</option>
                             @endforeach
                             </select>
 
@@ -358,7 +381,7 @@
                         </div>
 
 
-                        <div class="col-md-6 col-lg-6" style="padding-top: 65px;">
+                        <div class="col-md-6 col-lg-6 form-actions">
 
                         <button class="btn btn-primary" type="submit"> <font class="card-title" style="color:#fff;font-size: 15px;">Save</font></button>
                         <button class="btn btn-warning" type="reset"> <font class="card-title" style="color:#fff;font-size: 15px;">Cancel</font></button>

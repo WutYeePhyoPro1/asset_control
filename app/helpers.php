@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\AssetHistory;
+use App\Models\FixAsset;
 use App\Models\Remark;
 use App\Models\NonRemark;
 use App\Models\NonOperator;
@@ -55,3 +57,21 @@ function getnonRemark208($doc_no)
     return $remarks;
 }
 
+function syncAssetHistory()
+{
+    $assets = FixAsset::query()->select(['asset_code', 'asset_name'])->get();
+    foreach ($assets as $asset) {
+        $lastHistory = AssetHistory::where('asset_code', $asset->asset_code)->latest('id')->first();
+        if (!$lastHistory) {
+            AssetHistory::create([
+                'asset_code' => $asset['asset_code'],
+                'asset_name' => $asset['asset_name']
+            ]);
+        } elseif ($lastHistory->asset_name != $asset->asset_name) {
+            AssetHistory::create([
+                'asset_code' => $asset['asset_code'],
+                'asset_name' => $asset['asset_name']
+            ]);
+        }
+    }
+}
