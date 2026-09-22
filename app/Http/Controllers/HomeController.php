@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\LaptopAssetCode;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
@@ -33,23 +34,28 @@ class HomeController extends Controller
         $datas = LaptopAssetCode::latest()->paginate(20);
         $branches = Branch::all();
         $departments = Department::all();
-        $selectedMonth = $request->month;
+        $selectedMonth = $request->input('month');
 
-        // The month input sends YYYY-MM, for example 2026-09.
-        $selectedMonth = is_string($selectedMonth)
-            && preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $selectedMonth)
-            ? $selectedMonth . '-01'
-            : null;
-        $selectedMonthEnd = $selectedMonth
-            ? (new \DateTimeImmutable($selectedMonth))->modify('+1 month')->format('Y-m-d')
-            : null;
-        $dateFilter = $selectedMonth ? "
-             AND fxdt.fxdatebuy >= CAST(:month_start AS date)
-             AND fxdt.fxdatebuy < CAST(:month_end AS date)" : '';
-        $dateBindings = $selectedMonth ? [
-            'month_start' => $selectedMonth,
-            'month_end' => $selectedMonthEnd,
-        ] : [];
+        $request->validate([
+            'month' => ['nullable', 'date_format:Y-m'],
+        ]);
+
+        $dateFilter = '';
+        $dateBindings = [];
+
+        if ($selectedMonth) {
+            $monthStart = Carbon::createFromFormat('!Y-m', $selectedMonth)->startOfMonth();
+            $monthEnd = $monthStart->copy()->addMonth();
+            $dateFilter = "
+        AND fxdt.fxdatebuy >= :month_start
+        AND fxdt.fxdatebuy < :month_end
+    ";
+
+            $dateBindings = [
+                'month_start' => $monthStart,
+                'month_end' => $monthEnd,
+            ];
+        }
 
         $assetCounts = $conn->select("
                     SELECT branch_name || '(' || branch_code || ')' AS branch,
@@ -151,7 +157,7 @@ class HomeController extends Controller
 
         $opers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM operators GROUP BY branch");
         $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
-        
+
         $totalPhoneCount = collect($nonopers)->sum('phone_count');
 
         // dd($nonopers);

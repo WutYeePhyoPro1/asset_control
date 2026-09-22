@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -660,6 +659,7 @@ class LaptopAssetCodeController extends Controller
 
             $fix_assets = collect($conn->select($query, ['fxbranchcode' => $branch_id]));
         }
+        
 
         $fix_assets->each(function ($asset) {
             FixAsset::updateOrCreate(
@@ -737,7 +737,7 @@ class LaptopAssetCodeController extends Controller
             DB::table('operators')->insert($addasset);
         }
 
-        return back()->with('success', 'Data inserted successfully!');
+        return back()->with('success', 'Successfully saved.');
     }
 
     public function OpNew(Request $request)

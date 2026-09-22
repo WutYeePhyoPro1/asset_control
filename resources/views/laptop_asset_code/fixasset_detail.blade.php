@@ -896,90 +896,72 @@
 
         .asset-toast {
             position: fixed;
-            top: 18px;
-            right: 18px;
+            top: 24px;
+            right: 24px;
             z-index: 2000;
-            width: min(560px, calc(100vw - 36px));
-            padding: 4px;
-            color: #fff;
-            background: #009e55;
-            border: 1px solid #007f44;
-            border-radius: 8px;
-            box-shadow: 0 12px 26px rgba(0, 138, 73, .28), 0 5px 12px rgba(15, 23, 42, .16);
+            width: min(380px, calc(100vw - 48px));
+            overflow: hidden;
+            color: #064e3b;
+            background: #d1fae5;
+            border: 1px solid #6ee7b7;
+            border-radius: 7px;
+            box-shadow: 0 12px 26px rgba(16, 185, 129, .2), 0 5px 12px rgba(15, 23, 42, .12);
             animation: asset-toast-enter .34s cubic-bezier(.22, 1, .36, 1) both;
         }
 
         .asset-toast.is-error {
-            background: #d50d24;
-            border-color: #ad081b;
+            color: #7f1d1d;
+            background: #fee2e2;
+            border-color: #fca5a5;
         }
 
         .asset-toast.is-closing {
             animation: asset-toast-exit .28s ease-in both;
         }
 
-        .asset-toast-body {
+        .asset-toast-header {
             display: flex;
             align-items: center;
-            gap: 18px;
-            min-height: 78px;
-            padding: 16px 20px;
-            background: #00c968;
-            border: 1px solid rgba(255, 255, 255, .2);
-            border-radius: 4px;
+            justify-content: space-between;
+            margin: 0 16px;
+            padding: 14px 0 10px;
+            border-bottom: 1px solid rgba(6, 78, 59, .22);
         }
 
-        .asset-toast.is-error .asset-toast-body {
-            background: #ff1530;
+        .asset-toast-title {
+            font-size: 18px;
+            font-weight: 600;
         }
 
-        .asset-toast-icon {
-            display: inline-grid;
-            flex: 0 0 38px;
-            width: 38px;
-            height: 38px;
-            place-items: center;
-            color: #00b85e;
-            font-size: 22px;
-            background: #fff;
-            border-radius: 50%;
-        }
-
-        .asset-toast.is-error .asset-toast-icon {
-            color: #ef1730;
+        .asset-toast.is-error .asset-toast-header {
+            border-bottom-color: rgba(127, 29, 29, .22);
         }
 
         .asset-toast-close {
-            width: 24px;
-            height: 24px;
             padding: 0;
-            flex: 0 0 34px;
-            width: 34px;
-            height: 34px;
-            margin-left: auto;
-            color: rgba(255, 255, 255, .9);
-            font-size: 32px;
+            color: #047857;
+            font-size: 26px;
             line-height: 1;
             background: transparent;
             border: 0;
-            border-radius: 50%;
             cursor: pointer;
         }
 
         .asset-toast-close:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, .18);
+            color: #065f46;
+        }
+
+        .asset-toast.is-error .asset-toast-close {
+            color: #b91c1c;
         }
 
         .asset-toast-message {
             margin: 0;
-            color: #fff;
-            font-size: 21px;
-            font-weight: 700;
+            padding: 14px 16px 18px;
+            color: inherit;
+            font-size: 16px;
+            font-weight: 500;
             line-height: 1.25;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .asset-toast-progress {
@@ -988,10 +970,22 @@
             bottom: 0;
             left: 0;
             height: 2px;
-            background: rgba(255, 255, 255, .88);
+            background: #10b981;
             border-radius: 0 0 6px 6px;
             transform-origin: left;
             animation: asset-toast-progress 5s linear forwards;
+        }
+
+        .asset-toast.is-error .asset-toast-progress {
+            background: #ef4444;
+        }
+
+        @media (max-width: 575.98px) {
+            .asset-toast {
+                top: 14px;
+                right: 14px;
+                width: calc(100vw - 28px);
+            }
         }
 
         @keyframes asset-toast-enter {
@@ -1486,7 +1480,7 @@
                                 'C' => 'Cancelled',
                                 'T' => 'Transferred',
                                 'S' => 'Sold',
-                                default => 'Active record',
+                                default => 'Ongoing',
                             };
                             $isClosedStatus = in_array($rawStatus, ['C', 'T', 'S'], true);
                         @endphp
