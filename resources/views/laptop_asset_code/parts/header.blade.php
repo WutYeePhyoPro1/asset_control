@@ -125,8 +125,21 @@
     .asset-notification-menu {
       width: 360px;
       max-width: calc(100vw - 24px);
+      max-height: min(70vh, 560px);
       padding: 0;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #c4b5fd transparent;
+    }
+
+    .asset-notification-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .asset-notification-menu::-webkit-scrollbar-thumb {
+      background: #c4b5fd;
+      border-radius: 999px;
     }
 
     .asset-notification-menu .notification-heading {
