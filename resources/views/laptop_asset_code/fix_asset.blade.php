@@ -454,7 +454,7 @@
                                 <div class="col-md-12 d-flex justify-content-between" id="filter_clear">
                                     {{-- <label for="validationCustom05" class="form-label card-title"
                                         style="font-size: 15px;">Clear</label> --}}
-                                    <a class="nav-link collapsed" href="{{ route('laptop_asset_code.fix_asset') }}">
+                                    <a id="clear-fix-asset-filters" class="nav-link collapsed" href="{{ route('laptop_asset_code.fix_asset') }}">
                                         <button class="btn btn-primary"
                                             style="font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">All</button>
                                     </a>
@@ -888,12 +888,33 @@
             table.buttons().container().appendTo('#fixasset_wrapper .col-md-6:eq(0)');
 
             function filterColumn(i) {
+                const filterValue = $('#col' + i + '_filter').val();
 
-
-                $('#fixasset').DataTable().column(i).search(
-                    $('#col' + i + '_filter').val()
-                ).draw();
+                $('#fixasset').DataTable().column(i).search(filterValue).draw();
             }
+
+            const fixAssetFilterMap = {
+                '#col2_filter': 'branch',
+                '#col4_filter': 'asset_type',
+                '#col9_filter': 'status'
+            };
+            const savedFixAssetFilters = JSON.parse(localStorage.getItem('fixAssetFilters') || '{}');
+            const urlFilters = new URLSearchParams(window.location.search);
+
+            Object.keys(fixAssetFilterMap).forEach(function (selector) {
+                const queryKey = fixAssetFilterMap[selector];
+                const savedValue = urlFilters.has(queryKey)
+                    ? urlFilters.get(queryKey)
+                    : savedFixAssetFilters[selector];
+
+                if (savedValue !== undefined && savedValue !== null) {
+                    $(selector).val(savedValue);
+                }
+            });
+
+            Object.keys(fixAssetFilterMap).forEach(function (selector) {
+                filterColumn($(selector).attr('id').replace('col', '').replace('_filter', ''));
+            });
 
 
             $(document).ready(function() {
@@ -909,7 +930,23 @@
             });
 
             $('select.column_filter').on('change', function() {
-                filterColumn($(this).parents('div').attr('data-column'));
+                const column = $(this).parents('div').attr('data-column');
+                filterColumn(column);
+
+                const filters = {};
+                const currentUrl = new URL(window.location.href);
+                Object.keys(fixAssetFilterMap).forEach(function (selector) {
+                    const value = $(selector).val() || '';
+                    filters[selector] = value;
+                    currentUrl.searchParams.set(fixAssetFilterMap[selector], value);
+                });
+
+                localStorage.setItem('fixAssetFilters', JSON.stringify(filters));
+                window.history.replaceState({}, '', currentUrl.toString());
+            });
+
+            $('#clear-fix-asset-filters').on('click', function() {
+                localStorage.removeItem('fixAssetFilters');
             });
 
         });
