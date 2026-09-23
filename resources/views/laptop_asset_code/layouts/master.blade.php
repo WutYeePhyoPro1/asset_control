@@ -468,13 +468,14 @@ main .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
     function setPhoneInput(input) {
       var phone = $(input);
       var digits = phone.val().replace(/\D/g, '');
-      var number = digits.indexOf('09') === 0 ? digits : '09' + digits;
+      var number = digits === '' ? '' :
+        (digits.indexOf('09') === 0 ? digits : '09' + digits);
 
       phone.attr('type', 'tel');
       phone.attr('inputmode', 'numeric');
       phone.attr('maxlength', '11');
       phone.attr('minlength', '11');
-      phone.attr('pattern', '09[0-9]{9}');
+      phone.attr('pattern', '09([0-9]{9})?');
       phone.attr('title', 'Phone number must start with 09 and contain 11 digits.');
       phone.val(number.substring(0, 11));
     }

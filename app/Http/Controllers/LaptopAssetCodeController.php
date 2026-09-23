@@ -556,7 +556,10 @@ class LaptopAssetCodeController extends Controller
         $assets = $assetsQuery->get();
         $assetPaginator = null;
         $remarks = Remark::whereIn('asset_code', $assets->pluck('asset_code'))
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
             ->get()
+            ->unique('asset_code')
             ->keyBy('asset_code');
 
         $fix_assets = $assets->map(function ($asset) use ($remarks) {
@@ -699,7 +702,7 @@ class LaptopAssetCodeController extends Controller
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'array'],
-            'phone.*' => ['required', 'regex:/^09\d{9}$/'],
+            'phone.*' => ['nullable', 'regex:/^09(?:\d{9})?$/'],
         ], [
             'emp_id.required' => 'Please search and select an employee.',
             'emp_name.required' => 'Please search and select an employee.',
@@ -745,7 +748,7 @@ class LaptopAssetCodeController extends Controller
         // dd($request->all());
         $request->validate([
             'phone' => ['required', 'array'],
-            'phone.*' => ['required', 'regex:/^09\d{9}$/'],
+            'phone.*' => ['nullable', 'regex:/^09(?:\d{9})?$/'],
         ], [
             'phone.*.regex' => 'Phone number must start with 09 and contain 11 digits.',
         ]);
@@ -764,7 +767,7 @@ class LaptopAssetCodeController extends Controller
                 'asset_name' => $asset_name,
                 'asset_type' => $asset_type,
                 'operator' => $request->operator[$i],
-                'phone' => $request->phone[$i],
+                'phone' => $request->phone[$i] === '09' ? null : $request->phone[$i],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -935,15 +938,16 @@ class LaptopAssetCodeController extends Controller
 
     public function update_operator(Request $request, $id)
     {
+        
         $request->validate([
-            'phone' => ['required', 'regex:/^09\d{9}$/'],
+            'phone' => ['nullable', 'regex:/^09(?:\d{9})?$/'],
         ], [
             'phone.regex' => 'Phone number must start with 09 and contain 11 digits.',
         ]);
 
         $updateop = Operator::find($id);
         $updateop->operator = $request->operator;
-        $updateop->phone = $request->phone;
+        $updateop->phone = $request->phone === '09' ? null : $request->phone;
         $updateop->update();
         return back()->with('success', 'Successfully updated.');
     }
@@ -1102,7 +1106,7 @@ class LaptopAssetCodeController extends Controller
                 'department' => $department,
                 'branch' => $branch,
                 'operator' => $request->operator[$i],
-                'phone' => $request->phone[$i],
+                'phone' => $request->phone[$i] === '09' ? null : $request->phone[$i],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -1116,7 +1120,7 @@ class LaptopAssetCodeController extends Controller
     public function update_operator_non(Request $request, $id)
     {
         $request->validate([
-            'phone' => ['required', 'regex:/^09\d{9}$/'],
+            'phone' => ['nullable', 'regex:/^09(?:\d{9})?$/'],
         ], [
             'phone.regex' => 'Phone number must start with 09 and contain 11 digits.',
         ]);

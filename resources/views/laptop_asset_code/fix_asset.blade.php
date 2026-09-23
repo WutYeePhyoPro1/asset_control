@@ -441,11 +441,10 @@
                                         id="col11_filter" style="border:1px solid #1c1c1d;">
                                 </div>
 
-                                <div class="col-md-3" id="filter_col9" data-column="9">
-                                    <label for="validationCustom05" class="form-label" style="font-size: 15px;">Select
-                                        Contract</label>
+                                <div class="col-md-3" id="filter_col12" data-column="12">
+                                    <label for="validationCustom05" class="form-label" style="font-size: 15px;">Select Contract</label>
                                     <select class="form-select column_filter" aria-label="Default select example"
-                                        id="col9_filter" name="department">
+                                        id="col12_filter" name="department">
                                         <option value="">Select Your Contract</option>
                                         <option value="Yes">Yes</option>
                                         <option value="No">No</option>
@@ -600,7 +599,7 @@
                                         <input type="hidden" class="form-control asset_code" name="asset_code"
                                             value="">
                                         <select class="form-select" aria-label="Default select example" name="operator"
-                                            style="box-shadow:1px 1px 1px #333;" required>
+                                            style="box-shadow:1px 1px 1px #333;" >
                                             <option value="" selected>Select your Operator</option>
                                             <option value="ATOM">ATOM</option>
                                             <option value="Ooredoo">Ooredoo</option>
@@ -610,19 +609,19 @@
 
                                         <h5 class="card-title">Ph No:</h5>
                                         <input type="text" class="form-control" name="phone"
-                                            style="box-shadow:1px 1px 1px #333;" required>
+                                            style="box-shadow:1px 1px 1px #333;" >
 
                                         <h5 class="card-title">Contract</h5>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="contract"
-                                                id="gridRadios1" value="Yes" required>
+                                                id="gridRadios1" value="Yes" >
                                             <label class="form-check-label" for="contract">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="contract"
-                                                id="gridRadios2" value="No" required>
+                                                id="gridRadios2" value="No" >
                                             <label class="form-check-label" for="contract">
                                                 No
                                             </label>

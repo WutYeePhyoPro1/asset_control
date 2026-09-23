@@ -87,6 +87,70 @@
       max-width: min(420px, calc(100vw - 32px));
       box-shadow: 0 10px 24px rgba(15, 23, 42, .14);
     }
+
+    .asset-notification-link {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      color: #172554;
+      font-size: 21px;
+      border-radius: 50%;
+    }
+
+    .asset-notification-link:hover,
+    .asset-notification-link:focus {
+      color: #6d28d9;
+      background: #f3e8ff;
+    }
+
+    .asset-notification-badge {
+      position: absolute;
+      top: 1px;
+      right: 0;
+      min-width: 18px;
+      height: 18px;
+      padding: 1px 5px;
+      color: #fff;
+      font-size: 10px;
+      line-height: 16px;
+      text-align: center;
+      background: #dc2626;
+      border: 2px solid #fff;
+      border-radius: 999px;
+    }
+
+    .asset-notification-menu {
+      width: 360px;
+      max-width: calc(100vw - 24px);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .asset-notification-menu .notification-heading {
+      padding: 14px 16px;
+      color: #172554;
+      font-weight: 800;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .asset-notification-menu .notification-item {
+      display: block;
+      padding: 12px 16px;
+      color: #334155;
+      white-space: normal;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .asset-notification-menu .notification-item:hover {
+      background: #f8fafc;
+    }
+
+    .asset-notification-menu .notification-item strong {
+      color: #6d28d9;
+    }
   </style>
 
   <!-- ======= Header ======= -->
@@ -112,6 +176,63 @@
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
+
+        @php
+          $notificationAssetsQuery = \App\Models\FixAsset::query()
+              ->whereRaw('LOWER(status) = ?', ['sold']);
+
+          if (Auth::user()->type !== 'Manager') {
+              $notificationAssetsQuery->where('branch_code', Auth::user()->getBranch?->branch_code);
+          }
+
+          $notificationAssets = $notificationAssetsQuery
+              ->orderByDesc('updated_at')
+              ->get();
+
+          $notificationPhones = \App\Models\Operator::query()
+              ->whereIn('asset_code', $notificationAssets->pluck('asset_code'))
+              ->whereNotNull('phone')
+              ->whereRaw("TRIM(phone) <> ''")
+              ->whereRaw('TRIM(phone) NOT IN (?, ?, ?, ?, ?)', ['-', '--', 'N/A', 'n/a', "'"])
+              ->orderByDesc('id')
+              ->get()
+              ->groupBy('asset_code');
+
+          $assetNotifications = $notificationAssets
+              ->filter(fn ($asset) => $notificationPhones->has($asset->asset_code))
+              ->values();
+        @endphp
+
+        <li class="nav-item dropdown me-3">
+          <a class="asset-notification-link" href="#" data-bs-toggle="dropdown" aria-expanded="false"
+             aria-label="Asset notifications">
+            <i class="bi bi-bell"></i>
+            @if ($assetNotifications->count())
+              <span class="asset-notification-badge">{{ $assetNotifications->count() > 99 ? '99+' : $assetNotifications->count() }}</span>
+            @endif
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow asset-notification-menu">
+            <li class="notification-heading">
+              Sold assets with phone numbers
+              <span class="badge bg-danger float-end">{{ $assetNotifications->count() }}</span>
+            </li>
+            @forelse ($assetNotifications as $notification)
+              @php
+                $notificationPhone = $notificationPhones->get($notification->asset_code)->first()->phone;
+              @endphp
+              <li>
+                <a class="notification-item" href="{{ route('detail_fixasset', $notification->asset_code) }}">
+                  <strong>{{ $notification->asset_code }}</strong><br>
+                  <small>{{ $notification->asset_name }}</small><br>
+                  <small><i class="bi bi-telephone me-1"></i>{{ $notificationPhone }}</small>
+                </a>
+              </li>
+            @empty
+              <li class="p-3 text-muted">No sold asset notifications.</li>
+            @endforelse
+          </ul>
+        </li>
 
         <li class="nav-item dropdown pe-5 me-5">
 

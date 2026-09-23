@@ -1696,7 +1696,7 @@
                                                         <div class="create-form-field full-width">
                                                             <label class="create-form-label" for="create-rank">Rank</label>
                                                             <select class="form-select" id="create-rank" name="rank"
-                                                                required>
+                                                                >
                                                                 <option value="" selected>Select your rank</option>
                                                                 <option value="R1">R1</option>
                                                                 <option value="R2">R2</option>
@@ -1714,7 +1714,7 @@
                                                             <label class="create-form-label"
                                                                 for="create-operator">Operator</label>
                                                             <select class="form-select" id="create-operator"
-                                                                name="operator[]" required>
+                                                                name="operator[]">
                                                                 <option value="" selected>Select your Operator</option>
                                                                 <option value="ATOM">ATOM</option>
                                                                 <option value="Ooredoo">Ooredoo</option>
@@ -1727,7 +1727,7 @@
                                                             <label class="create-form-label" for="create-phone">Ph
                                                                 No:</label>
                                                             <input type="text" class="form-control" id="create-phone"
-                                                                name="phone[]" maxlength="11" placeholder="09" required>
+                                                                name="phone[]" maxlength="11" placeholder="09" >
                                                         </div>
 
                                                         <div class="operator-add-row">
@@ -1745,12 +1745,12 @@
                                                             <div class="create-contract-options">
                                                                 <div class="create-contract-choice">
                                                                     <input type="radio" name="contract"
-                                                                        id="gridRadios1" value="Yes" required>
+                                                                        id="gridRadios1" value="Yes" >
                                                                     <label for="gridRadios1">Yes</label>
                                                                 </div>
                                                                 <div class="create-contract-choice">
                                                                     <input type="radio" name="contract"
-                                                                        id="gridRadios2" value="No" required>
+                                                                        id="gridRadios2" value="No" >
                                                                     <label for="gridRadios2">No</label>
                                                                 </div>
                                                             </div>
@@ -1820,7 +1820,7 @@
                                                         <h5 class="card-title">Operator</h5>
                                                         <select class="form-select" aria-label="Default select example"
                                                             name="operator[]" style="box-shadow:1px 1px 1px #333;"
-                                                            required>
+                                                            >
                                                             <option value="" selected>Select your
                                                                 Operator</option>
                                                             <option value="ATOM">ATOM</option>
@@ -1832,7 +1832,7 @@
                                                     <div>
                                                         <h5 class="card-title">Ph No:</h5>
                                                         <input type="text" class="form-control" name="phone[]"
-                                                            maxlength="11" style="box-shadow:1px 1px 1px #333;" required>
+                                                            maxlength="11" style="box-shadow:1px 1px 1px #333;" >
                                                     </div>
                                                 </div>
 
@@ -1893,7 +1893,7 @@
                                                             <h5 class="card-title">Operator</h5>
                                                             <select class="form-select"
                                                                 aria-label="Default select example" name="operator"
-                                                                style="box-shadow:1px 1px 1px #333;" required>
+                                                                style="box-shadow:1px 1px 1px #333;" >
                                                                 <option value="{{ $operator->operator }}" selected>
                                                                     {{ $operator->operator }}</option>
                                                                 <option value="ATOM">ATOM</option>
@@ -1906,7 +1906,7 @@
                                                             <h5 class="card-title">Ph No:</h5>
                                                             <input type="text" class="form-control" name="phone"
                                                                 maxlength="11" value="{{ $operator->phone }}"
-                                                                style="box-shadow:1px 1px 1px #333;" required>
+                                                                style="box-shadow:1px 1px 1px #333;" >
                                                         </div>
                                                     </div>
 
@@ -1965,7 +1965,7 @@
                                                             <label class="field-label"
                                                                 for="rank-{{ $remark->id }}">Rank</label>
                                                             <select class="form-select" id="rank-{{ $remark->id }}"
-                                                                name="rank" required>
+                                                                name="rank" >
                                                                 @foreach (['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9'] as $rank)
                                                                     <option value="{{ $rank }}"
                                                                         {{ $remark->rank == $rank ? 'selected' : '' }}>
@@ -1990,7 +1990,7 @@
                                                                         id="contract-yes-{{ $remark->id }}"
                                                                         value="Yes"
                                                                         {{ $remark->contract == 'Yes' ? 'checked' : '' }}
-                                                                        required>
+                                                                        >
                                                                     <label for="contract-yes-{{ $remark->id }}"><i
                                                                             class="bi bi-check-circle"></i> Yes</label>
                                                                 </div>
@@ -2248,7 +2248,7 @@
                 <div class="operator-entry">
                     <div class="create-form-field">
                         <label class="create-form-label">Operator</label>
-                        <select class="form-select" aria-label="Select your Operator" name="operator[]" required>
+                        <select class="form-select" aria-label="Select your Operator" name="operator[]" >
                             <option value="" selected>Select your Operator</option>
                             <option value="ATOM">ATOM</option>
                             <option value="Ooredoo">Ooredoo</option>
@@ -2258,7 +2258,7 @@
                     </div>
                     <div class="create-form-field">
                         <label class="create-form-label">Ph No:</label>
-                        <input type="text" class="form-control" name="phone[]" maxlength="11" placeholder="09" required>
+                        <input type="text" class="form-control" name="phone[]" maxlength="11" placeholder="09" >
                     </div>
                     <button type="button" class="operator-remove-button removebtn"
                         title="Remove operator" aria-label="Remove operator">
@@ -2297,7 +2297,7 @@
                     <div class="operator-form-row">
                         <div>
                             <h5 class="card-title">Operator</h5>
-                            <select class="form-select" aria-label="Default select example" name="operator[]" required>
+                            <select class="form-select" aria-label="Default select example" name="operator[]" >
                                 <option value="" selected>Select your Operator</option>
                                 <option value="ATOM">ATOM</option>
                                 <option value="Ooredoo">Ooredoo</option>
@@ -2307,7 +2307,7 @@
                         </div>
                         <div>
                             <h5 class="card-title">Ph No:</h5>
-                            <input type="text" class="form-control" name="phone[]" maxlength="11" required>
+                            <input type="text" class="form-control" name="phone[]" maxlength="11" >
                         </div>
                         <button type="button" class="operator-remove-button removebtn1"
                             title="Remove operator" aria-label="Remove operator">
