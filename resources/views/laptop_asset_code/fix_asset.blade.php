@@ -900,6 +900,7 @@
                 '#col4_filter': 'asset_type',
                 '#col9_filter': 'status'
             };
+            const savedFixAssetPage = table.page();
             const savedFixAssetFilters = JSON.parse(localStorage.getItem('fixAssetFilters') || '{}');
             const urlFilters = new URLSearchParams(window.location.search);
 
@@ -917,6 +918,9 @@
             Object.keys(fixAssetFilterMap).forEach(function (selector) {
                 filterColumn($(selector).attr('id').replace('col', '').replace('_filter', ''));
             });
+
+            // Applying the filters redraws the table; restore the page saved by DataTables.
+            table.page(savedFixAssetPage).draw('page');
 
 
             $(document).ready(function() {
