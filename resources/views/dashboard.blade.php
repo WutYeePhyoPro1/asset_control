@@ -1,5 +1,6 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
+    <style>.chart-shell{border:0;border-radius:18px;padding:8px;background:#fff;box-shadow:none!important;transition:none;}.chart-shell:hover{box-shadow:none!important;transform:none;}</style>
 
     <script src="{{ asset('assets/js/highcharts.js') }}"></script>
 
@@ -93,7 +94,7 @@
                     <div class="card-body">
 
                         <h5 class="card-title">Laptop</h5>
-                        <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+                        <div class="col-md-12 chart-shell">
 
                             <div id="container-pi"></div>
                             <p id="totalAssetCount"></p>
@@ -108,7 +109,7 @@
                     <div class="card-body">
 
                         <h5 class="card-title">Handset</h5>
-                        <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+                        <div class="col-md-12 chart-shell">
 
                             <div id="container-pi-h"></div>
                             <p id="totalAssetCounth"></p>
@@ -123,7 +124,7 @@
                     <div class="card-body">
 
                         <h5 class="card-title">Handset and Asset Code Operator</h5>
-                        <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+                        <div class="col-md-12 chart-shell">
 
                             <div id="container-pi-h-o" style="height:600px;"></div>
                             <p id="totalHandsetAsset"></p>
@@ -138,7 +139,7 @@
                     <div class="card-body">
 
                         <h5 class="card-title">Non Asset Code Operator</h5>
-                        <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+                        <div class="col-md-12 chart-shell">
 
                             <div id="container-pi-non"></div>
                             <p id="totalNonAssetCount" style="margin: 10px 0px 10px 100px;">Total
@@ -152,7 +153,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="row" style="border:1px solid blue;border-radius:20px;padding:10px;">
+                        <div class="row chart-shell">
                             <h5 class="card-title">Laptop, Handset, Operator </h5>
                             <div class="col-md-12">
 
@@ -179,7 +180,7 @@
                      <div class="card-body">
 
                      <h5 class="card-title">By Department</h5>
-                     <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+                     <div class="col-md-12 chart-shell">
                      <div id="container-bar-department"></div>
                      </div>
 
@@ -192,7 +193,7 @@
                      <div class="card-body">
 
                      <h5 class="card-title">By Branch</h5>
-                     <div class="col-md-12" style="border:1px solid blue;border-radius:20px;">
+                     <div class="col-md-12 chart-shell">
 
 
                      <div id="container-bar-branch"></div>
@@ -926,11 +927,21 @@ Highcharts.chart('container-fix-lh', {
                         },
                         plotOptions: {
                             pie: {
+                                innerSize: '58%',
+                                size: '88%',
                                 allowPointSelect: true,
                                 cursor: 'pointer',
                                 dataLabels: {
                                     enabled: true,
-                                    format: '<b>{point.name}</b>: {point.y}'
+                                    distance: 22,
+                                    format: '<b>{point.name}</b>: {point.y}',
+                                    connectorColor: '#999999',
+                                    connectorWidth: 1,
+                                    softConnector: true,
+                                    style: {
+                                        fontSize: '11px',
+                                        textOutline: 'none'
+                                    }
                                 }
                             }
                         },
