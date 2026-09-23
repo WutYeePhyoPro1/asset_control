@@ -855,6 +855,8 @@
                 "lengthChange": false,
                 "searching": true,
                 "searchHighlight": true,
+                "stateSave": true,
+                "stateDuration": -1,
 
                 buttons: [
 
@@ -947,6 +949,7 @@
 
             $('#clear-fix-asset-filters').on('click', function() {
                 localStorage.removeItem('fixAssetFilters');
+                table.state.clear();
             });
 
         });
