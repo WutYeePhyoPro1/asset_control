@@ -480,6 +480,14 @@ class LaptopAssetCodeController extends Controller
 
         $employeeData = trim($validated['employee_data']);
         $searchTerm = '%' . $employeeData . '%';
+        $branchCode = Auth::user()->getBranch?->branch_code;
+
+        if (!$branchCode) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User branch is not found.',
+            ], 422);
+        }
 
         $conn = DB::connection('Hremployee');
         $users = $conn->select("
@@ -491,13 +499,16 @@ class LaptopAssetCodeController extends Controller
             FROM hremployee.employee emp
             LEFT JOIN master_data.master_branch brch
                 ON brch.branch_code = emp.brchcode
-            WHERE emp.employeecode ILIKE :employee_id
+            WHERE (emp.employeecode ILIKE :employee_id
                OR emp.employeename ILIKE :employee_name
+               )
+            AND brch.branch_code = :branch_code
             ORDER BY emp.employeename
             LIMIT 20
         ", [
             'employee_id' => $searchTerm,
             'employee_name' => $searchTerm,
+            'branch_code' => $branchCode
         ]);
 
         return response()->json([
@@ -662,7 +673,7 @@ class LaptopAssetCodeController extends Controller
 
             $fix_assets = collect($conn->select($query, ['fxbranchcode' => $branch_id]));
         }
-        
+
 
         $fix_assets->each(function ($asset) {
             FixAsset::updateOrCreate(
@@ -938,7 +949,7 @@ class LaptopAssetCodeController extends Controller
 
     public function update_operator(Request $request, $id)
     {
-        
+
         $request->validate([
             'phone' => ['nullable', 'regex:/^09(?:\d{9})?$/'],
         ], [
