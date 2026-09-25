@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\LaptopAssetCode;
-use App\Models\FixAsset;
-use App\Models\Remark;
+use App\Services\PendingEmployeeUpdateService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -30,7 +29,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index(Request $request)
+    public function index(Request $request, PendingEmployeeUpdateService $pendingEmployeeUpdates)
     {
         $conn = DB::connection('Fixasset');
         $datas = LaptopAssetCode::latest()->paginate(20);
@@ -158,45 +157,12 @@ class HomeController extends Controller
         $opers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM operators GROUP BY branch");
         $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
 
-        // Count active Laptop/Handset assets whose latest employee assignment
-        // is missing either the employee ID or employee name.
-        $pendingAssetsQuery = FixAsset::query()
-            ->whereIn('asset_type_name', ['Laptop', 'Handset'])
-            ->where('status', 'Ongoing');
-
-        if ($selectedMonth) {
-            $pendingAssetsQuery
-                ->whereDate('purchase_date', '>=', $monthStart->toDateString())
-                ->whereDate('purchase_date', '<', $monthEnd->toDateString());
-        }
-
-        $pendingAssets = $pendingAssetsQuery
-            ->get(['asset_code', 'branch_code', 'branch_name']);
-
-        $latestRemarks = Remark::whereIn('asset_code', $pendingAssets->pluck('asset_code'))
-            ->orderByDesc('updated_at')
-            ->orderByDesc('id')
-            ->get()
-            ->unique('asset_code')
-            ->keyBy('asset_code');
-
-        $pendingEmployeeUpdates = $pendingAssets
-            ->filter(function ($asset) use ($latestRemarks) {
-                $remark = $latestRemarks->get($asset->asset_code);
-                return blank($remark?->emp_id) || blank($remark?->emp_name);
-            })
-            ->groupBy(function ($asset) {
-                return $asset->branch_name . '(' . $asset->branch_code . ')';
-            })
-            ->map(function ($assets, $branch) {
-                return [
-                    'branch' => $branch,
-                    'pending_count' => $assets->count(),
-                    'laptop_count' => $assets->where('asset_type_name', 'Laptop')->count(),
-                    'handset_count' => $assets->where('asset_type_name', 'Handset')->count(),
-                ];
-            })
-            ->values();
+        $pendingEmployeeUpdateData = Auth::user()->type === 'Manager'
+            ? $pendingEmployeeUpdates->get(
+                $selectedMonth ? $monthStart : null,
+                $selectedMonth ? $monthEnd : null,
+            )
+            : collect();
 
         $totalPhoneCount = collect($nonopers)->sum('phone_count');
 
@@ -247,7 +213,7 @@ class HomeController extends Controller
 
 
         $mergedData = array_values($mergedData);
-        return view('dashboard', compact('datas', 'branches', 'departments', 'assetCounts', 'assetCounts1', 'mergedData', 'nonopers', 'totalPhoneCount', 'pendingEmployeeUpdates'));
+        return view('dashboard', compact('datas', 'branches', 'departments', 'assetCounts', 'assetCounts1', 'mergedData', 'nonopers', 'totalPhoneCount', 'pendingEmployeeUpdateData'));
     }
 
     public function logout()

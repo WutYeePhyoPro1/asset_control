@@ -15,8 +15,7 @@
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}" style="color:blue;">Dashboard</a></li>
-                {{-- <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.index')}}" style="color:#000;">Asset</a></li>
-          <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.create')}}" style="color:#000;">Add New</a></li> --}}
+
             </ol>
         </nav>
     </div><!-- End Page Title -->
@@ -168,16 +167,18 @@
                 </div>
             </div>
 
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Employee ID / Name မပြည့်သေးသော Asset များ</h5>
-                        <div class="col-md-12 chart-shell">
-                            <div id="container-pending-employee" style="height: 500px;"></div>
+            @if (Auth::user()->type === 'Manager')
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Employee ID / Name မပြည့်သေးသော Asset များ</h5>
+                            <div class="col-md-12 chart-shell">
+                                <div id="container-pending-employee" style="height: 500px;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
         </div>
 
@@ -895,7 +896,7 @@ Highcharts.chart('container-fix-lh', {
                 var handsetData = @json($assetCounts1);
                 var branchSummaryData = @json($mergedData);
                 var nonAssetOperatorData = @json($nonopers);
-                var pendingEmployeeData = @json($pendingEmployeeUpdates);
+                var pendingEmployeeData = @json($pendingEmployeeUpdateData);
 
                 function belongsToBranch(branchValue, branchCode) {
                     if (!branchCode) return true;
@@ -921,6 +922,21 @@ Highcharts.chart('container-fix-lh', {
                     return items.reduce(function(sum, item) {
                         return sum + item.y;
                     }, 0);
+                }
+
+                function pendingEmployeeChartDataForBranch(branchCode) {
+                    return pendingEmployeeData
+                        .filter(function(item) {
+                            return belongsToBranch(item.branch, branchCode);
+                        })
+                        .map(function(item) {
+                            return {
+                                name: item.branch,
+                                y: Number(item.pending_count || 0),
+                                laptop_count: Number(item.laptop_count || 0),
+                                handset_count: Number(item.handset_count || 0)
+                            };
+                        });
                 }
 
                 function pieChart(container, title, seriesName, chartData) {
@@ -973,18 +989,7 @@ Highcharts.chart('container-fix-lh', {
                     var laptopChartData = toPieData(laptopData, branchCode);
                     var handsetChartData = toPieData(handsetData, branchCode);
                     var nonAssetChartData = toPieData(nonAssetOperatorData, branchCode);
-                    var pendingEmployeeChartData = pendingEmployeeData
-                        .filter(function(item) {
-                            return belongsToBranch(item.branch, branchCode);
-                        })
-                        .map(function(item) {
-                            return {
-                                name: item.branch,
-                                y: Number(item.pending_count || 0),
-                                laptop_count: Number(item.laptop_count || 0),
-                                handset_count: Number(item.handset_count || 0)
-                            };
-                        });
+                    var pendingEmployeeChartData = pendingEmployeeChartDataForBranch(branchCode);
                     var filteredSummary = branchSummaryData.filter(function(item) {
                         return belongsToBranch(item.branch, branchCode);
                     });
@@ -1001,12 +1006,13 @@ Highcharts.chart('container-fix-lh', {
                     document.getElementById('totalNonAssetCount').textContent = 'Total Operators: ' + total(
                         nonAssetChartData);
 
-                    Highcharts.chart('container-pending-employee', {
+                    if (document.getElementById('container-pending-employee')) {
+                        Highcharts.chart('container-pending-employee', {
                         chart: {
                             type: 'bar'
                         },
                         title: {
-                            text: 'Employee ID / Name မပြည့်သေးသော Laptop / Handset အရေအတွက်'
+                            text: 'Employee ID / Name မပြည့်သေးသော Asset အရေအတွက်'
                         },
                         subtitle: {
                             text: selectedLabel
@@ -1027,9 +1033,16 @@ Highcharts.chart('container-fix-lh', {
                             }
                         },
                         tooltip: {
-                            shared: true,
-                            headerFormat: '<b>{point.key}</b><br/>',
-                            pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
+                            useHTML: true,
+                            formatter: function() {
+                                var point = this.point;
+                                return '<b>' + this.x + '</b><br/>' +
+                                    '<span style="color:#dc3545">●</span> Pending employee update: <b>' +
+                                    point.y + ' items</b><br/>' +
+                                    '&nbsp;&nbsp;For Laptop: <b>' + point.laptop_count +
+                                    ' items</b><br/>' +
+                                    '&nbsp;&nbsp;For Handset: <b>' + point.handset_count + ' items</b>';
+                            }
                         },
                         plotOptions: {
                             bar: {
@@ -1041,22 +1054,15 @@ Highcharts.chart('container-fix-lh', {
                             }
                         },
                         series: [{
-                            name: 'Laptop',
+                            name: 'Pending employee update',
                             color: '#dc3545',
-                            data: pendingEmployeeChartData.map(function(item) {
-                                return item.laptop_count || 0;
-                            })
-                        }, {
-                            name: 'Handset',
-                            color: '#0d6efd',
-                            data: pendingEmployeeChartData.map(function(item) {
-                                return item.handset_count || 0;
-                            })
+                            data: pendingEmployeeChartData
                         }],
                         credits: {
                             enabled: false
                         }
-                    });
+                        });
+                    }
 
                     // Use one normalized branch row so hover labels never point to a duplicate branch.
                     filteredSummary = filteredSummary.reduce(function(rows, item) {
