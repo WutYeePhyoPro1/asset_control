@@ -162,10 +162,7 @@ class HomeController extends Controller
         // is missing either the employee ID or employee name.
         $pendingAssetsQuery = FixAsset::query()
             ->whereIn('asset_type_name', ['Laptop', 'Handset'])
-            ->where(function ($query) {
-                $query->whereNull('status')
-                    ->orWhereNotIn('status', ['S', 'T', 'C']);
-            });
+            ->where('status', 'Ongoing');
 
         if ($selectedMonth) {
             $pendingAssetsQuery
