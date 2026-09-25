@@ -192,6 +192,8 @@ class HomeController extends Controller
                 return [
                     'branch' => $branch,
                     'pending_count' => $assets->count(),
+                    'laptop_count' => $assets->where('asset_type_name', 'Laptop')->count(),
+                    'handset_count' => $assets->where('asset_type_name', 'Handset')->count(),
                 ];
             })
             ->values();

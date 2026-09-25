@@ -980,7 +980,9 @@ Highcharts.chart('container-fix-lh', {
                         .map(function(item) {
                             return {
                                 name: item.branch,
-                                y: Number(item.pending_count || 0)
+                                y: Number(item.pending_count || 0),
+                                laptop_count: Number(item.laptop_count || 0),
+                                handset_count: Number(item.handset_count || 0)
                             };
                         });
                     var filteredSummary = branchSummaryData.filter(function(item) {
@@ -1004,7 +1006,7 @@ Highcharts.chart('container-fix-lh', {
                             type: 'bar'
                         },
                         title: {
-                            text: 'Employee ID / Name မပြည့်သေးသော Asset အရေအတွက်'
+                            text: 'Employee ID / Name မပြည့်သေးသော Laptop / Handset အရေအတွက်'
                         },
                         subtitle: {
                             text: selectedLabel
@@ -1025,7 +1027,9 @@ Highcharts.chart('container-fix-lh', {
                             }
                         },
                         tooltip: {
-                            pointFormat: '<b>{point.y}</b> asset(s) need employee ID/name update'
+                            shared: true,
+                            headerFormat: '<b>{point.key}</b><br/>',
+                            pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
                         },
                         plotOptions: {
                             bar: {
@@ -1037,8 +1041,17 @@ Highcharts.chart('container-fix-lh', {
                             }
                         },
                         series: [{
-                            name: 'Pending employee update',
-                            data: pendingEmployeeChartData
+                            name: 'Laptop',
+                            color: '#dc3545',
+                            data: pendingEmployeeChartData.map(function(item) {
+                                return item.laptop_count || 0;
+                            })
+                        }, {
+                            name: 'Handset',
+                            color: '#0d6efd',
+                            data: pendingEmployeeChartData.map(function(item) {
+                                return item.handset_count || 0;
+                            })
                         }],
                         credits: {
                             enabled: false
