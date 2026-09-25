@@ -184,7 +184,7 @@
                                             name="branchcode">
                                             <option value="">Select Your Branch</option>
                                             @foreach ($branches as $branch)
-                                                <option value="{{ $branch->branch_name }} ({{ $branch->branch_code }})">
+                                                <option value="{{ trim($branch->branch_code) }}">
                                                     {{ $branch->branch_name }} ({{ $branch->branch_code }})</option>
                                             @endforeach
                                         </select>
@@ -370,7 +370,7 @@
                                     <select class="form-select column_filter" id="col2_filter" name="branchcode">
                                         <option value="">Select Your Branch</option>
                                         @foreach ($branches as $branch)
-                                            <option value="{{ $branch->branch_name }} ({{ $branch->branch_code }})">
+                                            <option value="{{ trim($branch->branch_code) }}">
                                                 {{ $branch->branch_name }} ({{ $branch->branch_code }})</option>
                                         @endforeach
                                     </select>
@@ -904,6 +904,14 @@
             const savedFixAssetFilters = JSON.parse(localStorage.getItem('fixAssetFilters') || '{}');
             const urlFilters = new URLSearchParams(window.location.search);
 
+            // Branch options use branch_code. Convert old saved values such as
+            // "Branch Name (MM-001)" to the code so the filter still works.
+            function normalizeBranchFilter(value) {
+                const text = String(value || '').trim();
+                const match = text.match(/\(([^()]+)\)\s*$/);
+                return match ? match[1].trim() : text;
+            }
+
             Object.keys(fixAssetFilterMap).forEach(function (selector) {
                 const queryKey = fixAssetFilterMap[selector];
                 const savedValue = urlFilters.has(queryKey)
@@ -911,7 +919,7 @@
                     : savedFixAssetFilters[selector];
 
                 if (savedValue !== undefined && savedValue !== null) {
-                    $(selector).val(savedValue);
+                    $(selector).val(queryKey === 'branch' ? normalizeBranchFilter(savedValue) : savedValue);
                 }
             });
 

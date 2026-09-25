@@ -168,6 +168,17 @@
                 </div>
             </div>
 
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Employee ID / Name မပြည့်သေးသော Asset များ</h5>
+                        <div class="col-md-12 chart-shell">
+                            <div id="container-pending-employee" style="height: 500px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- {{-- <div class="row">
@@ -884,6 +895,7 @@ Highcharts.chart('container-fix-lh', {
                 var handsetData = @json($assetCounts1);
                 var branchSummaryData = @json($mergedData);
                 var nonAssetOperatorData = @json($nonopers);
+                var pendingEmployeeData = @json($pendingEmployeeUpdates);
 
                 function belongsToBranch(branchValue, branchCode) {
                     if (!branchCode) return true;
@@ -961,6 +973,16 @@ Highcharts.chart('container-fix-lh', {
                     var laptopChartData = toPieData(laptopData, branchCode);
                     var handsetChartData = toPieData(handsetData, branchCode);
                     var nonAssetChartData = toPieData(nonAssetOperatorData, branchCode);
+                    var pendingEmployeeChartData = pendingEmployeeData
+                        .filter(function(item) {
+                            return belongsToBranch(item.branch, branchCode);
+                        })
+                        .map(function(item) {
+                            return {
+                                name: item.branch,
+                                y: Number(item.pending_count || 0)
+                            };
+                        });
                     var filteredSummary = branchSummaryData.filter(function(item) {
                         return belongsToBranch(item.branch, branchCode);
                     });
@@ -977,6 +999,69 @@ Highcharts.chart('container-fix-lh', {
                     document.getElementById('totalNonAssetCount').textContent = 'Total Operators: ' + total(
                         nonAssetChartData);
 
+                    Highcharts.chart('container-pending-employee', {
+                        chart: {
+                            type: 'bar'
+                        },
+                        title: {
+                            text: 'Employee ID / Name မပြည့်သေးသော Asset အရေအတွက်'
+                        },
+                        subtitle: {
+                            text: selectedLabel
+                        },
+                        xAxis: {
+                            categories: pendingEmployeeChartData.map(function(item) {
+                                return item.name;
+                            }),
+                            title: {
+                                text: 'Branch'
+                            }
+                        },
+                        yAxis: {
+                            min: 0,
+                            allowDecimals: false,
+                            title: {
+                                text: 'Pending asset count'
+                            }
+                        },
+                        tooltip: {
+                            pointFormat: '<b>{point.y}</b> asset(s) need employee ID/name update'
+                        },
+                        plotOptions: {
+                            bar: {
+                                color: '#dc3545',
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '{point.y}'
+                                }
+                            }
+                        },
+                        series: [{
+                            name: 'Pending employee update',
+                            data: pendingEmployeeChartData
+                        }],
+                        credits: {
+                            enabled: false
+                        }
+                    });
+
+                    // Use one normalized branch row so hover labels never point to a duplicate branch.
+                    filteredSummary = filteredSummary.reduce(function(rows, item) {
+                        var key = String(item.branch || '').trim().replace(/\s+/g, ' ')
+                            .replace(/\s*\(\s*/g, '(').replace(/\s*\)\s*/g, ')');
+                        var existing = rows.find(function(row) { return row._branchKey === key; });
+                        if (!existing) {
+                            item._branchKey = key;
+                            item.branch = key;
+                            rows.push(item);
+                        } else {
+                            existing.asset_type_count = Object.assign({}, existing.asset_type_count || {}, item.asset_type_count || {});
+                            existing.handset_count = Math.max(Number(existing.handset_count || 0), Number(item.handset_count || 0));
+                            existing.operator_count = Math.max(Number(existing.operator_count || 0), Number(item.operator_count || 0));
+                        }
+                        return rows;
+                    }, []);
+
                     var categories = filteredSummary.map(function(item) {
                         return item.branch;
                     });
@@ -984,7 +1069,7 @@ Highcharts.chart('container-fix-lh', {
                         return Number((item.asset_type_count || {}).Laptop || 0);
                     });
                     var handsets = filteredSummary.map(function(item) {
-                        return Number((item.asset_type_count || {}).Handset || 0);
+                        return Number(item.handset_count || (item.asset_type_count || {}).Handset || 0);
                     });
                     var operators = filteredSummary.map(function(item) {
                         return Number(item.operator_count || 0);
@@ -1009,6 +1094,11 @@ Highcharts.chart('container-fix-lh', {
                             title: {
                                 text: 'Counts'
                             }
+                        },
+                        tooltip: {
+                            shared: true,
+                            valueSuffix: ' items',
+                            headerFormat: '<b>{point.key}</b><br/>'
                         },
                         plotOptions: {
                             column: {
@@ -1053,6 +1143,11 @@ Highcharts.chart('container-fix-lh', {
                             title: {
                                 text: 'Counts'
                             }
+                        },
+                        tooltip: {
+                            shared: true,
+                            valueSuffix: ' items',
+                            headerFormat: '<b>{point.key}</b><br/>'
                         },
                         plotOptions: {
                             bar: {

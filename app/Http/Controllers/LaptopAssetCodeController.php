@@ -456,7 +456,7 @@ class LaptopAssetCodeController extends Controller
         $conn    = DB::connection('Hremployee');
         $data = $conn->select("
         SELECT emp.employeecode, emp.employeename, brch.branch_code, brch.branch_name
-        FROM hremployee.employee emp
+        FROM hremployee.all_employee emp
         left join master_data.master_branch brch on brch.branch_code = emp.brchcode
         where emp.employeecode = '$emp_id'");
 
@@ -496,7 +496,7 @@ class LaptopAssetCodeController extends Controller
                 emp.employeename AS name,
                 brch.branch_code,
                 brch.branch_name
-            FROM hremployee.employee emp
+            FROM hremployee.all_employee emp
             LEFT JOIN master_data.master_branch brch
                 ON brch.branch_code = emp.brchcode
             WHERE (emp.employeecode ILIKE :employee_id
