@@ -480,13 +480,27 @@ class LaptopAssetCodeController extends Controller
 
         $employeeData = trim($validated['employee_data']);
         $searchTerm = '%' . $employeeData . '%';
+        $isManager = Auth::user()->type === 'Manager';
         $branchCode = Auth::user()->getBranch?->branch_code;
 
-        if (!$branchCode) {
+        if (!$isManager && !$branchCode) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'User branch is not found.',
             ], 422);
+        }
+
+        $branchFilter = $isManager
+            ? ''
+            : 'AND brch.branch_code = :branch_code';
+
+        $bindings = [
+            'employee_id' => $searchTerm,
+            'employee_name' => $searchTerm,
+        ];
+
+        if (!$isManager) {
+            $bindings['branch_code'] = $branchCode;
         }
 
         $conn = DB::connection('Hremployee');
@@ -502,14 +516,10 @@ class LaptopAssetCodeController extends Controller
             WHERE (emp.employeecode ILIKE :employee_id
                OR emp.employeename ILIKE :employee_name
                )
-            AND brch.branch_code = :branch_code
+            {$branchFilter}
             ORDER BY emp.employeename
             LIMIT 20
-        ", [
-            'employee_id' => $searchTerm,
-            'employee_name' => $searchTerm,
-            'branch_code' => $branchCode
-        ]);
+        ", $bindings);
 
         return response()->json([
             'status' => 'success',
