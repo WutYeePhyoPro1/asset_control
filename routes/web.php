@@ -82,6 +82,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/operator-form-non-asset_code',  [LaptopAssetCodeController::class, 'OpNonNew'])->name('operator-form-non');
     Route::put('/update_operator_non_asset_code/{id}', [LaptopAssetCodeController::class, 'update_operator_non'])->name('update_operator_non');
     Route::put('/update_contract_non_asset_code/{id}', [LaptopAssetCodeController::class, 'update_contract_non'])->name('update_contract_non');
+    Route::put('/non_asset_code/update_employee/{id}', [LaptopAssetCodeController::class, 'update_non_remark_employee'])
+        ->name('nonasset.update_employee');
 
     // Route::get('/non-remark/delete_remark/{id}',[LaptopAssetCodeController::class,'deletRemarknon']);
 

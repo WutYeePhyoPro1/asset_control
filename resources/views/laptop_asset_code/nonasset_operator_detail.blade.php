@@ -796,6 +796,169 @@
             background: #5b21b6 !important;
             border-color: #5b21b6 !important;
         }
+
+
+        /* Keep non-asset employee assignment visually identical to asset detail. */
+        .nonasset-detail .assignment-card {
+            margin-bottom: 18px;
+            padding: 18px 20px;
+            background: #f8f5ff !important;
+            border: 1px solid #ded4f7 !important;
+            border-radius: 14px;
+        }
+
+        .nonasset-detail .assignment-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 0;
+        }
+
+        .nonasset-detail .assignment-heading-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nonasset-detail .search-employee-btn,
+        .nonasset-detail .assignment-heading .btn-outline-primary {
+            color: #6d28d9 !important;
+            font-weight: 800;
+            background: #fff;
+            border-color: #6ee7b7;
+            border-radius: 6px;
+        }
+
+        .nonasset-detail .assignment-grid {
+            grid-template-columns: minmax(180px, 1.3fr) repeat(4, minmax(120px, 1fr));
+            gap: 0;
+            padding: 0;
+        }
+
+        .nonasset-detail .assignee-profile,
+        .nonasset-detail .assignment-detail {
+            min-height: 58px;
+            padding: 0 18px;
+            border-right: 1px solid #e1d8f5;
+        }
+
+        .nonasset-detail .assignee-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-left: 0;
+        }
+
+        .nonasset-detail .employee-avatar {
+            display: inline-flex;
+            flex: 0 0 44px;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            color: #6d28d9 !important;
+            font-size: 20px;
+            background: #ebe4ff !important;
+            border-radius: 50%;
+        }
+
+        .nonasset-detail .employee-name {
+            color: #0f172a;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .nonasset-detail .employee-id {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .nonasset-detail .assignment-detail:last-child {
+            border-right: 0;
+        }
+
+        .nonasset-detail .asset-edit-modal {
+            overflow: hidden;
+            border: 0;
+            border-radius: 16px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, .18);
+        }
+
+        .nonasset-detail .asset-edit-modal .modal-header {
+            padding: 18px 24px;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .nonasset-detail .asset-edit-modal .modal-title {
+            color: #172554;
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .nonasset-detail .asset-edit-modal .modal-body {
+            padding: 18px 16px;
+        }
+
+        .nonasset-detail .asset-edit-modal .modal-footer {
+            padding: 16px 24px;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .nonasset-detail .employee-search-component .input-group {
+            display: flex;
+            align-items: stretch;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid #cedbee;
+            border-radius: 10px;
+        }
+
+        .nonasset-detail .employee-search-component .input-group-text,
+        .nonasset-detail .employee-search-component .employee-search-input,
+        .nonasset-detail .employee-search-component .employee-search-button {
+            min-height: 48px;
+            border: 0 !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .nonasset-detail .employee-search-component .input-group-text {
+            flex: 0 0 44px;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .nonasset-detail .employee-search-component .employee-search-input { flex: 1 1 auto; min-width: 0; }
+        .nonasset-detail .employee-search-component .employee-search-button {
+            flex: 0 0 auto;
+            padding: 0 22px;
+            color: #fff;
+            background: #7c00d9;
+            border-left: 1px solid rgba(255,255,255,.25) !important;
+        }
+
+        .nonasset-detail .employee-search-component .input-group:focus-within {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 .2rem rgba(139, 92, 246, .12);
+        }
+
+        .nonasset-detail .employee-search-results {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            left: 0;
+            z-index: 20;
+            max-height: 240px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #d7e0ec;
+            border-radius: 9px;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, .12);
+        }
     </style>
     <div class="pagetitle">
         <h1>Asset Control System</h1><br>
@@ -851,15 +1014,18 @@
                                 </div>
                             </div>
 
-                            <div class="nonasset-assignment-card">
-                                <div class="assignment-heading"><i class="bi bi-bookmark-check-fill"></i> Currently Assigned
-                                    To</div>
-                                <div class="nonasset-assignment-grid">
-                                    <div class="assignment-detail">
-                                        <i class="bi bi-person"></i>
-                                        <div><span
-                                                class="assignment-value">{{ $getnonRemark->name ?: 'Employee not recorded' }}</span><small>{{ $getnonRemark->emp_id ?: '-' }}</small>
-                                        </div>
+                            <div class="nonasset-assignment-card assignment-card">
+                                <div class="assignment-heading">
+                                    <span class="assignment-heading-title"><i class="bi bi-bookmark-check-fill"></i> Currently Assigned To</span>
+                                    <button type="button" class="btn btn-sm btn-outline-primary"
+                                        data-bs-toggle="modal" data-bs-target="#changeNonAssetEmployeeModal">
+                                        <i class="bi bi-search me-1"></i>Update Employee
+                                    </button>
+                                </div>
+                                <div class="nonasset-assignment-grid assignment-grid">
+                                    <div class="assignee-profile">
+                                        <span class="employee-avatar"><i class="bi bi-person"></i></span>
+                                        <div><div class="employee-name">{{ $getnonRemark->name ?: 'Employee not recorded' }}</div><div class="employee-id">{{ $getnonRemark->emp_id ?: '-' }}</div></div>
                                     </div>
                                     <div class="assignment-detail">
                                         <i class="bi bi-building"></i>
@@ -880,6 +1046,40 @@
                                         <i class="bi bi-file-earmark-check"></i>
                                         <div><span class="assignment-label">Contract</span><span
                                                 class="assignment-value">{{ $getnonRemark->contract ?: '-' }}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" id="changeNonAssetEmployeeModal" tabindex="-1"
+                                aria-labelledby="changeNonAssetEmployeeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content asset-edit-modal">
+                                        <form action="{{ route('nonasset.update_employee', $getnonRemark->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="changeNonAssetEmployeeModalLabel">Search Employee</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <label class="form-label fw-bold">Employee ID or Name</label>
+                                                <div class="employee-search-wrapper employee-search-component">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                                                        <input type="text" class="form-control border-start-0 employee-search-input"
+                                                            autocomplete="off" placeholder="Search employee Name Or ID...">
+                                                        <button type="button" class="btn btn-primary employee-search-button">Search</button>
+                                                    </div>
+                                                    <input type="hidden" name="emp_id" class="selected-employee-id">
+                                                    <input type="hidden" name="emp_name" class="selected-employee-name">
+                                                    <div class="employee-search-results list-group d-none"></div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Assign Employee</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -1260,6 +1460,56 @@
 
 @endsection
 @section('js')
+    <script>
+        $(document).ready(function() {
+            const searchEmployeeUrl = @json(route('search_employee'));
+            $('.employee-search-component').each(function() {
+                const component = $(this);
+                const input = component.find('.employee-search-input');
+                const button = component.find('.employee-search-button');
+                const results = component.find('.employee-search-results');
+                const selectedId = component.find('.selected-employee-id');
+                const selectedName = component.find('.selected-employee-name');
+
+                function message(text, className = 'text-muted') {
+                    results.empty().append($('<div>', { class: 'list-group-item ' + className, text }))
+                        .removeClass('d-none');
+                }
+
+                function search() {
+                    const value = input.val().trim();
+                    if (!value) { message('Please enter an employee ID or name.', 'text-danger'); return; }
+                    button.prop('disabled', true);
+                    message('Searching...');
+                    $.get(searchEmployeeUrl, { employee_data: value })
+                        .done(function(response) {
+                            results.empty();
+                            if (!response.data || !response.data.length) { message('No employees found.'); return; }
+                            response.data.forEach(function(employee) {
+                                $('<button>', { type: 'button', class: 'list-group-item list-group-item-action' })
+                                    .append($('<strong>', { text: employee.name }))
+                                    .append($('<small>', { class: 'd-block text-muted', text: employee.emp_id }))
+                                    .on('click', function() {
+                                        input.val(employee.emp_id + ' - ' + employee.name);
+                                        selectedId.val(employee.emp_id);
+                                        selectedName.val(employee.name);
+                                        results.addClass('d-none').empty();
+                                    }).appendTo(results);
+                            });
+                            results.removeClass('d-none');
+                        })
+                        .fail(function() { message('Employee search failed. Please try again.', 'text-danger'); })
+                        .always(function() { button.prop('disabled', false); });
+                }
+                button.on('click', search);
+                input.on('keydown', function(event) { if (event.key === 'Enter') { event.preventDefault(); search(); } });
+                input.on('input', function() { selectedId.val(''); selectedName.val(''); });
+            });
+            $(document).on('click', function(event) {
+                if (!$(event.target).closest('.employee-search-wrapper').length) $('.employee-search-results').addClass('d-none');
+            });
+        });
+    </script>
     <script>
         document.querySelectorAll('[data-detail-toast]').forEach(function(toast, index) {
             var dismissToast = function() {

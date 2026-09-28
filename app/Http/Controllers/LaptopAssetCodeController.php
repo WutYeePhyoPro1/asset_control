@@ -1176,6 +1176,26 @@ class LaptopAssetCodeController extends Controller
         return back()->with('success', 'Successfully updated.');
     }
 
+    /** Replace the employee currently assigned to a non-asset code. */
+    public function update_non_remark_employee(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'emp_id' => ['required', 'string', 'max:100'],
+            'emp_name' => ['required', 'string', 'max:255'],
+        ], [
+            'emp_id.required' => 'Please search and select an employee.',
+            'emp_name.required' => 'Please search and select an employee.',
+        ]);
+
+        $nonRemark = NonRemark::findOrFail($id);
+        $nonRemark->update([
+            'emp_id' => $validated['emp_id'],
+            'name' => $validated['emp_name'],
+        ]);
+
+        return back()->with('success', 'Assigned employee updated successfully.');
+    }
+
     public function deletRemarknon($id)
     {
 
