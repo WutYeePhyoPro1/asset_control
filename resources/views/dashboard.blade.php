@@ -58,7 +58,7 @@
             <form method="GET" id="branchFilterForm">
                 <label class="form-label">Branch အလိုက် ရှာရန်</label>
                 <select name="branch" id="branchFilter" class="form-control" style="width:100%"
-                    {{ Auth::user()->type != 'Manager' ? 'disabled' : '' }}>
+>
                     <option value="">-- All Branches --</option>
                     @foreach ($branches as $branch)
                         <option value="{{ $branch->branch_code }}"

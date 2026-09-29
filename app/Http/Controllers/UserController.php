@@ -18,7 +18,7 @@ class UserController extends Controller
     public function index()
     {
 
-        $users = User::latest()->paginate(10);
+        $users = User::with('branches')->latest()->get();
         $branches =Branch::all();
         return view('admin.index', compact('users','branches'));
     }
@@ -175,7 +175,7 @@ class UserController extends Controller
             $query->where('status', 'LIKE', '%' . $request->input('status') . '%');
         }
 
-        $users = $query->latest()->paginate(20);
+        $users = $query->with('branches')->latest()->get();
         // $datas->appends($request->all());
 
         return view('admin.index', compact('users','branches'));

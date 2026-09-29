@@ -33,7 +33,11 @@ class HomeController extends Controller
     {
         $conn = DB::connection('Fixasset');
         $datas = LaptopAssetCode::latest()->paginate(20);
-        $branches = Branch::all();
+        $branches = (string) Auth::user()->emp_code === '000-000627'
+            ? Branch::whereIn('branch_code', ['MM-509', 'MM-510', 'MM-511'])->get()
+            : (Auth::user()->branch_id
+                ? Branch::where('id', Auth::user()->branch_id)->get()
+                : Branch::all());
         $departments = Department::all();
         $selectedMonth = $request->input('month');
 

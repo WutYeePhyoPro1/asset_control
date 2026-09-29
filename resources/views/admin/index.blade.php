@@ -217,7 +217,7 @@
                                     <div class="card-body"><br>
 
                                         <form method="POST" action="{{ route('all_user.search') }}"
-                                            class="user-search-form">
+                                            class="user-search-form" id="userSearchForm">
                                             @csrf
                                             <div class="row g-3">
 
@@ -389,10 +389,6 @@
                                                 </tbody>
                                             </table>
                                             <!-- End small tables -->
-
-                                            <p class="card-title">
-                                                {{ $users->links('pagination::bootstrap-5') }}
-                                            </p>
 
                                         </div>
                                     </div>
@@ -667,6 +663,43 @@
                 window.location.reload(); // Reload the page on success
             }, 1000);
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("userSearchForm");
+            const tableBody = document.querySelector("#myTable tbody");
+            if (!form || !tableBody) return;
+            const fields = { username: 2, empcode: 3, department: 4, branch: 5, type: 6, status: 7 };
+            const filterValue = name => {
+                const element = form.elements[name];
+                if (!element) return "";
+                if (!element.value) return "";
+                if (element.tagName === "SELECT") return element.options[element.selectedIndex]?.text || "";
+                return element.value || "";
+            };
+            const filterUsers = () => {
+                const filters = Object.fromEntries(Object.keys(fields).map(name => [name, filterValue(name).trim().toLowerCase()]));
+                let visible = 0;
+                tableBody.querySelectorAll(":scope > tr:not(.js-no-user-results)").forEach(row => {
+                    const matches = Object.entries(fields).every(([name, index]) => !filters[name] || (row.cells[index]?.textContent || "").trim().toLowerCase().includes(filters[name]));
+                    row.style.display = matches ? "" : "none";
+                    if (matches) row.cells[0].textContent = (++visible) + ".";
+                });
+                let emptyRow = tableBody.querySelector(".js-no-user-results");
+                if (!visible && !emptyRow) {
+                    emptyRow = document.createElement("tr");
+                    emptyRow.className = "js-no-user-results";
+                    emptyRow.innerHTML = "<td colspan=\"10\" class=\"text-center\">No matching users found.</td>";
+                    tableBody.appendChild(emptyRow);
+                }
+                if (emptyRow) emptyRow.style.display = visible ? "none" : "";
+            };
+            Object.keys(fields).forEach(name => {
+                form.elements[name]?.addEventListener("input", filterUsers);
+                form.elements[name]?.addEventListener("change", filterUsers);
+            });
+            form.addEventListener("submit", event => { event.preventDefault(); filterUsers(); });
+            filterUsers();
+        });
 
         $("input[type='file']").change(function() {
             var fileInput = $(this)[0];
