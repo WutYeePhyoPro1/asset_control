@@ -30,11 +30,13 @@ class LaptopAssetCodeController extends Controller
     public function index()
     {
         $datas = LaptopAssetCode::latest()->get();
-        $branches = (string) Auth::user()->emp_code === '000-000627'
-            ? Branch::whereIn('branch_code', ['MM-509', 'MM-510', 'MM-511'])->get()
-            : (Auth::user()->branch_id
-                ? Branch::where('id', Auth::user()->branch_id)->get()
-                : Branch::all());
+        $branches = Auth::user()->type === 'Manager'
+            ? Branch::all()
+            : ((string) Auth::user()->emp_code === '000-000627'
+                ? Branch::whereIn('branch_code', ['MM-509', 'MM-510', 'MM-511'])->get()
+                : (Auth::user()->branch_id
+                    ? Branch::where('id', Auth::user()->branch_id)->get()
+                    : Branch::all()));
 
         $departments = Department::all();
 
@@ -572,11 +574,13 @@ class LaptopAssetCodeController extends Controller
     {
         $branch_id = Auth::user()->getBranch->branch_code;
         $departments = Department::all();
-        $branches = (string) Auth::user()->emp_code === '000-000627'
-            ? Branch::whereIn('branch_code', ['MM-509', 'MM-510', 'MM-511'])->get()
-            : (Auth::user()->branch_id
-                ? Branch::where('id', Auth::user()->branch_id)->get()
-                : Branch::all());
+        $branches = Auth::user()->type === 'Manager'
+            ? Branch::all()
+            : ((string) Auth::user()->emp_code === '000-000627'
+                ? Branch::whereIn('branch_code', ['MM-509', 'MM-510', 'MM-511'])->get()
+                : (Auth::user()->branch_id
+                    ? Branch::where('id', Auth::user()->branch_id)->get()
+                    : Branch::all()));
         $assetsQuery = FixAsset::query()->orderBy('purchase_date');
 
         if (Auth::user()->type !== 'Manager') {
