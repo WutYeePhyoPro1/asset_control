@@ -68,6 +68,65 @@
             transition: border-color .18s ease, box-shadow .18s ease;
         }
 
+        .nonasset-create .employee-search-wrapper .input-group {
+            display: flex;
+            align-items: stretch;
+            height: 46px;
+            border: 1px solid var(--form-border);
+            border-radius: 9px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .nonasset-create .employee-search-wrapper .input-group-text {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            padding: 0;
+            color: #64748b;
+            border: 0;
+            background: #fff;
+        }
+
+        .nonasset-create .employee-search-wrapper #employeeSearch {
+            min-height: 44px;
+            height: 44px;
+            flex: 1;
+            padding: 9px 12px;
+            border: 0 !important;
+            border-radius: 0;
+            box-shadow: none !important;
+        }
+
+        .nonasset-create .employee-search-wrapper #employeeSearch:focus {
+            box-shadow: none !important;
+        }
+
+        .nonasset-create .employee-search-wrapper #employeeSearchButton {
+            min-width: 94px;
+            height: 44px;
+            padding: 0 16px;
+            color: #fff;
+            border: 0;
+            border-radius: 0;
+            background: #8b00d9;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nonasset-create .employee-search-wrapper #employeeSearchButton:hover {
+            background: #7200b5;
+        }
+
+        .nonasset-create .employee-search-wrapper .list-group {
+            margin-top: 4px;
+            border: 1px solid var(--form-border);
+            border-radius: 8px;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, .12);
+            overflow: hidden;
+        }
+
         .nonasset-create .nonasset-create-form textarea.form-control {
             min-height: 118px;
             resize: vertical;
@@ -299,18 +358,22 @@
                                                         </div>
 
 
-                                                        <div class="col-lg-6">
-                                                            <label class="field-label" for="empID">Employee ID</label>
-                                                            <input type="text" class="form-control" name="emp_id"
-                                                                id="empID" placeholder="Enter employee ID" required>
-                                                        </div>
-
-
-                                                        <div class="col-lg-6">
-                                                            <label class="field-label" for="employee_name">Name</label>
-                                                            <input type="text" class="form-control" name="name"
-                                                                id="employee_name" placeholder="Enter employee name"
-                                                                required>
+                                                        <div class="col-lg-12">
+                                                            <label class="field-label">Employee</label>
+                                                            <div class="employee-search-wrapper" style="position:relative;">
+                                                                <div class="input-group">
+                                                                    <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                                                                    <input type="text" class="form-control" id="employeeSearch"
+                                                                        placeholder="Search employee Name Or ID..." autocomplete="off">
+                                                                    <button type="button" class="btn btn-primary" id="employeeSearchButton">
+                                                                        <i class="bi bi-search me-1"></i>Search
+                                                                    </button>
+                                                                </div>
+                                                                <input type="hidden" name="emp_id" id="empID" required>
+                                                                <input type="hidden" name="name" id="employee_name" required>
+                                                                <div id="employeeSearchResults" class="list-group d-none"
+                                                                    style="position:absolute;left:0;right:0;z-index:1050;"></div>
+                                                            </div>
                                                         </div>
 
                                                         <div class="col-lg-6">
@@ -592,40 +655,86 @@
         });
     </script>
 
-
-    <script>
+<script>
         $(document).ready(function() {
-            $('#empID').on('change', function() {
+            const searchUrl = @json(route('search_employee'));
+            const input = $('#employeeSearch');
+            const button = $('#employeeSearchButton');
+            const results = $('#employeeSearchResults');
+            const selectedId = $('#empID');
+            const selectedName = $('#employee_name');
 
-                var empid = this.value;
-                console.log(empid);
-                $.ajax({
-                    url: "/employee_asset/search_emp_id/" + empid,
-                    type: "GET",
-                    data: {
-                        'employeecode': empid
-                    },
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status === 'success') {
-                            $('#employee_name').val(response.data[0].employeename);
+            function message(text, className = 'text-muted') {
+                results.empty().append($('<div>', {
+                    class: 'list-group-item ' + className,
+                    text: text
+                })).removeClass('d-none');
+            }
 
-                            $('#branchescode').val(response.data[0].branch_code);
-                            $('#branches').val(response.data[0].branch_name);
-                        }
-                        if (response.status === 'fail') {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Employee ID Not Found',
-                                text: 'The requested Employee ID could not be found.'
-                            });
-                            $('#empID').val('');
-                            $('#employee_name').val('');
-                            $('#branchescode').val('');
-                            $('#branches').val('');
-                        }
+            function searchEmployees() {
+                const value = input.val().trim();
+                if (!value) {
+                    message('Please enter an employee ID or name.', 'text-danger');
+                    return;
+                }
+
+                const branchValue = $('#branch').val() || '';
+                const branchMatch = branchValue.match(/\(([^()]+)\)\s*$/);
+                button.prop('disabled', true);
+                message('Searching...');
+
+                $.get(searchUrl, {
+                    employee_data: value,
+                    branch_code: branchMatch ? branchMatch[1].trim() : ''
+                }).done(function(response) {
+                    results.empty();
+                    if (!response.data || !response.data.length) {
+                        message('No employees found.');
+                        return;
                     }
+
+                    response.data.forEach(function(employee) {
+                        $('<button>', {
+                            type: 'button',
+                            class: 'list-group-item list-group-item-action'
+                        })
+                            .append($('<strong>', { text: employee.name }))
+                            .append($('<small>', {
+                                class: 'd-block text-muted',
+                                text: employee.emp_id
+                            }))
+                            .on('click', function() {
+                                input.val(employee.emp_id + ' - ' + employee.name);
+                                selectedId.val(employee.emp_id);
+                                selectedName.val(employee.name);
+                                if (employee.branch_code) {
+                                    $('#branch option').filter(function() {
+                                        return $(this).val().indexOf('(' + employee.branch_code + ')') !== -1;
+                                    }).prop('selected', true);
+                                    $('#branch').trigger('change');
+                                }
+                                results.addClass('d-none').empty();
+                            })
+                            .appendTo(results);
+                    });
+                    results.removeClass('d-none');
+                }).fail(function() {
+                    message('Employee search failed. Please try again.', 'text-danger');
+                }).always(function() {
+                    button.prop('disabled', false);
                 });
+            }
+
+            button.on('click', searchEmployees);
+            input.on('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    searchEmployees();
+                }
+            });
+            input.on('input', function() {
+                selectedId.val('');
+                selectedName.val('');
             });
         });
     </script>
