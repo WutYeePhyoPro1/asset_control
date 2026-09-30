@@ -33,7 +33,7 @@ class LaptopAssetCodeController extends Controller
         $branches = Auth::user()->type === 'Manager'
             ? Branch::all()
             : ((string) Auth::user()->emp_code === '000-000627'
-                ? Branch::whereIn('branch_code', ['MM-509', 'MM-510', 'MM-511'])->get()
+                ? Branch::whereIn('branch_code', ['MM-505', 'MM-510', 'MM-511'])->get()
                 : (Auth::user()->branch_id
                     ? Branch::where('id', Auth::user()->branch_id)->get()
                     : Branch::all()));
@@ -573,18 +573,23 @@ class LaptopAssetCodeController extends Controller
     public function fix_asset()
     {
         $branch_id = Auth::user()->getBranch->branch_code;
+        $hasMultiBranchAccess = Auth::user()->type === 'Manager'
+            || (string) Auth::user()->emp_code === '000-000627';
+        $accessibleBranchCodes = ['MM-505', 'MM-510', 'MM-511'];
         $departments = Department::all();
         $branches = Auth::user()->type === 'Manager'
             ? Branch::all()
             : ((string) Auth::user()->emp_code === '000-000627'
-                ? Branch::whereIn('branch_code', ['MM-509', 'MM-510', 'MM-511'])->get()
+                ? Branch::whereIn('branch_code', ['MM-505', 'MM-510', 'MM-511'])->get()
                 : (Auth::user()->branch_id
                     ? Branch::where('id', Auth::user()->branch_id)->get()
                     : Branch::all()));
         $assetsQuery = FixAsset::query()->orderBy('purchase_date');
 
-        if (Auth::user()->type !== 'Manager') {
+        if (!$hasMultiBranchAccess) {
             $assetsQuery->where('branch_code', $branch_id);
+        } elseif (Auth::user()->type !== 'Manager') {
+            $assetsQuery->whereIn('branch_code', $accessibleBranchCodes);
         }
         // Load all permitted assets so DataTables can filter immediately while typing.
         $assets = $assetsQuery->get();
@@ -649,6 +654,9 @@ class LaptopAssetCodeController extends Controller
         $departments = Department::all();
         $branches = Branch::all();
         $branch_id = Auth::user()->getBranch->branch_code;
+        $hasMultiBranchAccess = Auth::user()->type === 'Manager'
+            || (string) Auth::user()->emp_code === '000-000627';
+        $accessibleBranchCodes = ['MM-505', 'MM-510', 'MM-511'];
         $fix_assets = collect();
         if (Auth::user()->type == 'Manager') {
             $query = "SELECT
@@ -672,7 +680,7 @@ class LaptopAssetCodeController extends Controller
                     ORDER BY purchase_date";
 
             $fix_assets = collect($conn->select($query));
-        } elseif ($branch_id) {
+        } else {
             $query = "SELECT
                     fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
                     fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
@@ -691,10 +699,15 @@ class LaptopAssetCodeController extends Controller
                     LEFT JOIN asset.fxassetsale fxsa ON fxsa.fxassetdetailcode = fxdt.fxassetdetailcode
                     LEFT JOIN asset.fxassettransfer fxtf ON fxtf.fxassetdetailcode = fxdt.fxassetdetailcode
                     WHERE fxtp.fxassettypename IN ('Laptop', 'Handset')
-                    AND fxbr.fxbranchcode = :fxbranchcode
+                    AND fxbr.fxbranchcode IN (?, ?, ?)
                     ORDER BY purchase_date";
 
-            $fix_assets = collect($conn->select($query, ['fxbranchcode' => $branch_id]));
+            if ($hasMultiBranchAccess) {
+                $fix_assets = collect($conn->select($query, $accessibleBranchCodes));
+            } elseif ($branch_id) {
+                $query = str_replace('AND fxbr.fxbranchcode IN (?, ?, ?)', 'AND fxbr.fxbranchcode = ?', $query);
+                $fix_assets = collect($conn->select($query, [$branch_id]));
+            }
         }
 
 

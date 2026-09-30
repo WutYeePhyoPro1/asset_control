@@ -74,7 +74,7 @@
                     <div class="col-12">
                       <label for="yourUsername" class="form-label" style="font-size: 15px; font-weight: 500; color: #012970; font-family: Poppins, sans-serif;">Employee Number</label>
                       <div class="input-group has-validation">
-                        <input type="text" name="emp_code" class="form-control @error('emp_code') is-invalid @enderror" value="{{ old('emp_id') }}" id="yourempID" autocomplete="emp_code" autofocus required>
+                        <input type="text" name="emp_code" class="form-control @error('emp_code') is-invalid @enderror" value="{{ old('emp_code') }}" id="yourempID" autocomplete="emp_code" autofocus required>
                         @error('emp_code')
                         <div class="invalid-feedback">Please check your employee ID.</div>
                         @enderror

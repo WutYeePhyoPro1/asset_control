@@ -70,6 +70,8 @@ class LoginController extends Controller
             }
         }
 
-        return redirect()->back()->withErrors(['emp_id' => 'Invalid credentials.']);
+        return redirect()->back()
+            ->withInput($request->only('emp_code'))
+            ->with('error', 'Wrong Employee ID or Password.');
     }
 }
