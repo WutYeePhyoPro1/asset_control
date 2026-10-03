@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -162,7 +163,6 @@ class HomeController extends Controller
 
         $opers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM operators GROUP BY branch");
         $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
-
         $pendingEmployeeUpdateData = Auth::user()->type === 'Manager'
             ? $pendingEmployeeUpdates->get(
                 $selectedMonth ? $monthStart : null,
@@ -178,47 +178,60 @@ class HomeController extends Controller
         $normalizeBranch = static function ($branch) {
             $branch = trim((string) $branch);
             $branch = preg_replace('/\s+/', ' ', $branch);
+
+            // Use MM branch code as the merge key. This handles differences in
+            // spacing, spelling, and punctuation in the branch name.
+            if (preg_match('/\(\s*(MM-\d+)\s*\)/i', $branch, $matches)) {
+                return strtoupper($matches[1]);
+            }
+
             return preg_replace('/\s*\(\s*/', '(', preg_replace('/\s*\)\s*/', ')', $branch));
         };
 
         foreach ($assetCountslh as $asset) {
             $branchKey = $normalizeBranch($asset->branch);
             $mergedData[$branchKey]['branch'] = $branchKey;
-            $mergedData[$branchKey]['asset_type_count'][$asset->asset_type_name] = $asset->asset_type_count;
+            $mergedData[$branchKey]['asset_type_count'][$asset->asset_type_name] =
+                ($mergedData[$branchKey]['asset_type_count'][$asset->asset_type_name] ?? 0)
+                + (int) $asset->asset_type_count;
         }
 
         foreach ($assetCounts1 as $asset) {
-            $branch = $normalizeBranch($asset->branch);
-            $mergedData[$branch]['branch'] = $branch;
-            $mergedData[$branch]['handset_count'] = $asset->asset_type_count;
+            $branchKey = $normalizeBranch($asset->branch);
+            $mergedData[$branchKey]['branch'] = $branchKey;
+            $mergedData[$branchKey]['handset_count'] =
+                ($mergedData[$branchKey]['handset_count'] ?? 0) + (int) $asset->asset_type_count;
         }
 
         foreach ($opers as $oper) {
-            $branch = $normalizeBranch($oper->branch);
-            if (isset($mergedData[$branch])) {
-                $mergedData[$branch]['operator_count'] = $oper->phone_count;
-            } else {
-                $mergedData[$branch] = [
-                    'branch' => $branch,
+            $branchKey = $normalizeBranch($oper->branch);
+            if (!isset($mergedData[$branchKey])) {
+                $mergedData[$branchKey] = [
+                    'branch' => $branchKey,
                     'handset_count' => 0,
-                    'operator_count' => $oper->phone_count,
+                    'operator_count' => 0,
                 ];
             }
+
+            $mergedData[$branchKey]['operator_count'] =
+                ($mergedData[$branchKey]['operator_count'] ?? 0) + (int) $oper->phone_count;
         }
 
-        // foreach ($nonopers as $nonoper) {
-        //     $branch = $nonoper->branch;
-        //     if (isset($mergedData[$branch])) {
-        //         $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
-        //     } else {
+        foreach ($nonopers as $nonoper) {
+            $branchKey = $normalizeBranch($nonoper->branch);
+            if (!isset($mergedData[$branchKey])) {
+                $mergedData[$branchKey] = [
+                    'branch' => $branchKey,
+                    'handset_count' => 0,
+                    'operator_count' => 0,
+                ];
+            }
 
-        //         $mergedData[$branch]['branch'] = $branch;
-        //         $mergedData[$branch]['non_operator_count'] = $nonoper->phone_count;
-        //     }
-        // }
-
-
+            $mergedData[$branchKey]['operator_count'] =
+                ($mergedData[$branchKey]['operator_count'] ?? 0) + (int) $nonoper->phone_count;
+        }
         $mergedData = array_values($mergedData);
+
         return view('dashboard', compact('datas', 'branches', 'departments', 'assetCounts', 'assetCounts1', 'mergedData', 'nonopers', 'totalPhoneCount', 'pendingEmployeeUpdateData'));
     }
 
