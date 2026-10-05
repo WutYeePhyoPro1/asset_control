@@ -161,10 +161,7 @@ class HomeController extends Controller
          ORDER BY branch_code;
                 ", $dateBindings);
 
-        // Operators are stored in the application database, while the asset
-        // status is maintained in the Fixasset database. Resolve the active
-        // asset codes first so sold/transferred/cancelled assets cannot inflate
-        // the dashboard operator count.
+
         $ongoingAssetCodes = collect($conn->select("
             SELECT fxdt.fxassetdetailcode AS asset_code
             FROM asset.fxassetdetail fxdt
@@ -237,6 +234,20 @@ class HomeController extends Controller
 
             $mergedData[$branchKey]['operator_count'] =
                 ($mergedData[$branchKey]['operator_count'] ?? 0) + (int) $oper->phone_count;
+        }
+
+        foreach ($nonopers as $nonoper) {
+            $branchKey = $normalizeBranch($nonoper->branch);
+            if (!isset($mergedData[$branchKey])) {
+                $mergedData[$branchKey] = [
+                    'branch' => $branchKey,
+                    'handset_count' => 0,
+                    'operator_count' => 0,
+                ];
+            }
+
+            $mergedData[$branchKey]['operator_count'] =
+                ($mergedData[$branchKey]['operator_count'] ?? 0) + (int) $nonoper->phone_count;
         }
 
         $mergedData = array_values($mergedData);
