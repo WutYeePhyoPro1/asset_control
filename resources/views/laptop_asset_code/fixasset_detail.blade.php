@@ -1626,6 +1626,8 @@
                                                     </div>
                                                     <input type="hidden" name="emp_id" class="selected-employee-id">
                                                     <input type="hidden" name="emp_name" class="selected-employee-name">
+                                                    <input type="hidden" name="rank" class="selected-employee-rank">
+                         
                                                     <div class="employee-search-results list-group d-none"></div>
                                                 </div>
                                             </div>
@@ -1682,6 +1684,9 @@
                                                                         class="selected-employee-id">
                                                                     <input type="hidden" name="emp_name"
                                                                         class="selected-employee-name">
+                                                                    
+                                                                    <input type="hidden" name="rank"
+                                                                        class="selected-employee-rank">
                                                                     <button type="button"
                                                                         class="btn btn-primary px-4 employee-search-button">
                                                                         <i class="bi bi-search me-1"></i>Search
@@ -1961,7 +1966,7 @@
                                                 @method('PUT')
                                                 <div class="modal-body">
                                                     <div class="row g-4">
-                                                        <div class="col-lg-4">
+                                                        {{-- <div class="col-lg-4">
                                                             <label class="field-label"
                                                                 for="rank-{{ $remark->id }}">Rank</label>
                                                             <select class="form-select" id="rank-{{ $remark->id }}"
@@ -1972,7 +1977,7 @@
                                                                         {{ $rank }}</option>
                                                                 @endforeach
                                                             </select>
-                                                        </div>
+                                                        </div> --}}
                                                         <div class="col-lg-4">
                                                             <span class="field-label">Contract</span>
                                                             <div class="current-contract-card">
@@ -2005,7 +2010,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-lg-4">
+                                                        <div class="col-lg-8">
                                                             <label class="field-label"
                                                                 for="remark-edit-{{ $remark->id }}">Remark</label>
                                                             <textarea class="form-control" id="remark-edit-{{ $remark->id }}" style="height: 112px" name="remark"
@@ -2049,6 +2054,7 @@
                 const resultList = component.find('.employee-search-results');
                 const selectedEmployeeId = component.find('.selected-employee-id');
                 const selectedEmployeeName = component.find('.selected-employee-name');
+                const selectedEmployeeRank = component.find('.selected-employee-rank');
 
                 function showMessage(message, className = 'text-muted') {
                     resultList
@@ -2087,6 +2093,7 @@
                             }
 
                             response.data.forEach(function(employee) {
+                                console.log('Employee', employee);
                                 $('<button>', {
                                         type: 'button',
                                         class: 'list-group-item list-group-item-action'
@@ -2098,11 +2105,16 @@
                                         class: 'd-block text-muted',
                                         text: employee.emp_id
                                     }))
+                                    .append($('<small>', {
+                                        class: 'd-block text-muted',
+                                        text: employee.rank
+                                    }))
                                     .on('click', function() {
                                         employeeInput.val(employee.emp_id + ' - ' +
                                             employee.name);
                                         selectedEmployeeId.val(employee.emp_id);
                                         selectedEmployeeName.val(employee.name);
+                                        selectedEmployeeRank.val(employee.rank);
                                         resultList.addClass('d-none').empty();
                                     })
                                     .appendTo(resultList);
@@ -2135,6 +2147,7 @@
                 employeeInput.on('input', function() {
                     selectedEmployeeId.val('');
                     selectedEmployeeName.val('');
+                    selectedEmployeeRank.val('');
                 });
             });
 

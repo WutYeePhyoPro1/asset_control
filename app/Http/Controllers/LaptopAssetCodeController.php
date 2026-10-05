@@ -630,8 +630,14 @@ class LaptopAssetCodeController extends Controller
         $operators = (clone $operatorsQuery)
             ->paginate(900, ['*'], 'operators_page')
             ->withQueryString();
-        $operatorsByAsset = (clone $operatorsQuery)
+        // The asset table already contains only assets the current user can see.
+        // Do not apply the operator-list branch filter here: older operator
+        // records may have a different/legacy branch value, while their
+        // asset_code still correctly identifies the asset. The detail page
+        // also resolves operators by asset_code only.
+        $operatorsByAsset = Operator::query()
             ->whereIn('asset_code', $assets->pluck('asset_code'))
+            ->orderByDesc('id')
             ->get()
             ->groupBy('asset_code');
 
@@ -1015,7 +1021,7 @@ class LaptopAssetCodeController extends Controller
             $updatecon->contract = $request->contract_edit;
         }
 
-        $updatecon->rank = $request->rank;
+        // $updatecon->rank = $request->rank;
         $updatecon->remark = $request->remark;
         $updatecon->save();
 
@@ -1030,11 +1036,13 @@ class LaptopAssetCodeController extends Controller
         $validated = $request->validate([
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
+            'rank' => ['nullable', 'string', 'max:255'],
         ], [
             'emp_id.required' => 'Please search and select an employee.',
             'emp_name.required' => 'Please search and select an employee.',
         ]);
 
+        return $validated;
         $remark = Remark::findOrFail($id);
         $remark->update($validated);
 
