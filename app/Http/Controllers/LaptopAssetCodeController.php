@@ -515,6 +515,7 @@ class LaptopAssetCodeController extends Controller
             SELECT
                 emp.employeecode AS emp_id,
                 emp.employeename AS name,
+                emp.positionlevel AS rank,
                 brch.branch_code,
                 brch.branch_name
             FROM hremployee.all_employee emp
@@ -1047,6 +1048,7 @@ class LaptopAssetCodeController extends Controller
 
     public function non_asset_operator()
     {
+
         $branch_id = Auth::user()->getBranch->branch_code;
         if (Auth::user()->type == 'Manager') {
             $nonoperators = NonRemark::latest()->get();
