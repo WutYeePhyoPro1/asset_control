@@ -630,11 +630,7 @@ class LaptopAssetCodeController extends Controller
         $operators = (clone $operatorsQuery)
             ->paginate(900, ['*'], 'operators_page')
             ->withQueryString();
-        // The asset table already contains only assets the current user can see.
-        // Do not apply the operator-list branch filter here: older operator
-        // records may have a different/legacy branch value, while their
-        // asset_code still correctly identifies the asset. The detail page
-        // also resolves operators by asset_code only.
+  
         $operatorsByAsset = Operator::query()
             ->whereIn('asset_code', $assets->pluck('asset_code'))
             ->orderByDesc('id')

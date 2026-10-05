@@ -161,7 +161,29 @@ class HomeController extends Controller
          ORDER BY branch_code;
                 ", $dateBindings);
 
-        $opers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM operators GROUP BY branch");
+        // Operators are stored in the application database, while the asset
+        // status is maintained in the Fixasset database. Resolve the active
+        // asset codes first so sold/transferred/cancelled assets cannot inflate
+        // the dashboard operator count.
+        $ongoingAssetCodes = collect($conn->select("
+            SELECT fxdt.fxassetdetailcode AS asset_code
+            FROM asset.fxassetdetail fxdt
+            WHERE COALESCE(fxdt.fxstatus, 'A') NOT IN ('S', 'T', 'C')
+        "))
+            ->pluck('asset_code')
+            ->filter(fn ($assetCode) => trim((string) $assetCode) !== '')
+            ->values();
+
+        $opers = $ongoingAssetCodes->isEmpty()
+            ? collect()
+            : DB::table('operators')
+                ->select('branch')
+                ->selectRaw('COUNT(phone) AS phone_count')
+                ->whereIn('asset_code', $ongoingAssetCodes->all())
+                ->whereNotNull('phone')
+                ->whereRaw("TRIM(phone) <> ''")
+                ->groupBy('branch')
+                ->get();
         $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
         $pendingEmployeeUpdateData = Auth::user()->type === 'Manager'
             ? $pendingEmployeeUpdates->get(
@@ -217,19 +239,6 @@ class HomeController extends Controller
                 ($mergedData[$branchKey]['operator_count'] ?? 0) + (int) $oper->phone_count;
         }
 
-        foreach ($nonopers as $nonoper) {
-            $branchKey = $normalizeBranch($nonoper->branch);
-            if (!isset($mergedData[$branchKey])) {
-                $mergedData[$branchKey] = [
-                    'branch' => $branchKey,
-                    'handset_count' => 0,
-                    'operator_count' => 0,
-                ];
-            }
-
-            $mergedData[$branchKey]['operator_count'] =
-                ($mergedData[$branchKey]['operator_count'] ?? 0) + (int) $nonoper->phone_count;
-        }
         $mergedData = array_values($mergedData);
 
         return view('dashboard', compact('datas', 'branches', 'departments', 'assetCounts', 'assetCounts1', 'mergedData', 'nonopers', 'totalPhoneCount', 'pendingEmployeeUpdateData'));
