@@ -1072,6 +1072,7 @@
                                                     </div>
                                                     <input type="hidden" name="emp_id" class="selected-employee-id">
                                                     <input type="hidden" name="emp_name" class="selected-employee-name">
+                                                    <input type="hidden" name="rank" class="selected-employee-rank">
                                                     <div class="employee-search-results list-group d-none"></div>
                                                 </div>
                                             </div>
@@ -1137,9 +1138,9 @@
                                         <div class="content-panel">
 
                                             @if ($getnonRemark != null && $getnonRemark->doc_no)
-                                                <div class="panel-toolbar">
-                                                    <h6 class="panel-title">Phone Operators</h6><button type="button"
-                                                        class="btn btn-primary btn-sm add-operator-btn"
+                                                <div class="d-flex justify-content-end mb-3">
+                                                    <button type="button"
+                                                        class="btn btn-primary btn-sm add-operator-btn py-2 px-3"
                                                         data-bs-toggle="modal" data-bs-target="#addoperator"><i
                                                             class="bi bi-plus-lg me-1"></i>Add operator</button>
                                                 </div>
@@ -1470,7 +1471,7 @@
                 const results = component.find('.employee-search-results');
                 const selectedId = component.find('.selected-employee-id');
                 const selectedName = component.find('.selected-employee-name');
-
+                const selectedRank = component.find('.selected-employee-rank');
                 function message(text, className = 'text-muted') {
                     results.empty().append($('<div>', { class: 'list-group-item ' + className, text }))
                         .removeClass('d-none');
@@ -1490,9 +1491,10 @@
                                     .append($('<strong>', { text: employee.name }))
                                     .append($('<small>', { class: 'd-block text-muted', text: employee.emp_id }))
                                     .on('click', function() {
-                                        input.val(employee.emp_id + ' - ' + employee.name);
+                                        input.val(employee.emp_id + ' - ' + employee.name + ' (' + employee.rank + ')');
                                         selectedId.val(employee.emp_id);
                                         selectedName.val(employee.name);
+                                        selectedRank.val(employee.rank);
                                         results.addClass('d-none').empty();
                                     }).appendTo(results);
                             });
@@ -1503,7 +1505,7 @@
                 }
                 button.on('click', search);
                 input.on('keydown', function(event) { if (event.key === 'Enter') { event.preventDefault(); search(); } });
-                input.on('input', function() { selectedId.val(''); selectedName.val(''); });
+                input.on('input', function() { selectedId.val(''); selectedName.val(''); selectedRank.val(''); results.addClass('d-none').empty(); });
             });
             $(document).on('click', function(event) {
                 if (!$(event.target).closest('.employee-search-wrapper').length) $('.employee-search-results').addClass('d-none');

@@ -339,7 +339,7 @@
                                                             </select>
                                                         </div>
 
-                                                        <div class="col-lg-12">
+                                                        {{-- <div class="col-lg-12">
                                                             <label class="field-label">Rank</label>
                                                             <select class="form-select" aria-label="Default select example"
                                                                 name="rank" style="box-shadow:1px 1px 1px #333;"
@@ -355,7 +355,7 @@
                                                                 <option value="R8">R8</option>
                                                                 <option value="R9">R9</option>
                                                             </select>
-                                                        </div>
+                                                        </div> --}}
 
 
                                                         <div class="col-lg-12">
@@ -371,6 +371,7 @@
                                                                 </div>
                                                                 <input type="hidden" name="emp_id" id="empID" required>
                                                                 <input type="hidden" name="name" id="employee_name" required>
+                                                                <input type="hidden" name="rank" id="rank" required>
                                                                 <div id="employeeSearchResults" class="list-group d-none"
                                                                     style="position:absolute;left:0;right:0;z-index:1050;"></div>
                                                             </div>
@@ -663,7 +664,7 @@
             const results = $('#employeeSearchResults');
             const selectedId = $('#empID');
             const selectedName = $('#employee_name');
-
+            const selectedRank = $('#rank');
             function message(text, className = 'text-muted') {
                 results.empty().append($('<div>', {
                     class: 'list-group-item ' + className,
@@ -707,6 +708,7 @@
                                 input.val(employee.emp_id + ' - ' + employee.name);
                                 selectedId.val(employee.emp_id);
                                 selectedName.val(employee.name);
+                                selectedRank.val(employee.rank);
                                 if (employee.branch_code) {
                                     $('#branch option').filter(function() {
                                         return $(this).val().indexOf('(' + employee.branch_code + ')') !== -1;
@@ -735,6 +737,8 @@
             input.on('input', function() {
                 selectedId.val('');
                 selectedName.val('');
+                selectedRank.val('');
+                results.addClass('d-none').empty();
             });
         });
     </script>

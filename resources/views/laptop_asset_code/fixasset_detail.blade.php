@@ -1698,7 +1698,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="create-form-field full-width">
+                                                        {{-- <div class="create-form-field full-width">
                                                             <label class="create-form-label" for="create-rank">Rank</label>
                                                             <select class="form-select" id="create-rank" name="rank"
                                                                 >
@@ -1713,7 +1713,7 @@
                                                                 <option value="R8">R8</option>
                                                                 <option value="R9">R9</option>
                                                             </select>
-                                                        </div>
+                                                        </div> --}}
 
                                                         <div class="create-form-field">
                                                             <label class="create-form-label"
@@ -1779,9 +1779,9 @@
                                     @endif
                                     <div class="col-12 asset-detail-panel">
                             @if ($remark != null && $remark->asset_code)
-                                <div class="operator-toolbar">
-                                    <h6>Phone Operators</h6><button type="button"
-                                        class="btn btn-primary btn-sm add-operator-btn" data-bs-toggle="modal"
+                                <div class="d-flex justify-content-end mb-3">
+                                    <button type="button"
+                                        class="btn btn-primary btn-sm add-operator-btn py-2 px-3" data-bs-toggle="modal"
                                         data-bs-target="#addoperator"><i class="bi bi-plus-lg me-1"></i>Add
                                         operator</button>
                                 </div>

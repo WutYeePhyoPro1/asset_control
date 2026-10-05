@@ -1033,10 +1033,11 @@ class LaptopAssetCodeController extends Controller
         $validated = $request->validate([
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
-            'rank' => ['nullable', 'string', 'max:255'],
+            'rank' => ['required', 'string', 'max:255'],
         ], [
             'emp_id.required' => 'Please search and select an employee.',
             'emp_name.required' => 'Please search and select an employee.',
+            'rank.required' => 'Please search and select an employee.',
         ]);
 
         $remark = Remark::findOrFail($id);
@@ -1213,15 +1214,18 @@ class LaptopAssetCodeController extends Controller
         $validated = $request->validate([
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
+            'rank' => ['required', 'string', 'max:255'],
         ], [
             'emp_id.required' => 'Please search and select an employee.',
             'emp_name.required' => 'Please search and select an employee.',
+            'rank.required' => 'Please search and select an employee.',
         ]);
 
         $nonRemark = NonRemark::findOrFail($id);
         $nonRemark->update([
             'emp_id' => $validated['emp_id'],
             'name' => $validated['emp_name'],
+            'rank' => $validated['rank'],
         ]);
 
         return back()->with('success', 'Assigned employee updated successfully.');
