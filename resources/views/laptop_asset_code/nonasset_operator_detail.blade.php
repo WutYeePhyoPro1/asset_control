@@ -339,7 +339,7 @@
         }
 
         .nonasset-detail .asset-edit-modal {
-            overflow: hidden;
+            overflow: visible;
             border: 0;
             border-radius: 16px;
             box-shadow: 0 24px 60px rgba(15, 23, 42, .18);
@@ -521,10 +521,24 @@
             transition: opacity .25s ease, transform .25s ease;
         }
 
-        .nonasset-detail-toast.is-visible { opacity: 1; transform: translateX(0); }
-        .nonasset-detail-toast.is-hiding { opacity: 0; transform: translateX(20px); }
-        .nonasset-detail-toast.is-error { background: #fda4af; }
-        .nonasset-detail-toast-icon { font-size: 17px; line-height: 1; }
+        .nonasset-detail-toast.is-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .nonasset-detail-toast.is-hiding {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .nonasset-detail-toast.is-error {
+            background: #fda4af;
+        }
+
+        .nonasset-detail-toast-icon {
+            font-size: 17px;
+            line-height: 1;
+        }
 
         .nonasset-detail-toast-title {
             margin: 0 0 2px;
@@ -542,7 +556,9 @@
             line-height: 1.35;
         }
 
-        .nonasset-detail-toast-message + .nonasset-detail-toast-message { margin-top: 2px; }
+        .nonasset-detail-toast-message+.nonasset-detail-toast-message {
+            margin-top: 2px;
+        }
 
         .nonasset-detail-toast-close {
             width: 24px;
@@ -645,7 +661,7 @@
         }
 
         .nonasset-detail .remark-card-icon,
-        .nonasset-detail .contract-choice input:checked + label {
+        .nonasset-detail .contract-choice input:checked+label {
             background: #4f8aa3;
             border-color: var(--detail-primary);
             box-shadow: 0 5px 12px rgba(49, 91, 120, .16);
@@ -880,7 +896,7 @@
         }
 
         .nonasset-detail .asset-edit-modal {
-            overflow: hidden;
+            overflow: visible;
             border: 0;
             border-radius: 16px;
             box-shadow: 0 24px 60px rgba(15, 23, 42, .18);
@@ -932,13 +948,17 @@
             padding: 0;
         }
 
-        .nonasset-detail .employee-search-component .employee-search-input { flex: 1 1 auto; min-width: 0; }
+        .nonasset-detail .employee-search-component .employee-search-input {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
         .nonasset-detail .employee-search-component .employee-search-button {
             flex: 0 0 auto;
             padding: 0 22px;
             color: #fff;
             background: #7c00d9;
-            border-left: 1px solid rgba(255,255,255,.25) !important;
+            border-left: 1px solid rgba(255, 255, 255, .25) !important;
         }
 
         .nonasset-detail .employee-search-component .input-group:focus-within {
@@ -958,6 +978,12 @@
             border: 1px solid #d7e0ec;
             border-radius: 9px;
             box-shadow: 0 10px 24px rgba(15, 23, 42, .12);
+        }
+
+        .nonasset-detail .employee-search-results .list-group-item {
+            min-height: 86px;
+            padding: 14px 16px;
+            line-height: 1.45;
         }
     </style>
     <div class="pagetitle">
@@ -979,7 +1005,8 @@
                         <h4 class="nonasset-detail-toast-title">Success</h4>
                         <p class="nonasset-detail-toast-message">{{ Session::get('success') }}</p>
                     </div>
-                    <button type="button" class="nonasset-detail-toast-close" data-detail-toast-close aria-label="Close">&times;</button>
+                    <button type="button" class="nonasset-detail-toast-close" data-detail-toast-close
+                        aria-label="Close">&times;</button>
                 </div>
             @endif
 
@@ -992,7 +1019,8 @@
                             <p class="nonasset-detail-toast-message">{{ $error }}</p>
                         @endforeach
                     </div>
-                    <button type="button" class="nonasset-detail-toast-close" data-detail-toast-close aria-label="Close">&times;</button>
+                    <button type="button" class="nonasset-detail-toast-close" data-detail-toast-close
+                        aria-label="Close">&times;</button>
                 </div>
             @endif
         </div>
@@ -1016,16 +1044,21 @@
 
                             <div class="nonasset-assignment-card assignment-card">
                                 <div class="assignment-heading">
-                                    <span class="assignment-heading-title"><i class="bi bi-bookmark-check-fill"></i> Currently Assigned To</span>
-                                    <button type="button" class="btn btn-sm btn-outline-primary"
-                                        data-bs-toggle="modal" data-bs-target="#changeNonAssetEmployeeModal">
+                                    <span class="assignment-heading-title"><i class="bi bi-bookmark-check-fill"></i>
+                                        Currently Assigned To</span>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
+                                        data-bs-target="#changeNonAssetEmployeeModal">
                                         <i class="bi bi-search me-1"></i>Update Employee
                                     </button>
                                 </div>
                                 <div class="nonasset-assignment-grid assignment-grid">
                                     <div class="assignee-profile">
                                         <span class="employee-avatar"><i class="bi bi-person"></i></span>
-                                        <div><div class="employee-name">{{ $getnonRemark->name ?: 'Employee not recorded' }}</div><div class="employee-id">{{ $getnonRemark->emp_id ?: '-' }}</div></div>
+                                        <div>
+                                            <div class="employee-name">{{ $getnonRemark->name ?: 'Employee not recorded' }}
+                                            </div>
+                                            <div class="employee-id">{{ $getnonRemark->emp_id ?: '-' }}</div>
+                                        </div>
                                     </div>
                                     <div class="assignment-detail">
                                         <i class="bi bi-building"></i>
@@ -1054,21 +1087,27 @@
                                 aria-labelledby="changeNonAssetEmployeeModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content asset-edit-modal">
-                                        <form action="{{ route('nonasset.update_employee', $getnonRemark->id) }}" method="POST">
+                                        <form action="{{ route('nonasset.update_employee', $getnonRemark->id) }}"
+                                            method="POST">
                                             @csrf
                                             @method('PUT')
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="changeNonAssetEmployeeModalLabel">Search Employee</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                <h5 class="modal-title" id="changeNonAssetEmployeeModalLabel">Search
+                                                    Employee</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <label class="form-label fw-bold">Employee ID or Name</label>
                                                 <div class="employee-search-wrapper employee-search-component">
                                                     <div class="input-group">
-                                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                                                        <input type="text" class="form-control border-start-0 employee-search-input"
+                                                        <span class="input-group-text bg-white border-end-0"><i
+                                                                class="bi bi-search text-muted"></i></span>
+                                                        <input type="text"
+                                                            class="form-control border-start-0 employee-search-input"
                                                             autocomplete="off" placeholder="Search employee Name Or ID...">
-                                                        <button type="button" class="btn btn-primary employee-search-button">Search</button>
+                                                        <button type="button"
+                                                            class="btn btn-primary employee-search-button">Search</button>
                                                     </div>
                                                     <input type="hidden" name="emp_id" class="selected-employee-id">
                                                     <input type="hidden" name="emp_name" class="selected-employee-name">
@@ -1077,8 +1116,10 @@
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Assign Employee</button>
+                                                <button type="button" class="btn btn-light"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-success"><i
+                                                        class="bi bi-check-lg me-1"></i>Assign Employee</button>
                                             </div>
                                         </form>
                                     </div>
@@ -1235,7 +1276,7 @@
 
                                                         <button type="button" data-bs-toggle="modal"
                                                             data-bs-target="#editoperator{{ $operator->id }}"
-                                                            class="action-link" ><i
+                                                            class="action-link"><i
                                                                 class="bi bi-pencil-square me-1 fs-5"></i></button>
 
                                                         @if (Auth::user()->type == 'superadmin' || Auth::user()->type == 'Manager')
@@ -1326,7 +1367,8 @@
                                                     <div class="form-actions">
                                                         <button type="button" data-bs-toggle="modal"
                                                             data-bs-target="#editremark{{ $getnonRemark->id }}"
-                                                            class="btn btn-warning text-white btn-sm p-2" style="border-radius: 8px;">Edit Detail</button>
+                                                            class="btn btn-warning text-white btn-sm p-2"
+                                                            style="border-radius: 8px;">Edit Detail</button>
                                                     </div>
                                                 </div>
 
@@ -1472,26 +1514,52 @@
                 const selectedId = component.find('.selected-employee-id');
                 const selectedName = component.find('.selected-employee-name');
                 const selectedRank = component.find('.selected-employee-rank');
+
                 function message(text, className = 'text-muted') {
-                    results.empty().append($('<div>', { class: 'list-group-item ' + className, text }))
+                    results.empty().append($('<div>', {
+                            class: 'list-group-item ' + className,
+                            text
+                        }))
                         .removeClass('d-none');
                 }
 
                 function search() {
                     const value = input.val().trim();
-                    if (!value) { message('Please enter an employee ID or name.', 'text-danger'); return; }
+                    if (!value) {
+                        message('Please enter an employee ID or name.', 'text-danger');
+                        return;
+                    }
                     button.prop('disabled', true);
                     message('Searching...');
-                    $.get(searchEmployeeUrl, { employee_data: value })
+                    $.get(searchEmployeeUrl, {
+                            employee_data: value
+                        })
                         .done(function(response) {
                             results.empty();
-                            if (!response.data || !response.data.length) { message('No employees found.'); return; }
+                            if (!response.data || !response.data.length) {
+                                message('No employees found.');
+                                return;
+                            }
                             response.data.forEach(function(employee) {
-                                $('<button>', { type: 'button', class: 'list-group-item list-group-item-action' })
-                                    .append($('<strong>', { text: employee.name }))
-                                    .append($('<small>', { class: 'd-block text-muted', text: employee.emp_id }))
+                                $('<button>', {
+                                        type: 'button',
+                                        class: 'list-group-item list-group-item-action'
+                                    })
+                                    .append($('<strong>', {
+                                        text: employee.name
+                                    }))
+                                    .append($('<small>', {
+                                        class: 'd-block text-muted',
+                                        text: employee.emp_id
+                                    }))
+                                    .append($('<strong>', {
+                                        class: 'd-block text-muted',
+                                        text: (employee.rank || '-')
+                                    }))
+
                                     .on('click', function() {
-                                        input.val(employee.emp_id + ' - ' + employee.name + ' (' + employee.rank + ')');
+                                        input.val(employee.emp_id + ' - ' + employee.name +
+                                            ' (' + employee.rank + ')');
                                         selectedId.val(employee.emp_id);
                                         selectedName.val(employee.name);
                                         selectedRank.val(employee.rank);
@@ -1500,15 +1568,29 @@
                             });
                             results.removeClass('d-none');
                         })
-                        .fail(function() { message('Employee search failed. Please try again.', 'text-danger'); })
-                        .always(function() { button.prop('disabled', false); });
+                        .fail(function() {
+                            message('Employee search failed. Please try again.', 'text-danger');
+                        })
+                        .always(function() {
+                            button.prop('disabled', false);
+                        });
                 }
                 button.on('click', search);
-                input.on('keydown', function(event) { if (event.key === 'Enter') { event.preventDefault(); search(); } });
-                input.on('input', function() { selectedId.val(''); selectedName.val(''); selectedRank.val(''); results.addClass('d-none').empty(); });
+                input.on('keydown', function(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        search();
+                    }
+                });
+                input.on('input', function() {
+                    selectedId.val('');
+                    selectedName.val('');
+                    selectedRank.val('');
+                });
             });
             $(document).on('click', function(event) {
-                if (!$(event.target).closest('.employee-search-wrapper').length) $('.employee-search-results').addClass('d-none');
+                if (!$(event.target).closest('.employee-search-wrapper').length) $(
+                    '.employee-search-results').addClass('d-none');
             });
         });
     </script>

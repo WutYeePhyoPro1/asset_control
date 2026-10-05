@@ -127,6 +127,12 @@
             overflow: hidden;
         }
 
+        .nonasset-create .employee-search-wrapper .list-group-item {
+            min-height: 86px;
+            padding: 14px 16px;
+            line-height: 1.45;
+        }
+
         .nonasset-create .nonasset-create-form textarea.form-control {
             min-height: 118px;
             resize: vertical;
@@ -321,7 +327,8 @@
                                                                     <option
                                                                         value="{{ $branch->branch_name }}({{ $branch->branch_code }})">
                                                                         {{ $branch->branch_name }}
-                                                                        ({{ $branch->branch_code }})</option>
+                                                                        ({{ $branch->branch_code }})
+                                                                    </option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -362,18 +369,26 @@
                                                             <label class="field-label">Employee</label>
                                                             <div class="employee-search-wrapper" style="position:relative;">
                                                                 <div class="input-group">
-                                                                    <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
-                                                                    <input type="text" class="form-control" id="employeeSearch"
-                                                                        placeholder="Search employee Name Or ID..." autocomplete="off">
-                                                                    <button type="button" class="btn btn-primary" id="employeeSearchButton">
+                                                                    <span class="input-group-text bg-white"><i
+                                                                            class="bi bi-search text-muted"></i></span>
+                                                                    <input type="text" class="form-control"
+                                                                        id="employeeSearch"
+                                                                        placeholder="Search employee Name Or ID..."
+                                                                        autocomplete="off">
+                                                                    <button type="button" class="btn btn-primary"
+                                                                        id="employeeSearchButton">
                                                                         <i class="bi bi-search me-1"></i>Search
                                                                     </button>
                                                                 </div>
-                                                                <input type="hidden" name="emp_id" id="empID" required>
-                                                                <input type="hidden" name="name" id="employee_name" required>
-                                                                <input type="hidden" name="rank" id="rank" required>
+                                                                <input type="hidden" name="emp_id" id="empID"
+                                                                    required>
+                                                                <input type="hidden" name="name" id="employee_name"
+                                                                    required>
+                                                                <input type="hidden" name="rank" id="rank"
+                                                                    required>
                                                                 <div id="employeeSearchResults" class="list-group d-none"
-                                                                    style="position:absolute;left:0;right:0;z-index:1050;"></div>
+                                                                    style="position:absolute;left:0;right:0;z-index:1050;">
+                                                                </div>
                                                             </div>
                                                         </div>
 
@@ -656,7 +671,7 @@
         });
     </script>
 
-<script>
+    <script>
         $(document).ready(function() {
             const searchUrl = @json(route('search_employee'));
             const input = $('#employeeSearch');
@@ -665,6 +680,7 @@
             const selectedId = $('#empID');
             const selectedName = $('#employee_name');
             const selectedRank = $('#rank');
+
             function message(text, className = 'text-muted') {
                 results.empty().append($('<div>', {
                     class: 'list-group-item ' + className,
@@ -695,23 +711,32 @@
                     }
 
                     response.data.forEach(function(employee) {
+                        const employeeRank = employee.rank || '-';
                         $('<button>', {
-                            type: 'button',
-                            class: 'list-group-item list-group-item-action'
-                        })
-                            .append($('<strong>', { text: employee.name }))
+                                type: 'button',
+                                class: 'list-group-item list-group-item-action'
+                            })
+                            .append($('<strong>', {
+                                text: employee.name
+                            }))
                             .append($('<small>', {
                                 class: 'd-block text-muted',
                                 text: employee.emp_id
                             }))
+                            .append($('<strong>', {
+                                class: 'd-block text-muted',
+                                text: employeeRank
+                            }))
+
                             .on('click', function() {
-                                input.val(employee.emp_id + ' - ' + employee.name);
+                                input.val(employee.emp_id + ' - ' + employee.name + employeeRank);
                                 selectedId.val(employee.emp_id);
                                 selectedName.val(employee.name);
-                                selectedRank.val(employee.rank);
+                                selectedRank.val(employeeRank === '-' ? '' : employeeRank);
                                 if (employee.branch_code) {
                                     $('#branch option').filter(function() {
-                                        return $(this).val().indexOf('(' + employee.branch_code + ')') !== -1;
+                                        return $(this).val().indexOf('(' + employee
+                                            .branch_code + ')') !== -1;
                                     }).prop('selected', true);
                                     $('#branch').trigger('change');
                                 }
