@@ -1038,7 +1038,6 @@ class LaptopAssetCodeController extends Controller
             'emp_name.required' => 'Please search and select an employee.',
         ]);
 
-        return $validated;
         $remark = Remark::findOrFail($id);
         $remark->update($validated);
 
