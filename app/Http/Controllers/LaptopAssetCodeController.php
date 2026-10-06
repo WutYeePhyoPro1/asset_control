@@ -30,7 +30,7 @@ class LaptopAssetCodeController extends Controller
     public function index()
     {
         $datas = LaptopAssetCode::latest()->get();
-        $branches = Auth::user()->type === 'Manager'
+        $branches = Auth::user()->hasRole('manager')
             ? Branch::all()
             : ((string) Auth::user()->emp_code === '000-000627'
                 ? Branch::whereIn('branch_code', ['MM-505', 'MM-510', 'MM-511'])->get()
@@ -487,7 +487,7 @@ class LaptopAssetCodeController extends Controller
 
         $employeeData = trim($validated['employee_data']);
         $searchTerm = '%' . $employeeData . '%';
-        $isManager = Auth::user()->type === 'Manager';
+        $isManager = Auth::user()->hasRole('manager');
         $branchCode = Auth::user()->getBranch?->branch_code;
 
         if (!$isManager && !$branchCode) {
@@ -574,11 +574,11 @@ class LaptopAssetCodeController extends Controller
     public function fix_asset()
     {
         $branch_id = Auth::user()->getBranch->branch_code;
-        $hasMultiBranchAccess = Auth::user()->type === 'Manager'
+        $hasMultiBranchAccess = Auth::user()->hasRole('manager')
             || (string) Auth::user()->emp_code === '000-000627';
         $accessibleBranchCodes = ['MM-505', 'MM-510', 'MM-511'];
         $departments = Department::all();
-        $branches = Auth::user()->type === 'Manager'
+        $branches = Auth::user()->hasRole('manager')
             ? Branch::all()
             : ((string) Auth::user()->emp_code === '000-000627'
                 ? Branch::whereIn('branch_code', ['MM-505', 'MM-510', 'MM-511'])->get()
@@ -589,7 +589,7 @@ class LaptopAssetCodeController extends Controller
 
         if (!$hasMultiBranchAccess) {
             $assetsQuery->where('branch_code', $branch_id);
-        } elseif (Auth::user()->type !== 'Manager') {
+        } elseif (!Auth::user()->hasRole('manager')) {
             $assetsQuery->whereIn('branch_code', $accessibleBranchCodes);
         }
         // Load all permitted assets so DataTables can filter immediately while typing.
@@ -624,7 +624,7 @@ class LaptopAssetCodeController extends Controller
 
         $operatorsQuery = Operator::query()->orderByDesc('id');
 
-        if (Auth::user()->type !== 'Manager') {
+        if (!Auth::user()->hasRole('manager')) {
             $operatorsQuery->where('branch', 'like', "%$branch_id%");
         }
 
@@ -657,11 +657,11 @@ class LaptopAssetCodeController extends Controller
         $departments = Department::all();
         $branches = Branch::all();
         $branch_id = Auth::user()->getBranch->branch_code;
-        $hasMultiBranchAccess = Auth::user()->type === 'Manager'
+        $hasMultiBranchAccess = Auth::user()->hasRole('manager')
             || (string) Auth::user()->emp_code === '000-000627';
         $accessibleBranchCodes = ['MM-505', 'MM-510', 'MM-511'];
         $fix_assets = collect();
-        if (Auth::user()->type == 'Manager') {
+        if (Auth::user()->hasRole('manager')) {
             $query = "SELECT
                     fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
                     fxdt.fxassetdetailcode AS asset_code, fxdt.fxassetdetailname AS asset_name, fxdt.fxdatebuy AS purchase_date, fxdt.fxenddatecal AS stop_cal_date,
@@ -1051,7 +1051,7 @@ class LaptopAssetCodeController extends Controller
     {
 
         $branch_id = Auth::user()->getBranch->branch_code;
-        if (Auth::user()->type == 'Manager') {
+        if (Auth::user()->hasRole('manager')) {
             $nonoperators = NonRemark::latest()->get();
         } elseif ($branch_id) {
             $nonoperators = NonRemark::where('branch', 'like', "%$branch_id%")->get();

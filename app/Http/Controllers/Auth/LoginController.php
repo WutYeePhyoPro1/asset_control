@@ -7,9 +7,11 @@ use App\Models\Branch;
 use App\Models\Department;
 use App\Models\LaptopAssetCode;
 use App\Providers\RouteServiceProvider;
+use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
@@ -56,10 +58,18 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
+        
+        // login user က user table ထဲမှာရှိပြီး model_has_roles table ထဲမှာ role assign လုပ်ထားရမယ်။ role မရှိရင် login မလုပ်နိုင်ဘူး။
+        
+        $user = User::where('emp_code', $credentials['emp_code'])
+            ->whereHas('roles', function ($query) {
+                $query->where('guard_name', 'web');
+            })
+            ->first();
 
-        // dd($credentials);
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            Auth::login($user, $request->boolean('remember'));
+
             // dd($user->status==1);
             if ($user->status == '1') {
                 return redirect('/home');

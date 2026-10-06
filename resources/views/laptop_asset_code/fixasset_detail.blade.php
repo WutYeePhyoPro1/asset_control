@@ -1870,7 +1870,7 @@
                                             data-bs-target="#editoperator{{ $operator->id }}" class="action-link"><i
                                                 class="bi bi-pencil-square me-1"></i>Edit</button>
 
-                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->type == 'Manager')
+                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
                                             <button type="button" class="action-link delete"
                                                 onclick='deleteOperator("{{ $operator->id }}")'><i
                                                     class="bi bi-trash3 me-1"></i>Delete</button>
@@ -1940,7 +1940,7 @@
 
                                     <div class="remark-actions">
                                         @if ($operators->count() <= 0)
-                                            @if (Auth::user()->type == 'superadmin' || Auth::user()->type == 'Manager')
+                                            @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
                                                 <button type="button" class="btn btn-outline-danger btn-sm"
                                                     onclick='deleteRemark("{{ $remark->id }}")'><i
                                                         class="bi bi-trash3 me-1"></i>Delete</button>

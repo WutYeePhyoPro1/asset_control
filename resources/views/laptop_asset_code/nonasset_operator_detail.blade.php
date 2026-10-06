@@ -1279,7 +1279,7 @@
                                                             class="action-link"><i
                                                                 class="bi bi-pencil-square me-1 fs-5"></i></button>
 
-                                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->type == 'Manager')
+                                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
                                                             <button type="button" class="action-link delete"
                                                                 onclick='deleteOperator("{{ $operator->id }}")'><i
                                                                     class="bi bi-trash3 me-1 fs-5"></i></button>
@@ -1357,7 +1357,7 @@
 
 
                                                     @if ($getnonOperator->count() <= 0)
-                                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->type == 'Manager')
+                                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
                                                             <button type="button" class="btn btn-outline-danger btn-sm"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#delnon{{ $getnonRemark->id }}"><i

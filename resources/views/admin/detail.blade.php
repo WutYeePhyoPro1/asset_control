@@ -113,8 +113,12 @@
 
 
                   <div class="row">
-                    <div class="col-lg-3 col-md-4 label">User Type</div>
-                    <div class="col-lg-9 col-md-8">{{$user->type}}</div>
+                    <div class="col-lg-3 col-md-4 label">User Role</div>
+                    <div class="col-lg-9 col-md-8">
+                        @foreach($user->roles as $role)
+                            {{ ucfirst($role->name) }}
+                        @endforeach
+                    </div>
                   </div>
 
                   <div class="row">
@@ -216,7 +220,7 @@
                         <div class="col-md-6 col-lg-6">
                         <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">Status</label>
 
-                        @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Admin' )
+                        @if(Auth::user()->hasAnyRole(['superadmin', 'admin']))
                         <input type="hidden" name="status" value="{{ $user->status }}" class="form-control" style="box-shadow:1px 1px 1px #333;">
                         <input type="text" value="{{ $user->status=='1'?'Active':'Inactive' }}" class="form-control" style="box-shadow:1px 1px 1px #333;" readonly>
                         @else
@@ -232,23 +236,24 @@
                         </div>
 
                         <div class="col-md-6 col-lg-6">
-                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">User Type</label>
+                        @php($userRole = $user->roles->pluck('name')->first())
+                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;">User Role</label>
 
-                        @if(Auth::user()->type=='superadmin' || Auth::user()->type=='Admin' )
-                        <input type="text" value="{{ $user->type}}" name="type" class="form-control" style="box-shadow:1px 1px 1px #333;" readonly>
+                        @if(Auth::user()->hasAnyRole(['superadmin', 'admin']))
+                        <input type="hidden" value="{{ $userRole }}" name="role">
+                        <input type="text" value="{{ ucfirst($userRole ?? 'No role assigned') }}" class="form-control" style="box-shadow:1px 1px 1px #333;" readonly>
                         @else
-                        <select class="form-select mb-3" aria-label=".form-select-lg example" name="type" style="box-shadow:1px 1px 1px #333;" required>
-                        <option value="admin" {{$user->type=='admin'?'selected':''}}>Admin</option>
-                        <option value="superadmin" {{$user->type=='superadmin'?'selected':''}}>Superadmin</option>
-                        @if(Auth::user()->type=='Manager')
-                        <option value="Manager" {{$user->type=='Manager'?'selected':''}}>Manager</option>
-                        @endif
+                        <select class="form-select mb-3" aria-label=".form-select-lg example" name="role" style="box-shadow:1px 1px 1px #333;" required>
+                        <option value="">Select User Role</option>
+                        @foreach($roles as $role)
+                        <option value="{{ $role->name }}" @selected($userRole === $role->name)>{{ ucfirst($role->name) }}</option>
+                        @endforeach
                         </select>
                         @endif
 
 
                         <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                            Please select your user type.
+                            Please select your user role.
                         </div>
                         </div>
 

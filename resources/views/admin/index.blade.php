@@ -136,6 +136,53 @@
             font-family: "Nunito", sans-serif;
             font-weight: 800;
         }
+
+        .admin-users-page .user-action-cell {
+            width: 92px;
+            min-width: 92px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .admin-users-page .user-action-list {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .admin-users-page .user-action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: 1px solid #dbe4f0;
+            border-radius: 8px;
+            background: #fff;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1;
+            transition: .18s ease;
+        }
+
+        .admin-users-page .user-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(15, 23, 42, .12);
+        }
+
+        .admin-users-page .user-action-btn.view:hover {
+            border-color: #bfdbfe;
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .admin-users-page .user-action-btn.delete:hover {
+            border-color: #fecaca;
+            background: #fef2f2;
+            color: #dc2626;
+        }
     </style>
     <div class="pagetitle">
         <h1>Employee Asset Control System</h1><br>
@@ -188,8 +235,6 @@
                     <div class="card-body">
 
                         <h5 class="card-title">User Accounts</h5>
-
-
                         <!-- Default Tabs -->
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
@@ -224,15 +269,15 @@
                                                 <div class="col-md-2 col-lg-2">
                                                     <label for="validationCustom01" class="form-label card-title"
                                                         style="font-size: 12px;padding:0px;">User Name</label>
-                                                    <input type="text" class="form-control" id="validationCustom01"
-                                                        name="username" style="box-shadow:1px 1px 1px #333;">
+                                                        <input type="text" class="form-control" id="validationCustom01"
+                                                        name="username" value="{{ request('username') }}" style="box-shadow:1px 1px 1px #333;">
                                                 </div>
 
                                                 <div class="col-md-2 col-lg-2">
                                                     <label for="validationCustom01" class="form-label card-title"
                                                         style="font-size: 12px;padding:0px;">Employee ID</label>
                                                     <input type="text" class="form-control" id="validationCustom01"
-                                                        name="empcode" style="box-shadow:1px 1px 1px #333;">
+                                                        name="empcode" value="{{ request('empcode') }}" style="box-shadow:1px 1px 1px #333;">
                                                 </div>
 
                                                 <div class="col-md-2 col-lg-2">
@@ -240,9 +285,10 @@
                                                         style="font-size: 12px;padding:0px;">Department</label>
                                                     <select class="form-select" id="department" name="department"
                                                         style="box-shadow:1px 1px 1px #333;">
-                                                        <option value="" selected>Select Your Department</option>
-                                                        <option value="System Development">System Development</option>
-                                                        <option value="HR">HR</option>
+                                                        <option value="">Select Your Department</option>
+                                                        @foreach ($departments as $department)
+                                                            <option value="{{ $department }}" @selected(request('department') === $department)>{{ $department }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
 
@@ -253,21 +299,24 @@
                                                         name="branch">
                                                         <option value="">Select Your Branch</option>
                                                         @foreach ($branches as $branch)
-                                                            <option value="{{ $branch->id }}">{{ $branch->branch_name }}
-                                                                ({{ $branch->branch_code }})</option>
+                                                            <option value="{{ $branch->id }}" @selected((string) request('branch') === (string) $branch->id)>{{ $branch->branch_name }}
+                                                                ({{ $branch->branch_code }})
+                                                            </option>
                                                         @endforeach
                                                     </select>
                                                 </div>
 
                                                 <div class="col-md-2 col-lg-2">
                                                     <label for="validationCustom01" class="form-label card-title"
-                                                        style="font-size: 12px;padding:0px;">User Type</label>
-                                                    <select class="form-select mb-3" id="type" name="type"
+                                                        style="font-size: 12px;padding:0px;">User Role</label>
+                                                    <select class="form-select mb-3" id="role" name="role"
                                                         style="box-shadow:1px 1px 1px #333;">
-                                                        <option value="" selected>Select Your User Type</option>
-                                                        <option value="admin">Admin</option>
-                                                        <option value="superadmin">Superadmin</option>
-                                                        <option value="Manager">Manager</option>
+                                                        <option value="">Select User Role</option>
+                                                        @foreach ($roles as $role)
+                                                            <option value="{{ $role->name }}" @selected(request('role') === $role->name)>{{ ucfirst($role->name) }}
+                                                            </option>
+                                                        @endforeach
+
                                                     </select>
                                                 </div>
 
@@ -276,21 +325,17 @@
                                                         style="font-size: 12px;padding:0px;">Status</label>
                                                     <select class="form-select mb-3" name="status" id="status"
                                                         style="box-shadow:1px 1px 1px #333;">
-                                                        <option value="" selected>Select Your Status</option>
-                                                        <option value="1">Active</option>
-                                                        <option value="0">Inactive</option>
+                                                        <option value="">Select Your Status</option>
+                                                        <option value="1" @selected(request('status') === '1')>Active</option>
+                                                        <option value="0" @selected(request('status') === '0')>Inactive</option>
                                                     </select>
                                                 </div>
 
-
-                                                <div class="col-md-2 col-lg-2">
-                                                    <label for="validationCustom01" class="form-label"
-                                                        style="font-size: 12px;padding:0px;"><br></label><br>
-                                                    <button class="btn btn-primary" type="submit">
-                                                        <font class="card-title" style="color:#fff;font-size: 13px;">
-                                                            Search</font>
-                                                    </button>
+                                                <div class="col-md-2 col-lg-2 d-flex align-items-end">
+                                                    <button class="btn btn-outline-secondary mb-3" type="button"
+                                                        id="clearUserFilters">Clear</button>
                                                 </div>
+
 
                                             </div>
                                         </form>
@@ -305,7 +350,7 @@
                                                         <th scope="col">Employee ID</th>
                                                         <th scope="col">Department</th>
                                                         <th scope="col">Branch</th>
-                                                        <th scope="col">User Type</th>
+                                                        <th scope="col">User Role</th>
                                                         <th scope="col">Status</th>
                                                         <th scope="col">Created at</th>
                                                         <th scope="col">Updated at</th>
@@ -316,17 +361,22 @@
                                                     @foreach ($users as $data)
                                                         <tr>
                                                             <th scope="row">{{ $no }}.</th>
-                                                            <td>
-                                                                <center>
-                                                                    @if (Auth::user()->type == 'Manager')
-                                                                        <i class="bi bi-trash-fill pointer"
+                                                            <td class="user-action-cell">
+                                                                <div class="user-action-list">
+                                                                    @if (Auth::user()->hasRole('manager'))
+                                                                        <button type="button" class="user-action-btn delete"
                                                                             data-bs-toggle="modal"
                                                                             data-bs-target="#del{{ $data->id }}"
-                                                                            style="font-size: 15px;"></i> |
+                                                                            title="Delete user" aria-label="Delete user">
+                                                                            <i class="bi bi-trash3-fill"></i>
+                                                                        </button>
                                                                     @endif
-                                                                    <a href="{{ route('all_user.show', $data->id) }}">
-                                                                        <i class="bi bi-eye-fill pointer"></i></a>
-                                                                </center>
+                                                                    <a class="user-action-btn view"
+                                                                        href="{{ route('all_user.show', $data->id) }}"
+                                                                        title="View user" aria-label="View user">
+                                                                        <i class="bi bi-eye-fill"></i>
+                                                                    </a>
+                                                                </div>
                                                             </td>
                                                             <td><a href="{{ route('all_user.show', $data->id) }}"
                                                                     style="text-decoration:none;color:#000">{{ $data->name }}</a>
@@ -338,10 +388,10 @@
                                                                     style="text-decoration:none;color:#000">{{ $data->department }}</a>
                                                             </td>
                                                             <td><a href="{{ route('all_user.show', $data->id) }}"
-                                                                    style="text-decoration:none;color:#000">{{ $data->branches->branch_name }}</a>
+                                                                    style="text-decoration:none;color:#000">{{ $data->branches->branch_name }} ({{ $data->branches->branch_code }})</a>
                                                             </td>
                                                             <td><a href="{{ route('all_user.show', $data->id) }}"
-                                                                    style="text-decoration:none;color:#000">{{ $data->type }}</a>
+                                                                    style="text-decoration:none;color:#000">{{ $data->roles->pluck('name')->map(fn ($role) => ucfirst($role))->join(', ') ?: $data->type }}</a>
                                                             </td>
                                                             <td><a href="{{ route('all_user.show', $data->id) }}"
                                                                     style="text-decoration:none;color:#000">
@@ -412,7 +462,8 @@
                                                                     <div class="profile-upload">
                                                                         <div class="profile-preview" id="image_preview">
                                                                             <img src="{{ asset('assets/img/default-profile.svg') }}"
-                                                                                alt="Default profile"></div>
+                                                                                alt="Default profile">
+                                                                        </div>
                                                                         <div>
                                                                             <label for="validationCustom01"
                                                                                 class="form-label card-title"
@@ -473,8 +524,8 @@
                                                                 style="box-shadow:1px 1px 1px #333;" required>
 
                                                             <!-- <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                                Please enter your employee ID.
-                            </div> -->
+                                    Please enter your employee ID.
+                                </div> -->
 
                                                             @error('emp_code')
                                                                 <div class="invalid-feedback card-title"
@@ -527,20 +578,20 @@
 
                                                         <div class="col-md-6 col-lg-6">
                                                             <label for="validationCustom01" class="form-label card-title"
-                                                                style="font-size: 15px;">User Type</label>
+                                                                style="font-size: 15px;">User Role</label>
                                                             <select class="form-select mb-3"
-                                                                aria-label=".form-select-lg example" name="type"
+                                                                aria-label=".form-select-lg example" name="role"
                                                                 style="box-shadow:1px 1px 1px #333;" required>
-                                                                <option value="" selected>Select Your User Type
+                                                                <option value="" selected>Select User Role
                                                                 </option>
-                                                                <option value="admin">Admin</option>
-                                                                <option value="superadmin">Superadmin</option>
-                                                                <option value="Manager">Manager</option>
+                                                                @foreach($roles as $role)
+                                                                    <option value="{{ $role->name }}">{{ ucfirst($role->name) }}</option>
+                                                                @endforeach
                                                             </select>
 
                                                             <div class="invalid-feedback card-title"
                                                                 style="color:red;font-size:12px;">
-                                                                Please select your user type.
+                                                                Please select user role.
                                                             </div>
                                                         </div>
 
@@ -571,8 +622,8 @@
                                                                 style="box-shadow:1px 1px 1px #333;"
                                                                 autocomplete="new-password" required>
                                                             <!-- <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                             Please enter your password.
-                            </div> -->
+                                 Please enter your password.
+                                </div> -->
                                                             @error('password')
                                                                 <div class="invalid-feedback card-title"
                                                                     style="color:red;font-size:12px;">
@@ -594,21 +645,22 @@
                                                                 </div>
                                                             @enderror
                                                             <!-- <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                             Please enter your confirm password.
-                            </div> -->
+                                 Please enter your confirm password.
+                                </div> -->
                                                         </div>
 
 
                                                         <div class="col-md-6 col-lg-6 form-actions">
+                                                            <button class="btn btn-warning" type="reset">
+                                                                <font class="card-title"
+                                                                    style="color:#fff;font-size: 15px;">Cancel</font>
+                                                            </button>
 
                                                             <button class="btn btn-primary" type="submit">
                                                                 <font class="card-title"
                                                                     style="color:#fff;font-size: 15px;">Save</font>
                                                             </button>
-                                                            <button class="btn btn-warning" type="reset">
-                                                                <font class="card-title"
-                                                                    style="color:#fff;font-size: 15px;">Cancel</font>
-                                                            </button>
+
                                                         </div>
 
                                                     </div>
@@ -664,11 +716,18 @@
             }, 1000);
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const form = document.getElementById("userSearchForm");
             const tableBody = document.querySelector("#myTable tbody");
             if (!form || !tableBody) return;
-            const fields = { username: 2, empcode: 3, department: 4, branch: 5, type: 6, status: 7 };
+            const fields = {
+                username: 2,
+                empcode: 3,
+                department: 4,
+                branch: 5,
+                role: 6,
+                status: 7
+            };
             const filterValue = name => {
                 const element = form.elements[name];
                 if (!element) return "";
@@ -677,10 +736,14 @@
                 return element.value || "";
             };
             const filterUsers = () => {
-                const filters = Object.fromEntries(Object.keys(fields).map(name => [name, filterValue(name).trim().toLowerCase()]));
+                const filters = Object.fromEntries(Object.keys(fields).map(name => [name, filterValue(name)
+                    .trim().toLowerCase()
+                ]));
                 let visible = 0;
                 tableBody.querySelectorAll(":scope > tr:not(.js-no-user-results)").forEach(row => {
-                    const matches = Object.entries(fields).every(([name, index]) => !filters[name] || (row.cells[index]?.textContent || "").trim().toLowerCase().includes(filters[name]));
+                    const matches = Object.entries(fields).every(([name, index]) => !filters[name] || (
+                        row.cells[index]?.textContent || "").trim().toLowerCase().includes(
+                        filters[name]));
                     row.style.display = matches ? "" : "none";
                     if (matches) row.cells[0].textContent = (++visible) + ".";
                 });
@@ -688,7 +751,8 @@
                 if (!visible && !emptyRow) {
                     emptyRow = document.createElement("tr");
                     emptyRow.className = "js-no-user-results";
-                    emptyRow.innerHTML = "<td colspan=\"10\" class=\"text-center\">No matching users found.</td>";
+                    emptyRow.innerHTML =
+                        "<td colspan=\"10\" class=\"text-center\">No matching users found.</td>";
                     tableBody.appendChild(emptyRow);
                 }
                 if (emptyRow) emptyRow.style.display = visible ? "none" : "";
@@ -697,7 +761,12 @@
                 form.elements[name]?.addEventListener("input", filterUsers);
                 form.elements[name]?.addEventListener("change", filterUsers);
             });
-            form.addEventListener("submit", event => { event.preventDefault(); filterUsers(); });
+            $(form).find("select").on("change select2:select select2:clear", filterUsers);
+            document.getElementById("clearUserFilters")?.addEventListener("click", function() {
+                form.querySelectorAll("input").forEach(input => input.value = "");
+                $(form).find("select").val("").trigger("change");
+                filterUsers();
+            });
             filterUsers();
         });
 
@@ -729,19 +798,19 @@
                 placeholder: 'Choose Your department',
             });
 
-            $('#type').select2({
+            $('#role').select2({
                 theme: 'bootstrap-5',
-                placeholder: 'Choose Your user type',
+                placeholder: 'Choose User Role',
             });
 
             $('#status').select2({
                 theme: 'bootstrap-5',
-                placeholder: 'Choose Your user status',
+                placeholder: 'Choose User Status',
             });
 
             $('#branc_id').select2({
                 theme: 'bootstrap-5',
-                placeholder: 'Choose Your user Branch',
+                placeholder: 'Choose User Branch',
             });
 
         });

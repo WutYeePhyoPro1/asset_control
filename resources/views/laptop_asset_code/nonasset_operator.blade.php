@@ -419,7 +419,7 @@
                                                                 <th scope="row">{{ $no }}.</th>
                                                                 <td>
                                                                     <center>
-                                                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->type == 'Manager')
+                                                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
                                                                             <i class="bi bi-trash-fill pointer"
                                                                                 data-bs-toggle="modal"
                                                                                 data-bs-target="#del{{ $data->id }}"

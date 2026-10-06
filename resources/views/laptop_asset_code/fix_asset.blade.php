@@ -351,7 +351,7 @@
                             <div class="col-md-10"></div>
                             <div class="col-md-2">
                                 <br>
-                                {{-- @if (Auth::user()->type == 'Manager') --}}
+                                {{-- @if (Auth::user()->hasRole('manager')) --}}
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                     data-bs-target="#ExtralargeModal" style="margin: 10px;">
                                     All Operators

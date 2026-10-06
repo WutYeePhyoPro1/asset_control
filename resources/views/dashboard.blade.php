@@ -62,7 +62,7 @@
                     <option value="">-- All Branches --</option>
                     @foreach ($branches as $branch)
                         <option value="{{ $branch->branch_code }}"
-                            {{ Auth::user()->type != 'Manager' && Auth::user()->branch_id == $branch->id ? 'selected' : '' }}
+                            {{ !Auth::user()->hasRole('manager') && Auth::user()->branch_id == $branch->id ? 'selected' : '' }}
                             {{ request('branch') == $branch->branch_code ? 'selected' : '' }}>
                             {{ $branch->branch_name }} ({{ $branch->branch_code }})
                         </option>
@@ -167,7 +167,7 @@
                 </div>
             </div>
 
-            @if (Auth::user()->type === 'Manager')
+            @if (Auth::user()->hasRole('manager'))
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">

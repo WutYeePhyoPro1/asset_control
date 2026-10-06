@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Spatie\Permission\Models\Role;
 class HomeController extends Controller
 {
     /**
@@ -34,7 +34,7 @@ class HomeController extends Controller
     {
         $conn = DB::connection('Fixasset');
         $datas = LaptopAssetCode::latest()->paginate(20);
-        $branches = Auth::user()->type === 'Manager'
+        $branches = Auth::user()->hasRole('manager')
             ? Branch::all()
             : ((string) Auth::user()->emp_code === '000-000627'
                 ? Branch::whereIn('branch_code', ['MM-505', 'MM-510', 'MM-511'])->get()
@@ -182,7 +182,7 @@ class HomeController extends Controller
                 ->groupBy('branch')
                 ->get();
         $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
-        $pendingEmployeeUpdateData = Auth::user()->type === 'Manager'
+        $pendingEmployeeUpdateData = Auth::user()->hasRole('manager')
             ? $pendingEmployeeUpdates->get(
                 $selectedMonth ? $monthStart : null,
                 $selectedMonth ? $monthEnd : null,

@@ -194,7 +194,7 @@
           $notificationAssetsQuery = \App\Models\FixAsset::query()
               ->whereRaw('LOWER(status) = ?', ['sold']);
 
-          if (Auth::user()->type !== 'Manager') {
+          if (!Auth::user()->hasRole('manager')) {
               $notificationAssetsQuery->where('branch_code', Auth::user()->getBranch?->branch_code);
           }
 
@@ -367,7 +367,7 @@
         </a>
       </li><!-- End Components Nav -->
 
-      @if(Auth::user()->type=='Manager')
+      @if(Auth::user()->hasRole('manager'))
       <li class="nav-heading"><hr></li>
 
       <li class="nav-item">
