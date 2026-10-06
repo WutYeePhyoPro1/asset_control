@@ -325,7 +325,8 @@
                                                                 <option value="">Select Your Branch</option>
                                                                 @foreach ($branches as $branch)
                                                                     <option
-                                                                        value="{{ $branch->branch_name }}({{ $branch->branch_code }})">
+                                                                        value="{{ $branch->branch_name }}({{ $branch->branch_code }})"
+                                                                        {{ (string) $branch->id === (string) Auth::user()->branch_id ? 'selected' : '' }}>
                                                                         {{ $branch->branch_name }}
                                                                         ({{ $branch->branch_code }})
                                                                     </option>
@@ -768,5 +769,3 @@
         });
     </script>
 @endsection
-
-

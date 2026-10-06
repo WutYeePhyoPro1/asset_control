@@ -487,28 +487,10 @@ class LaptopAssetCodeController extends Controller
 
         $employeeData = trim($validated['employee_data']);
         $searchTerm = '%' . $employeeData . '%';
-        $isManager = Auth::user()->hasRole('manager');
-        $branchCode = Auth::user()->getBranch?->branch_code;
-
-        if (!$isManager && !$branchCode) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'User branch is not found.',
-            ], 422);
-        }
-
-        $branchFilter = $isManager
-            ? ''
-            : 'AND brch.branch_code = :branch_code';
-
         $bindings = [
             'employee_id' => $searchTerm,
             'employee_name' => $searchTerm,
         ];
-
-        if (!$isManager) {
-            $bindings['branch_code'] = $branchCode;
-        }
 
         $conn = DB::connection('Hremployee');
         $users = $conn->select("
@@ -524,7 +506,6 @@ class LaptopAssetCodeController extends Controller
             WHERE (emp.employeecode ILIKE :employee_id
                OR emp.employeename ILIKE :employee_name
                )
-            {$branchFilter}
             ORDER BY emp.employeename
             LIMIT 20
         ", $bindings);
@@ -1064,7 +1045,13 @@ class LaptopAssetCodeController extends Controller
     public function nonasset_operator_create()
     {
         $departments = Department::all();
-        $branches = Branch::all();
+        $branches = Auth::user()->hasRole('manager')
+            ? Branch::all()
+            : ((string) Auth::user()->emp_code === '000-000627'
+                ? Branch::whereIn('branch_code', ['MM-505', 'MM-510', 'MM-511'])->get()
+                : (Auth::user()->branch_id
+                    ? Branch::where('id', Auth::user()->branch_id)->get()
+                    : collect()));
         return view('laptop_asset_code.nonasset_op_create', compact('departments', 'branches'));
     }
 
