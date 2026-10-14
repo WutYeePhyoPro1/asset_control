@@ -164,7 +164,7 @@ body {
 
 }
 
-#fixasset_filter,#opera_filter{
+#fixasset_filter{
     display: none;
 }
 
@@ -174,14 +174,7 @@ body {
 }
 
 /* Style for the fixed table header */
-#fixasset thead,#opera thead{
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background-color: #fff; /* Background color for the fixed header */
-}
-
-#opera thead{
+#fixasset thead{
     position: sticky;
     top: 0;
     z-index: 1;
@@ -205,7 +198,7 @@ main .table thead th {
     font-size: 13px;
     font-weight: 800;
     white-space: nowrap;
-    background: #f6f4fc !important;
+    background: #f2f7fa !important;
     border-color: #d9dfeb !important;
 }
 
@@ -236,7 +229,7 @@ main .dataTables_wrapper .dt-buttons .btn {
     font-family: "Nunito", "Poppins", sans-serif;
     font-size: 13px;
     font-weight: 800;
-    background: #f6f4fc;
+    background: #f2f7fa;
     border: 1px solid #d9dfeb;
     border-radius: 7px;
     box-shadow: none;
@@ -297,13 +290,13 @@ main .dataTables_wrapper .dataTables_paginate .paginate_button:not(.current) {
 
 /* Clean system theme */
 :root {
-    --system-primary: #6d28d9;
-    --system-primary-dark: #5b21b6;
-    --system-soft: #f7f5ff;
-    --system-page: #f8f9fd;
-    --system-ink: #202342;
+    --system-primary: #5b7c99;
+    --system-primary-dark: #46677f;
+    --system-soft: #eef5f8;
+    --system-page: #f7fafc;
+    --system-ink: #223246;
     --system-muted: #718096;
-    --system-border: #e6e7f0;
+    --system-border: #dbe5ec;
 }
 
 body {
@@ -319,14 +312,14 @@ body {
     height: 64px !important;
     background: rgba(255, 255, 255, .96) !important;
     border-bottom: 1px solid var(--system-border);
-    box-shadow: 0 4px 18px rgba(54, 44, 105, .06);
+    box-shadow: 0 4px 18px rgba(70, 103, 127, .08);
 }
 
 .sidebar {
     top: 64px !important;
     background: #fff !important;
     border-right: 1px solid var(--system-border);
-    box-shadow: 5px 0 22px rgba(54, 44, 105, .04);
+    box-shadow: 5px 0 22px rgba(70, 103, 127, .05);
 }
 
 .sidebar-nav .nav-link {
@@ -337,7 +330,7 @@ body {
 }
 
 .sidebar-nav .nav-link i {
-    color: #8b7bbd !important;
+    color: #7899ad !important;
 }
 
 .sidebar-nav .nav-link:hover,
@@ -384,12 +377,12 @@ body {
 .form-control:focus,
 .form-select:focus,
 .select2-container--bootstrap-5.select2-container--focus .select2-selection {
-    border-color: #a78bfa !important;
-    box-shadow: 0 0 0 .2rem rgba(109, 40, 217, .12) !important;
+    border-color: #8fb4c5 !important;
+    box-shadow: 0 0 0 .2rem rgba(91, 124, 153, .14) !important;
 }
 
 main .table thead th {
-    color: #40356e !important;
+    color: #345268 !important;
     background: var(--system-soft) !important;
     border-color: var(--system-border) !important;
 }
@@ -404,7 +397,7 @@ main .table a:hover {
 
 main .dataTables_wrapper .dt-buttons .btn,
 main .dataTables_wrapper .dataTables_paginate .paginate_button {
-    color: #554486 !important;
+    color: #4f7186 !important;
     background: #fff !important;
     border-color: var(--system-border) !important;
 }
@@ -415,6 +408,114 @@ main .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
     color: #fff !important;
     background: var(--system-primary) !important;
     border-color: var(--system-primary) !important;
+}
+
+/* Desktop sidebar: keep the content wide and reveal labels on toggle. */
+@media (min-width: 1200px) {
+    .sidebar {
+        left: 0 !important;
+        width: 76px !important;
+        padding: 18px 10px !important;
+        transition: width .26s ease, box-shadow .26s ease !important;
+    }
+
+    #main,
+    #footer {
+        margin-left: 76px !important;
+    }
+
+    .sidebar-nav .nav-link {
+        justify-content: center;
+        width: 56px;
+        min-height: 46px;
+        margin: 5px auto !important;
+        padding: 10px 8px !important;
+    }
+
+    .sidebar-nav .nav-link span {
+        display: none;
+    }
+
+    .sidebar-nav .nav-link i {
+        margin-right: 0 !important;
+        font-size: 20px !important;
+    }
+
+    .sidebar-nav .nav-heading {
+        margin: 14px 0 !important;
+    }
+
+    body.toggle-sidebar .sidebar {
+        left: 0 !important;
+        width: 300px !important;
+    }
+
+    body.toggle-sidebar #main,
+    body.toggle-sidebar #footer {
+        margin-left: 300px !important;
+    }
+
+    body.toggle-sidebar .sidebar-nav .nav-link {
+        justify-content: flex-start;
+        width: auto;
+        margin: 5px 2px !important;
+        padding: 10px 15px !important;
+    }
+
+    body.toggle-sidebar .sidebar-nav .nav-link span {
+        display: inline;
+    }
+
+    body.toggle-sidebar .sidebar-nav .nav-link i {
+        margin-right: 12px !important;
+    }
+
+    /* Hover expansion keeps the navigation discoverable without permanently
+       taking table space. Click still pins the expanded state. */
+    body:not(.toggle-sidebar):has(.sidebar:hover) .sidebar {
+        width: 300px !important;
+        box-shadow: 8px 0 26px rgba(70, 103, 127, .14) !important;
+    }
+
+    body:not(.toggle-sidebar):has(.sidebar:hover) #main,
+    body:not(.toggle-sidebar):has(.sidebar:hover) #footer {
+        margin-left: 300px !important;
+        transition: margin-left .26s ease;
+    }
+
+    body:not(.toggle-sidebar):has(.sidebar:hover) .sidebar-nav .nav-link {
+        justify-content: flex-start;
+        width: auto;
+        margin: 5px 2px !important;
+        padding: 10px 15px !important;
+    }
+
+    body:not(.toggle-sidebar):has(.sidebar:hover) .sidebar-nav .nav-link span {
+        display: inline;
+        animation: sidebar-label-in .22s ease both;
+    }
+
+    body:not(.toggle-sidebar):has(.sidebar:hover) .sidebar-nav .nav-link i {
+        margin-right: 12px !important;
+    }
+
+    @keyframes sidebar-label-in {
+        from { opacity: 0; transform: translateX(-6px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    #main {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    main .table-responsive {
+        width: 100%;
+    }
+
+    #fixasset {
+        min-width: 1800px;
+    }
 }
 
 </style>

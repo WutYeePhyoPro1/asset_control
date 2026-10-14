@@ -95,9 +95,7 @@ npm run build
 အသုံးပြုနေသော import flow များ —
 
 - Main asset import: `AssetImportExcelController` → `app/Imports/AssetImport.php`
-- Asset operator import: `AssetOperatorController` → `app/Imports/AssetOperator.php`
 - Non-asset operator import: `NonAssetImportController` → `app/Imports/NonAssetOperator.php`
-- Operator import: `OperatorController` → `app/Imports/OperatorImport.php`
 - Asset export: `app/Exports/LaptopAssetCodeExport.php`
 
 Sample Excel ဖိုင်များကို `public/assets/img/` တွင် ထားထားသည်။ Column/header ပြောင်းလဲမည်ဆိုပါက သက်ဆိုင်ရာ `Import` class ၏ `model()` နှင့် `rules()` ကို UI form မတိုင်မီ အရင်ပြင်ပါ။ Import ပြီးနောက် row count နှင့် validation error များကို စစ်ပါ။

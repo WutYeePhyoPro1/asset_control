@@ -508,7 +508,7 @@
                                                             </div>
 
 
-                                                            <div class="modal fade" id="move{{ $data->id }}"
+                                                            <div class="modal fade" id="move{{ $data->id }}
                                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                                 <div class="modal-dialog modal-dialog-centered">
                                                                     <div class="modal-content">
@@ -521,7 +521,7 @@
                                                                                         @METHOD('PUT')
                                                                                         @csrf
                                                                                         <h5>Move To Fix asset</h5>
-                                                                                        Doc: No {{ $data->doc_no }}
+                                                                                        Doc No: {{ $data->doc_no }}
                                                                                         <hr>
                                                                                         <label>Asset Code</label><br><br>
                                                                                         <input type="hidden"

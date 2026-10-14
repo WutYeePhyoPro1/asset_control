@@ -1,6 +1,15 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
     <style>
+        #fixasset th.gbh-column {
+            background-color: #fff3cd !important;
+        }
+
+        #fixasset th.pro1-column {
+            color: white !important;
+            background-color: #2F70B4 !important;
+        }
+
         .fix-asset-page form[id="clear"] {
             font-family: "Nunito", sans-serif;
         }
@@ -79,17 +88,6 @@
             border-radius: 9px;
         }
     </style>
-    <!-- <div class="pagetitle">
-                                  <h1>Asset Control System</h1><br>
-                                  {{-- <nav>
-        <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{route('home')}}" style="color:#000;">Dashboard</a></li>
-          <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.create')}}" style="color:#000;">Add New</a></li>
-        </ol>
-      </nav> --}}
-                                </div>-->
-    <!-- End Page Title -->
-
     @if (Session::has('success'))
         <div class="alert alert-success alert-dismissible fade show outline-animation" role="alert"
             style="width: 300px; float: right; z-index: 1000; position: absolute; top: 15%; right: 2%;" id="toast">
@@ -160,207 +158,9 @@
     @endif
     <section class="section fix-asset-page">
         <div class="row">
-            <div class="modal fade" id="ExtralargeModal" tabindex="-1">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">All Operators</h5>
-
-                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import_operator"
-                                type="button">
-                                <font class="card-title" style="color:#fff;font-size: 13px;">
-                                    <i class="ri-file-excel-2-line" style="font-size: 12px;"></i> Excel Import
-                                </font>
-                            </button>
-
-                        </div>
-                        <div class="modal-body">
-                            <form id="clear">
-                                <div class="row" style="text-wrap: nowrap">
-                                    <div class="col-md-3" id="filteropera_col1" data-column="1">
-                                        <label for="validationCustom03" class="form-label"
-                                            style="font-size: 15px;">Branch</label>
-                                        <select class="form-select column_filteropera" id="col1_filteropera"
-                                            name="branchcode">
-                                            <option value="">Select Your Branch</option>
-                                            @foreach ($branches as $branch)
-                                                <option value="{{ trim($branch->branch_code) }}">
-                                                    {{ $branch->branch_name }} ({{ $branch->branch_code }})</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-3" id="filteropera_col2" data-column="2">
-                                        <label for="validationCustom03" class="form-label"
-                                            style="font-size: 15px;">Department</label>
-                                        <select class="form-select column_filteropera" aria-label="Default select example"
-                                            id="col2_filteropera" name="department">
-                                            <option value="">Select Your Department</option>
-                                            @foreach ($departments as $department)
-                                                <option value="{{ $department->name }}">{{ $department->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-3" id="filteropera_col3" data-column="3">
-                                        <label for="validationCustom05" class="form-label" style="font-size: 15px;">Select
-                                            Asset Type</label>
-                                        <select class="form-select column_filteropera" aria-label="Default select example"
-                                            id="col3_filteropera" name="department">
-                                            <option value="">Select Your Asset Type</option>
-                                            <option value="Laptop">Laptop</option>
-                                            <option value="Handset">Handset</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label for="validationCustom05" class="form-label"
-                                            style="font-size: 15px;">Clear</label>
-                                        <a class="nav-link collapsed" href="{{ route('laptop_asset_code.fix_asset') }}">
-                                            <button class="btn btn-primary"
-                                                style="font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">All</button>
-                                        </a>
-                                    </div>
-
-                                    <div class="col-md-3 mt-3" id="filteropera_col4" data-column="4">
-                                        <label for="validationCustom05" class="form-label" style="font-size: 15px;">Asset
-                                            Code </label>
-                                        <input type="text" class="form-control column_filteropera" name="asset_code"
-                                            placeholder="Enter Asset Code" id="col4_filteropera"
-                                            style="border:1px solid #0d0d0e;">
-                                    </div>
-
-                                    <div class="col-md-3 mt-3" id="filteropera_col5" data-column="5">
-                                        <label class="form-label" style="font-size: 15px;">Asset Name</label>
-                                        <input type="text" class="form-control column_filteropera" name="asset_name"
-                                            placeholder="Enter Asset Name" id="col5_filteropera"
-                                            style="border:1px solid #1c1c1d;">
-                                    </div>
-
-                                    <div class="col-md-3 mt-3" id="filteropera_col6" data-column="6">
-                                        <label for="validationCustom05" class="form-label"
-                                            style="font-size: 15px;">Select Operator</label>
-                                        <select class="form-select column_filteropera" aria-label="Default select example"
-                                            id="col6_filteropera" name="department">
-                                            <option value="">Select Your Operator</option>
-                                            <option value="ATOM">ATOM</option>
-                                            <option value="Ooredoo">Ooredoo</option>
-                                            <option value="MPT">MPT</option>
-                                            <option value="Mytel">Mytel</option>
-
-                                        </select>
-                                    </div>
-
-                                    <div class="col-md-3 mt-3" id="filteropera_col8" data-column="8">
-                                        <label for="validationCustom05" class="form-label"
-                                            style="font-size: 15px;">Select Contract</label>
-                                        <select class="form-select column_filteropera" aria-label="Default select example"
-                                            id="col8_filteropera" name="department">
-                                            <option value="">Select Your Contract</option>
-                                            <option value="Yes">Yes</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
-
-
-                                </div>
-                            </form>
-                            <div class="table-responsive mt-3" style="height: 550px;">
-                                <table class="table table-sm card-title table-hover table-bordered table-fix"
-                                    style="font-size: 15px;" id="opera">
-                                    <thead>
-
-                                        <tr class="table-primary" style="text-wrap: nowrap">
-                                            <th scope="col">No</th>
-                                            <th scope="col">Branch Name</th>
-                                            <th scope="col">Department</th>
-                                            <th scope="col">Asset Type Name</th>
-                                            <th scope="col">Asset Code</th>
-                                            <th scope="col">Asset Name</th>
-                                            <th scope="col">Operator</th>
-                                            <th scope="col">Phone</th>
-                                            <th scope="col">Contract</th>
-                                            <th scope="col">Remark</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php($no = 1)
-
-                                        @foreach ($operators as $data)
-                                            <tr style="text-wrap: nowrap;cursor: pointer;">
-                                                <td scope="row">{{ $no }}.</td>
-
-                                                <td>
-                                                    <a href="{{ route('detail_fixasset', $data->asset_code) }}">
-                                                        {{ $data->branch }}</a>
-                                                </td>
-                                                <td>{{ $data->department }}</td>
-                                                <td>{{ $data->asset_type }}</td>
-                                                <td>
-                                                    <a
-                                                        href="{{ route('detail_fixasset', $data->asset_code) }}">{{ $data->asset_code }}</a>
-
-                                                </td>
-                                                <td>{{ $data->asset_name }}</td>
-                                                <td>
-                                                    {{ $data->operator }}
-                                                </td>
-                                                <td>
-                                                    {{ $data->phone }}
-                                                </td>
-                                                <td>
-                                                    {{ $data->contract }}
-                                                </td>
-                                                <td>
-
-                                                    {{ $data->remark }}
-                                                </td>
-                                            </tr>
-                                            @php($no++)
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                                <!-- End small tables -->
-
-                            </div>
-                            @if ($operators->hasPages())
-                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                    <span>Page {{ $operators->currentPage() }} / {{ $operators->lastPage() }}</span>
-                                    <div>
-                                        @if ($operators->previousPageUrl())
-                                            <a class="btn btn-sm btn-outline-primary" href="{{ $operators->previousPageUrl() }}">Previous</a>
-                                        @endif
-                                        @if ($operators->nextPageUrl())
-                                            <a class="btn btn-sm btn-outline-primary" href="{{ $operators->nextPageUrl() }}">Next</a>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- End Extra Large Modal-->
-
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-10"></div>
-                            <div class="col-md-2">
-                                <br>
-                                {{-- @if (Auth::user()->hasRole('manager')) --}}
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#ExtralargeModal" style="margin: 10px;">
-                                    All Operators
-                                </button>
-                            </div>
-                        </div>
-
-
-
                         {{-- Fix Asset Page --}}
                         <form id="clear" style="margin-top: 20px;">
                             <div class="row g-3" style="text-wrap: nowrap">
@@ -370,11 +170,24 @@
                                     <select class="form-select column_filter" id="col2_filter" name="branchcode">
                                         <option value="">Select Your Branch</option>
                                         @foreach ($branches as $branch)
-                                            <option value="{{ trim($branch->branch_code) }}">
+                                            <option value="{{ trim($branch->branch_name) }}">
                                                 {{ $branch->branch_name }} ({{ $branch->branch_code }})</option>
                                         @endforeach
                                     </select>
 
+                                </div>
+
+                                <div class="col-md-3" id="filter_col5" data-column="5">
+                                    <label for="validationCustom04" class="form-label" style="font-size: 15px;">Select
+                                        Asset Type</label>
+                                    <select class="form-select column_filter" aria-label="Default select example"
+                                        id="asset_type_filter" name="asset_type">
+                                        <option value="">Select Asset Type</option>
+                                        <option value="Laptop">Laptop</option>
+                                        <option value="Handset">Handset</option>
+                                        <option value="Handset+Simcard">Handset+Simcard</option>
+                                        <option value="Other">Other</option>
+                                    </select>
                                 </div>
 
                                 <div class="col-md-3" id="filter_col3" data-column="3">
@@ -391,43 +204,31 @@
                                     </select>
                                 </div>
 
-                                <div class="col-md-3" id="filter_col4" data-column="4">
-                                    <label for="validationCustom04" class="form-label" style="font-size: 15px;">Select
-                                        Asset Type</label>
-                                    <select class="form-select column_filter" aria-label="Default select example"
-                                        id="col4_filter" name="department">
-                                        <option value="">Select Your Asset Type</option>
-                                        <option value="Laptop">Laptop</option>
-                                        <option value="Handset">Handset</option>
-
-                                    </select>
-                                </div>
-
-                                <div class="col-md-3" id="filter_col5" data-column="5">
-                                    <label for="validationCustom05" class="form-label" style="font-size: 15px;">Asset
+                                <div class="col-md-3" id="filter_col6" data-column="6">
+                                    <label for="validationCustom04" class="form-label" style="font-size: 15px;">Asset
                                         Code </label>
                                     <input type="text" class="form-control column_filter"
-                                        placeholder="Enter asset code" id="col5_filter"
+                                        placeholder="Enter asset code" id="col6_filter"
                                         style="border:1px solid #0d0d0e;">
                                 </div>
 
 
                                 <div class="w-100"></div>
 
-                                <div class="col-md-3" id="filter_col6" data-column="6">
+                                <div class="col-md-3" id="filter_col7" data-column="7">
                                     <label class="form-label" style="font-size: 15px;">Asset Name</label>
                                     <input type="text" class="form-control column_filter"
-                                        placeholder="Enter Asset Name" id="col6_filter"
+                                        placeholder="Enter Asset Name" id="col7_filter"
                                         style="border:1px solid #1c1c1d;">
                                 </div>
 
-                                <div class="col-md-3" id="filter_col9" data-column="9">
+                                <div class="col-md-3" id="filter_col10" data-column="10">
                                     <label for="validationCustom06" class="form-label" style="font-size: 15px;">Select
                                         Status</label>
                                     <select class="form-select column_filter" aria-label="Default select example"
-                                        id="col9_filter" name="department">
+                                        id="status_filter" name="status">
                                         <option value="">Status</option>
-                                        <option value="Ongoing">Ongoing</option>
+                                        <option value="Using">Using</option>
                                         <option value="Transfered">Transfered</option>
                                         <option value="Sold">Sold</option>
                                         <option value="Cancel">Cancel</option>
@@ -441,10 +242,11 @@
                                         id="col11_filter" style="border:1px solid #1c1c1d;">
                                 </div>
 
-                                <div class="col-md-3" id="filter_col12" data-column="12">
-                                    <label for="validationCustom05" class="form-label" style="font-size: 15px;">Select Contract</label>
+                                <div class="col-md-3" id="filter_col13" data-column="13">
+                                    <label for="validationCustom05" class="form-label" style="font-size: 15px;">Select
+                                        Contract</label>
                                     <select class="form-select column_filter" aria-label="Default select example"
-                                        id="col12_filter" name="department">
+                                        id="col13_filter" name="contract">
                                         <option value="">Select Your Contract</option>
                                         <option value="Yes">Yes</option>
                                         <option value="No">No</option>
@@ -452,9 +254,9 @@
                                 </div>
 
                                 <div class="col-md-12 d-flex justify-content-between" id="filter_clear">
-                                    {{-- <label for="validationCustom05" class="form-label card-title"
-                                        style="font-size: 15px;">Clear</label> --}}
-                                    <a id="clear-fix-asset-filters" class="nav-link collapsed" href="{{ route('laptop_asset_code.fix_asset') }}">
+
+                                    <a id="clear-fix-asset-filters" class="nav-link collapsed"
+                                        href="{{ route('laptop_asset_code.fix_asset') }}">
                                         <button class="btn btn-primary"
                                             style="font-weight: 500; color: #fff; font-family: Poppins, sans-serif;">All</button>
                                     </a>
@@ -466,8 +268,6 @@
                                         </button>
                                     </div>
                                 </div>
-
-
                             </div>
                         </form>
 
@@ -489,13 +289,14 @@
                                                     <tr class="table-primary" style="text-wrap: nowrap">
                                                         <th scope="col">No</th>
                                                         <th scope="col">Action</th>
-                                                        <th scope="col">Branch Name</th>
-                                                        <th scope="col">Department</th>
-                                                        <th scope="col">Asset Type Name</th>
-                                                        <th scope="col">Asset Code</th>
-                                                        <th scope="col">Asset Name</th>
-                                                        <th scope="col">Employee Id</th>
-                                                        <th scope="col">Employee Name</th>
+                                                        <th scope="col" class="pro1-column">Branch Name (PRO1)</th>
+                                                        <th scope="col" class="pro1-column">Department (PRO1)</th>
+                                                        <th scope="col" class="pro1-column">Sub-Department (PRO1)</th>
+                                                        <th scope="col" class="pro1-column">Asset Type Name (PRO1)</th>
+                                                        <th scope="col" class="gbh-column">Asset Code (GBH)</th>
+                                                        <th scope="col" class="gbh-column">Asset Name (GBH)</th>
+                                                        <th scope="col" class="pro1-column">Employee Id (PRO1)</th>
+                                                        <th scope="col" class="pro1-column">Employee Name (PRO1)</th>
                                                         <th scope="col">Status</th>
                                                         <th scope="col">Operator</th>
                                                         <th scope="col">Phone</th>
@@ -521,20 +322,21 @@
                                                                 <a
                                                                     href="{{ route('detail_fixasset', $data['asset_code']) }}">
                                                                     {{ $data['branch_name'] }}
-                                                                    ({{ $data['branch_code'] }})
+
                                                                 </a>
                                                             </td>
                                                             <td>{{ $data['department'] }}</td>
+                                                            <td>{{ $data['sub_department'] }}</td>
                                                             <td>{{ $data['asset_type_name'] }}</td>
                                                             <td>
                                                                 <a
                                                                     href="{{ route('detail_fixasset', $data['asset_code']) }}">{{ $data['asset_code'] }}</a>
-
                                                             </td>
                                                             <td>{{ $data['asset_name'] }}</td>
                                                             <td>{{ $data['employee_id'] ?? '--' }}</td>
                                                             <td>{{ $data['employee_name'] ?? '--' }}</td>
-                                                            <td>{{ $data['status'] }}</td>
+                                                            <td>{{ $data['status'] == 'Ongoing' ? 'Using' : $data['status'] }}
+                                                            </td>
 
                                                             @php($assetOperators = $operatorsByAsset->get($data['asset_code'], collect()))
                                                             <td>
@@ -561,13 +363,16 @@
                                     </div>
                                     @if ($assetPaginator && $assetPaginator->hasPages())
                                         <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <span>Page {{ $assetPaginator->currentPage() }} / {{ $assetPaginator->lastPage() }}</span>
+                                            <span>Page {{ $assetPaginator->currentPage() }} /
+                                                {{ $assetPaginator->lastPage() }}</span>
                                             <div>
                                                 @if ($assetPaginator->previousPageUrl())
-                                                    <a class="btn btn-sm btn-outline-primary" href="{{ $assetPaginator->previousPageUrl() }}">Previous</a>
+                                                    <a class="btn btn-sm btn-outline-primary"
+                                                        href="{{ $assetPaginator->previousPageUrl() }}">Previous</a>
                                                 @endif
                                                 @if ($assetPaginator->nextPageUrl())
-                                                    <a class="btn btn-sm btn-outline-primary" href="{{ $assetPaginator->nextPageUrl() }}">Next</a>
+                                                    <a class="btn btn-sm btn-outline-primary"
+                                                        href="{{ $assetPaginator->nextPageUrl() }}">Next</a>
                                                 @endif
                                             </div>
                                         </div>
@@ -599,7 +404,7 @@
                                         <input type="hidden" class="form-control asset_code" name="asset_code"
                                             value="">
                                         <select class="form-select" aria-label="Default select example" name="operator"
-                                            style="box-shadow:1px 1px 1px #333;" >
+                                            style="box-shadow:1px 1px 1px #333;">
                                             <option value="" selected>Select your Operator</option>
                                             <option value="ATOM">ATOM</option>
                                             <option value="Ooredoo">Ooredoo</option>
@@ -609,19 +414,19 @@
 
                                         <h5 class="card-title">Ph No:</h5>
                                         <input type="text" class="form-control" name="phone"
-                                            style="box-shadow:1px 1px 1px #333;" >
+                                            style="box-shadow:1px 1px 1px #333;">
 
                                         <h5 class="card-title">Contract</h5>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="contract"
-                                                id="gridRadios1" value="Yes" >
+                                                id="gridRadios1" value="Yes">
                                             <label class="form-check-label" for="contract">
                                                 Yes
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="contract"
-                                                id="gridRadios2" value="No" >
+                                                id="gridRadios2" value="No">
                                             <label class="form-check-label" for="contract">
                                                 No
                                             </label>
@@ -649,58 +454,6 @@
                 </div>
             </div>
 
-            <!--------------------------------excel import-------------------------------------------------------------->
-            <div class="modal fade" id="import_operator" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"
-                                style="font-weight: 500;color: #012970;font-family: Poppins, sans-serif;"><i
-                                    class="ri-file-excel-2-line" style="font-size: 20px;"></i> Excel Import</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <h5 style="font-size:15px;;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
-                                <a href="{{ asset('assets/img/operatorImportsample.xlsx') }}" download><u>Download Sample
-                                        Excel File</u></a>
-                            </h5>
-                            <form action="{{ route('assetoperator.import') }}" class="needs-validation" method="POST"
-                                enctype="multipart/form-data" novalidate>
-                                @csrf
-                                <br>
-                                <label for="my_import">
-
-                                    <i class="bi bi-upload btn btn-primary btn-sm" data-bs-toggle="tooltip"
-                                        data-bs-placement="top"
-                                        title="Employee asset code import excel click the button."></i>
-
-                                </label>
-                                <input type="file" id="my_import" style="display: none;" name="file" required />
-                                <div class="invalid-feedback card-title" style="color:red;font-size:12px;">
-                                    Please import your excel file.
-                                </div>
-
-                                <div id="file_name" class="file-name"
-                                    style="font-size: 13px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;margin-top:10px;">
-                                </div>
-
-                                <!-- <div id="excel_preview" class="excel-preview"></div> -->
-
-                                <!-- <div id="file_name" style="font-size: 15px;font-weight: 500;color: #012970;font-family:Poppins, sans-serif;color:red;"></div> -->
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary"
-                                style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Import</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                style="font-weight: 500;color: #fff;font-family: Poppins, sans-serif;">Close</button>
-
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- End Vertically centered Modal-->
     </section>
     <style>
         .dataTables_wrapper .highlight {
@@ -718,27 +471,6 @@
                     'd-block'); // Assuming 'd-block' class is used to display modal
 
             });
-        });
-
-        $("input[type='file']").change(function() {
-            var fileInput = $(this)[0];
-            var imagePreview = $("#image_preview")[0];
-
-            if (fileInput.files && fileInput.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                    imagePreview.innerHTML = '<img src="' + e.target.result +
-                        '" style="max-width: 100%; max-height: 100%;">';
-                };
-
-                reader.readAsDataURL(fileInput.files[0]);
-                var fileName = fileInput.files[0].name;
-                $("#file_name").text(fileName);
-            } else {
-                imagePreview.innerHTML = ''; // Clear the image preview
-                $("#file_name").text(""); // Clear the file name
-            }
         });
     </script>
     <script>
@@ -855,7 +587,10 @@
                 "lengthChange": false,
                 "searching": true,
                 "searchHighlight": true,
-                "stateSave": true,
+                // Filter values are persisted separately in localStorage below.
+                // Disable DataTables' old column-index state so stale filters do not
+                // get applied to the wrong columns after the table layout changes.
+                "stateSave": false,
                 "stateDuration": -1,
 
                 buttons: [
@@ -889,170 +624,154 @@
 
             table.buttons().container().appendTo('#fixasset_wrapper .col-md-6:eq(0)');
 
-            function filterColumn(i) {
-                const filterValue = $('#col' + i + '_filter').val();
-
-                $('#fixasset').DataTable().column(i).search(filterValue).draw();
-            }
-
-            const fixAssetFilterMap = {
-                '#col2_filter': 'branch',
-                '#col4_filter': 'asset_type',
-                '#col9_filter': 'status'
-            };
-            const savedFixAssetPage = table.page();
-            const savedFixAssetFilters = JSON.parse(localStorage.getItem('fixAssetFilters') || '{}');
-            const urlFilters = new URLSearchParams(window.location.search);
-
-            // Branch options use branch_code. Convert old saved values such as
-            // "Branch Name (MM-001)" to the code so the filter still works.
-            function normalizeBranchFilter(value) {
-                const text = String(value || '').trim();
-                const match = text.match(/\(([^()]+)\)\s*$/);
-                return match ? match[1].trim() : text;
-            }
-
-            Object.keys(fixAssetFilterMap).forEach(function (selector) {
-                const queryKey = fixAssetFilterMap[selector];
-                const savedValue = urlFilters.has(queryKey)
-                    ? urlFilters.get(queryKey)
-                    : savedFixAssetFilters[selector];
-
-                if (savedValue !== undefined && savedValue !== null) {
-                    $(selector).val(queryKey === 'branch' ? normalizeBranchFilter(savedValue) : savedValue);
+            // Keep filter selectors, table indexes and URL keys in one place.
+            const selectFilters = {
+                '#col2_filter': {
+                    column: 2,
+                    queryKey: 'branch'
+                },
+                '#asset_type_filter': {
+                    column: 5,
+                    queryKey: 'asset_type'
+                },
+                '#status_filter': {
+                    column: 10,
+                    queryKey: 'status'
+                },
+                '#col3_filter': {
+                    column: 3,
+                    queryKey: 'department'
+                },
+                '#col13_filter': {
+                    column: 13,
+                    queryKey: 'contract'
                 }
-            });
+            };
 
-            Object.keys(fixAssetFilterMap).forEach(function (selector) {
-                filterColumn($(selector).attr('id').replace('col', '').replace('_filter', ''));
-            });
+            const savedPage = table.page();
+            const savedFilters = JSON.parse(localStorage.getItem('fixAssetFilters') || '{}');
+            const urlFilters = new URLSearchParams(window.location.search);
+            let operatorFilterValue = '';
 
-            // Applying the filters redraws the table; restore the page saved by DataTables.
-            table.page(savedFixAssetPage).draw('page');
+            // Operator and phone are two independent cells. Use one OR filter
+            // for the shared input instead of DataTables' default AND behavior.
+            $.fn.dataTable.ext.search.push(function(settings, data) {
+                if (settings.nTable.id !== 'fixasset' || !operatorFilterValue) {
+                    return true;
+                }
 
-
-            $(document).ready(function() {
-                $('#fixasset').DataTable();
-
-                $('input.global_filter').on('keyup click', function() {
-                    filterGlobal();
-                });
-
-                $('input.column_filter').on('keyup click', function() {
-                    filterColumn($(this).parents('div').attr('data-column'));
+                const needle = operatorFilterValue.toLowerCase();
+                return [data[11], data[12]].some(function(value) {
+                    return String(value || '').toLowerCase().includes(needle);
                 });
             });
 
-            $('select.column_filter').on('change', function() {
-                const column = $(this).parents('div').attr('data-column');
-                filterColumn(column);
+            function escapeRegex(value) {
+                return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
 
+            function normalizeStatusFilter(value) {
+                return String(value || '').trim() === 'Ongoing' ? 'Using' : String(value || '').trim();
+            }
+
+            function filterColumn(column, selector, exactMatch = false) {
+                const value = String($(selector).val() || '').trim();
+                const searchValue = exactMatch && value ?
+                    '^\\s*' + escapeRegex(value) + '\\s*$' :
+                    value;
+
+                table.column(column).search(searchValue, exactMatch, false).draw();
+            }
+
+            function filterGlobal() {
+                table.search($(this).val() || '').draw();
+            }
+
+            function applySelectFilters() {
+                Object.keys(selectFilters).forEach(function(selector) {
+                    const filter = selectFilters[selector];
+                    filterColumn(filter.column, selector, true);
+                });
+            }
+
+            function persistSelectFilters() {
                 const filters = {};
                 const currentUrl = new URL(window.location.href);
-                Object.keys(fixAssetFilterMap).forEach(function (selector) {
+
+                Object.keys(selectFilters).forEach(function(selector) {
+                    const filter = selectFilters[selector];
                     const value = $(selector).val() || '';
                     filters[selector] = value;
-                    currentUrl.searchParams.set(fixAssetFilterMap[selector], value);
+                    currentUrl.searchParams.set(filter.queryKey, value);
                 });
 
                 localStorage.setItem('fixAssetFilters', JSON.stringify(filters));
                 window.history.replaceState({}, '', currentUrl.toString());
-            });
-
-            $('#clear-fix-asset-filters').on('click', function() {
-                localStorage.removeItem('fixAssetFilters');
-                table.state.clear();
-            });
-
-        });
-    </script>
-
-
-    <script>
-        $(document).ready(function() {
-            var table = $('#opera').DataTable({
-                "lengthMenu": [10, 20, 50, 100, 200],
-                "pageLength": 20,
-                "deferRender": true,
-                "lengthChange": false,
-                "searching": true,
-                "searchHighlight": true,
-
-                buttons: [
-
-                    {
-                        extend: 'excel',
-                        text: 'Export to Excel',
-
-                        exportOptions: {
-                            columns: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-                        },
-
-                        customize: function(xlsx) {
-                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
-
-                            $('col', sheet).eq(0).attr('width', 20);
-                        }
-                    },
-
-                    {
-                        extend: 'csv',
-                        text: 'Export to CSV'
-                    },
-
-                    'colvis'
-                ],
-
-
-            });
-
-
-            table.buttons().container().appendTo('#opera_wrapper .col-md-6:eq(0)');
-
-            function filterColumn(i) {
-
-
-                $('#opera').DataTable().column(i).search(
-                    $('#col' + i + '_filteropera').val()
-                ).draw();
             }
 
-            $(document).ready(function() {
-                $('#opera').DataTable();
+            // Restore saved filters after the table layout/column indexes changed.
+            Object.keys(selectFilters).forEach(function(selector) {
+                const filter = selectFilters[selector];
+                const savedValue = urlFilters.has(filter.queryKey) ?
+                    urlFilters.get(filter.queryKey) :
+                    savedFilters[selector];
 
-                $('input.global_filteropera').on('keyup click', function() {
-                    filterGlobal();
-                });
+                if (savedValue !== undefined && savedValue !== null) {
+                    const normalizedValue = filter.queryKey === 'status' ?
+                        normalizeStatusFilter(savedValue) : savedValue;
 
-                $('input.column_filteropera').on('keyup click', function() {
-                    filterColumn($(this).parents('div').attr('data-column'));
-                });
+                    $(selector).val(normalizedValue);
+                }
             });
 
-            $('select.column_filteropera').on('change', function() {
-                filterColumn($(this).parents('div').attr('data-column'));
+            applySelectFilters();
+            table.page(savedPage).draw('page');
+
+            $('input.global_filter').on('keyup click', filterGlobal);
+
+            $('input.column_filter').on('keyup click', function() {
+                const column = $(this).closest('[data-column]').data('column');
+                const selector = '#' + this.id;
+
+                // Operator and phone are separate table columns but intentionally
+                // share one search box: match either value.
+                if (selector === '#col11_filter') {
+                    operatorFilterValue = String($(this).val() || '').trim();
+                    table.column(11).search('');
+                    table.column(12).search('').draw();
+                    return;
+                }
+
+                filterColumn(column, selector);
             });
+
+            $('select.column_filter').on('change', function() {
+                const selector = '#' + this.id;
+                const filter = selectFilters[selector];
+
+                if (filter) {
+                    filterColumn(filter.column, selector, true);
+                    persistSelectFilters();
+                }
+            });
+
+            $('#clear-fix-asset-filters').on('click', function(event) {
+                event.preventDefault();
+                localStorage.removeItem('fixAssetFilters');
+                sessionStorage.removeItem('fixAssetFilters');
+                table.state.clear();
+
+                table.search('');
+                table.columns().search('');
+                operatorFilterValue = '';
+                $('#clear').find('input.column_filter').val('');
+                $('#clear').find('select.column_filter').val('');
+
+                // Navigate to the clean route, never to the current URL with
+                // branchcode=&asset_type=&... appended to it.
+                window.location.replace(this.href.split('?')[0]);
+            });
+
         });
-
-        //     $(document).ready(function(){
-        //     $('#col1_filteropera').select2({
-        //         theme       : 'bootstrap-5',
-        //         placeholder : 'Choose Your  branch',
-        //         width: '100%'
-        //     });
-
-        //     $('#col2_filteropera').select2({
-        //         theme       : 'bootstrap-5',
-        //         placeholder : 'Choose Department  branch',
-        //         width: '100%'
-        //     });
-
-        //     $('#col3_filteropera').select2({
-        //         theme       : 'bootstrap-5',
-        //         placeholder : 'Choose Asset Type',
-        //         width: '100%'
-        //     });
-
-        // });
     </script>
 @endsection

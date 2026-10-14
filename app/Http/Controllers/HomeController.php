@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Branch;
 use App\Models\Department;
+use App\Models\FixAsset;
 use App\Models\LaptopAssetCode;
+use App\Models\Remark;
 use App\Services\PendingEmployeeUpdateService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Role;
 class HomeController extends Controller
 {
     /**
@@ -34,7 +35,9 @@ class HomeController extends Controller
     {
         $conn = DB::connection('Fixasset');
         $datas = LaptopAssetCode::latest()->paginate(20);
-        $branches = Auth::user()->hasRole('manager')
+         /** @var User $user */
+        $user = Auth::user();
+        $branches = $user->hasRole('manager')
             ? Branch::all()
             : ((string) Auth::user()->emp_code === '000-000627'
                 ? Branch::whereIn('branch_code', ['MM-505', 'MM-510', 'MM-511'])->get()
@@ -129,6 +132,71 @@ class HomeController extends Controller
      ORDER BY branch_code;
             ", $dateBindings);
 
+        // Handset + Simcard assets are maintained in the local FixAsset table.
+        // Use the same source as the Fix Asset page so the dashboard cannot
+        // disagree with the records users see there.
+        $assetCountsSim = FixAsset::query()
+            ->select('branch_code', 'branch_name', 'asset_type_name')
+            ->selectRaw('COUNT(*) AS asset_type_count')
+            ->whereRaw("REPLACE(LOWER(TRIM(asset_type_name)), ' ', '') = ?", ['handset+simcard'])
+            ->whereNotIn('status', ['S', 'T', 'C', 'Sold', 'Transfered', 'Cancel'])
+            ->groupBy('branch_code', 'branch_name', 'asset_type_name')
+            ->orderBy('branch_code')
+            ->get()
+            ->map(function ($asset) {
+                return (object) [
+                    'branch' => trim((string) $asset->branch_name) . ' (' . trim((string) $asset->branch_code) . ')',
+                    'asset_type_name' => $asset->asset_type_name,
+                    'asset_type_count' => (int) $asset->asset_type_count,
+                ];
+            })
+            ->values();
+
+        // Keep the detail chart at the same grain users maintain in Fix Asset:
+        // branch -> sub-department -> asset type. The latest remark is used
+        // because employee/sub-department assignments can change over time.
+        $dashboardAssets = FixAsset::query()
+            ->whereNotIn('status', ['S', 'T', 'C', 'Sold', 'Transfered', 'Cancel'])
+            ->get(['asset_code', 'branch_code', 'branch_name', 'asset_type_name']);
+        $dashboardRemarks = Remark::query()
+            ->whereIn('asset_code', $dashboardAssets->pluck('asset_code'))
+            ->latest('updated_at')
+            ->latest('id')
+            ->get()
+            ->unique('asset_code')
+            ->keyBy('asset_code');
+
+        $subDepartmentAssetData = $dashboardAssets
+            ->map(function ($asset) use ($dashboardRemarks) {
+                $remark = $dashboardRemarks->get($asset->asset_code);
+                $type = preg_replace('/\s+/', '', strtolower(trim((string) $asset->asset_type_name)));
+
+                if (!in_array($type, ['laptop', 'handset'], true)) {
+                    return null;
+                }
+
+                return [
+                    'branch_code' => trim((string) $asset->branch_code),
+                    'branch' => trim((string) $asset->branch_name) . ' (' . trim((string) $asset->branch_code) . ')',
+                    'sub_department' => trim((string) ($remark?->sub_department ?: 'Unassigned')),
+                    'asset_type' => $type,
+                ];
+            })
+            ->filter()
+            ->groupBy(fn ($asset) => implode('|', [$asset['branch_code'], $asset['sub_department']]))
+            ->map(function ($assets) {
+                $first = $assets->first();
+
+                return [
+                    'branch_code' => $first['branch_code'],
+                    'branch' => $first['branch'],
+                    'sub_department' => $first['sub_department'],
+                    'laptop_count' => $assets->where('asset_type', 'laptop')->count(),
+                    'handset_count' => $assets->where('asset_type', 'handset')->count(),
+                ];
+            })
+            ->values();
+
         $assetCountslh = $conn->select("
                 SELECT branch_name || '(' || branch_code || ')' AS branch,
                 asset_type_name,
@@ -182,7 +250,7 @@ class HomeController extends Controller
                 ->groupBy('branch')
                 ->get();
         $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
-        $pendingEmployeeUpdateData = Auth::user()->hasRole('manager')
+        $pendingEmployeeUpdateData = $user->hasRole('manager')
             ? $pendingEmployeeUpdates->get(
                 $selectedMonth ? $monthStart : null,
                 $selectedMonth ? $monthEnd : null,
@@ -252,7 +320,20 @@ class HomeController extends Controller
 
         $mergedData = array_values($mergedData);
 
-        return view('dashboard', compact('datas', 'branches', 'departments', 'assetCounts', 'assetCounts1', 'mergedData', 'nonopers', 'totalPhoneCount', 'pendingEmployeeUpdateData'));
+        $branchShortNames = [];
+        $branchesWithShortNames = Branch::query()
+            ->whereNotNull('branch_code')
+            ->whereNotNull('branch_short_name')
+            ->get(['branch_code', 'branch_short_name']);
+
+        foreach ($branchesWithShortNames as $branch) {
+            $branchCode = strtoupper(trim((string) $branch->branch_code));
+            $shortName = trim((string) $branch->branch_short_name);
+
+            $branchShortNames[$branchCode] = $shortName;
+        }
+
+        return view('dashboard', compact('datas', 'branches', 'departments', 'assetCounts', 'assetCounts1', 'assetCountsSim', 'subDepartmentAssetData', 'mergedData', 'nonopers', 'totalPhoneCount', 'pendingEmployeeUpdateData', 'branchShortNames'));
     }
 
     public function logout()

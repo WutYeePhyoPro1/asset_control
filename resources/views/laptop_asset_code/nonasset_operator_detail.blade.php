@@ -207,7 +207,7 @@
             align-items: center;
             margin-bottom: 18px;
             padding: 15px 18px;
-            background: linear-gradient(120deg, #1d4ed8, #6d28d9);
+            background: linear-gradient(120deg, #1d4ed8, #5b7c99);
             border-radius: 14px;
             box-shadow: 0 10px 22px rgba(79, 70, 229, .22);
         }
@@ -280,6 +280,50 @@
             color: #dc2626;
         }
 
+        .nonasset-detail .master-sim-input-wrapper {
+            position: relative;
+        }
+
+        .nonasset-detail .master-sim-suggestions {
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            left: 0;
+            z-index: 1055;
+            display: none;
+            max-height: 180px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, .16);
+        }
+
+        .nonasset-detail .master-sim-suggestions.is-visible {
+            display: block;
+        }
+
+        .nonasset-detail .master-sim-suggestion {
+            display: block;
+            width: 100%;
+            padding: 9px 12px;
+            color: #202342;
+            text-align: left;
+            background: #fff;
+            border: 0;
+            border-bottom: 1px solid #eff6ff;
+            cursor: pointer;
+        }
+
+        .nonasset-detail .master-sim-suggestion:last-child {
+            border-bottom: 0;
+        }
+
+        .nonasset-detail .master-sim-suggestion:hover {
+            color: #1d4ed8;
+            background: #eff6ff;
+        }
+
         .nonasset-detail .detail-form-card {
             margin-top: 20px;
             padding: 21px;
@@ -289,8 +333,8 @@
         }
 
         .nonasset-detail .remark-card {
-            background: linear-gradient(125deg, #f5f3ff 0%, #fdf4ff 58%, #fff 100%);
-            border: 1px solid #c4b5fd;
+            background: linear-gradient(125deg, #f3f8fa 0%, #f7fbfc 58%, #fff 100%);
+            border: 1px solid #c5dbe5;
             box-shadow: 0 10px 24px rgba(124, 58, 237, .1);
         }
 
@@ -309,7 +353,7 @@
         }
 
         .nonasset-detail .remark-card-heading small {
-            color: #7c3aed;
+            color: #5b7c99;
             font-weight: 700;
         }
 
@@ -321,20 +365,20 @@
             height: 40px;
             color: #fff;
             font-size: 18px;
-            background: linear-gradient(135deg, #7c3aed, #db2777);
+            background: linear-gradient(135deg, #5b7c99, #86aabf);
             border-radius: 12px;
             box-shadow: 0 7px 14px rgba(124, 58, 237, .22);
         }
 
         .nonasset-detail .remark-card textarea {
-            color: #312e81;
+            color: #46677f;
             font-weight: 650;
             background: rgba(255, 255, 255, .82);
-            border-color: #c4b5fd;
+            border-color: #c5dbe5;
         }
 
         .nonasset-detail .remark-card .btn-warning {
-            background: linear-gradient(135deg, #7c3aed, #db2777);
+            background: linear-gradient(135deg, #5b7c99, #86aabf);
             border: 0;
         }
 
@@ -347,7 +391,7 @@
 
         .nonasset-detail .asset-edit-modal .modal-header {
             padding: 18px 24px;
-            background: linear-gradient(135deg, #f8fbff, #f5f3ff);
+            background: linear-gradient(135deg, #f8fbff, #f3f8fa);
             border-bottom: 1px solid #e2e8f0;
         }
 
@@ -399,7 +443,7 @@
         }
 
         .nonasset-detail .current-contract-card strong {
-            color: #1e3a8a;
+            color: #46677f;
             font-size: 14px;
         }
 
@@ -438,7 +482,7 @@
 
         .nonasset-detail .contract-choice input:checked+label {
             color: #fff;
-            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            background: linear-gradient(135deg, #2563eb, #5b7c99);
             border-color: #2563eb;
             box-shadow: 0 5px 12px rgba(37, 99, 235, .22);
         }
@@ -744,73 +788,73 @@
 
         /* Final system theme overrides */
         .nonasset-detail {
-            --detail-primary: #6d28d9;
+            --detail-primary: #5b7c99;
             --detail-ink: #202342;
             --detail-muted: #718096;
-            --detail-border: #e3def4;
-            --detail-soft: #fbfaff;
-            --detail-accent: #8b5cf6;
+            --detail-border: #dce9ef;
+            --detail-soft: #f8fbfc;
+            --detail-accent: #6f9bb2;
         }
 
         .nonasset-detail .nonasset-hero-card {
-            border-top-color: #8b5cf6 !important;
+            border-top-color: #6f9bb2 !important;
         }
 
         .nonasset-detail .nonasset-hero-icon,
         .nonasset-detail .remark-card-icon {
-            color: #6d28d9 !important;
-            background: #f1edff !important;
-            border-color: #d8caff !important;
+            color: #5b7c99 !important;
+            background: #e7f1f5 !important;
+            border-color: #cfe1e8 !important;
         }
 
         .nonasset-detail .nonasset-assignment-card {
-            background: #f8f5ff !important;
-            border-color: #ded4f7 !important;
+            background: #f1f7fa !important;
+            border-color: #d9e8ef !important;
         }
 
         .nonasset-detail .assignment-heading,
         .nonasset-detail .assignment-detail i,
         .nonasset-detail .assignment-label,
         .nonasset-detail .panel-title {
-            color: #6d28d9 !important;
+            color: #5b7c99 !important;
         }
 
         .nonasset-detail .employee-avatar {
-            color: #6d28d9 !important;
-            background: #ebe4ff !important;
+            color: #5b7c99 !important;
+            background: #dcecf2 !important;
         }
 
         .nonasset-detail .panel-toolbar {
-            background: linear-gradient(135deg, #6d28d9, #8b5cf6) !important;
+            background: linear-gradient(135deg, #5b7c99, #6f9bb2) !important;
             box-shadow: 0 10px 22px rgba(109, 40, 217, .18) !important;
         }
 
         .nonasset-detail .operator-card {
-            border-left-color: #8b5cf6 !important;
+            border-left-color: #6f9bb2 !important;
             background: #fff !important;
         }
 
         .nonasset-detail .remark-card {
-            background: #fbfaff !important;
-            border-color: #ded4f7 !important;
+            background: #f8fbfc !important;
+            border-color: #d9e8ef !important;
         }
 
         .nonasset-detail .remark-card-heading h6,
         .nonasset-detail .remark-card-heading small {
-            color: #6d28d9 !important;
+            color: #5b7c99 !important;
         }
 
         .nonasset-detail .add-operator-btn {
             color: #fff !important;
-            background: #6d28d9 !important;
-            border-color: #6d28d9 !important;
+            background: #5b7c99 !important;
+            border-color: #5b7c99 !important;
         }
 
         .nonasset-detail .add-operator-btn:hover,
         .nonasset-detail .add-operator-btn:focus {
             color: #fff !important;
-            background: #5b21b6 !important;
-            border-color: #5b21b6 !important;
+            background: #46677f !important;
+            border-color: #46677f !important;
         }
 
 
@@ -818,8 +862,8 @@
         .nonasset-detail .assignment-card {
             margin-bottom: 18px;
             padding: 18px 20px;
-            background: #f8f5ff !important;
-            border: 1px solid #ded4f7 !important;
+            background: #f1f7fa !important;
+            border: 1px solid #d9e8ef !important;
             border-radius: 14px;
         }
 
@@ -840,7 +884,7 @@
 
         .nonasset-detail .search-employee-btn,
         .nonasset-detail .assignment-heading .btn-outline-primary {
-            color: #6d28d9 !important;
+            color: #5b7c99 !important;
             font-weight: 800;
             background: #fff;
             border-color: #6ee7b7;
@@ -857,7 +901,7 @@
         .nonasset-detail .assignment-detail {
             min-height: 58px;
             padding: 0 18px;
-            border-right: 1px solid #e1d8f5;
+            border-right: 1px solid #d9e7ee;
         }
 
         .nonasset-detail .assignee-profile {
@@ -874,9 +918,9 @@
             justify-content: center;
             width: 44px;
             height: 44px;
-            color: #6d28d9 !important;
+            color: #5b7c99 !important;
             font-size: 20px;
-            background: #ebe4ff !important;
+            background: #dcecf2 !important;
             border-radius: 50%;
         }
 
@@ -957,12 +1001,12 @@
             flex: 0 0 auto;
             padding: 0 22px;
             color: #fff;
-            background: #7c00d9;
+            background: #5b7c99;
             border-left: 1px solid rgba(255, 255, 255, .25) !important;
         }
 
         .nonasset-detail .employee-search-component .input-group:focus-within {
-            border-color: #8b5cf6;
+            border-color: #6f9bb2;
             box-shadow: 0 0 0 .2rem rgba(139, 92, 246, .12);
         }
 
@@ -991,7 +1035,7 @@
         {{-- <nav>
         <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{route('home')}}" style="color:#000;">Dashboard</a></li>
-          <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.index')}}" style="color:#000;">Back</a></li>
+          <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.nonasset_operator')}}" style="color:#000;">Back</a></li>
         </ol>
       </nav> --}}
     </div><!-- End Page Title -->
@@ -1740,6 +1784,94 @@
             $('#showope').on('click', '.removebtn', function() {
                 $(this).closest('.row').remove();
                 x--;
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const masterSimNumbers = @json($masterSims->pluck('simcard')->values());
+            const maxSuggestions = 10;
+            const minimumSearchLength = 2;
+
+            function hideSuggestions(list) {
+                list.classList.remove('is-visible');
+                list.replaceChildren();
+            }
+
+            function getMatchingNumbers(inputValue) {
+                const keyword = inputValue.trim().toLowerCase();
+
+                if (keyword.length < minimumSearchLength) {
+                    return [];
+                }
+
+                return masterSimNumbers
+                    .filter(number => String(number).toLowerCase().includes(keyword))
+                    .slice(0, maxSuggestions);
+            }
+
+            function setupPhoneInput(input) {
+                if (input.dataset.masterSimReady) {
+                    return;
+                }
+
+                input.dataset.masterSimReady = 'true';
+                const wrapper = input.parentElement;
+                wrapper.classList.add('master-sim-input-wrapper');
+
+                const list = document.createElement('div');
+                list.className = 'master-sim-suggestions';
+                wrapper.appendChild(list);
+
+                const renderSuggestions = function() {
+                    const matches = getMatchingNumbers(input.value);
+                    list.replaceChildren();
+
+                    matches.forEach(function(number) {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'master-sim-suggestion';
+                        button.textContent = number;
+                        button.dataset.value = number;
+                        list.appendChild(button);
+                    });
+
+                    list.classList.toggle('is-visible', matches.length > 0);
+                };
+
+                input.addEventListener('input', renderSuggestions);
+                input.addEventListener('focus', renderSuggestions);
+
+                list.addEventListener('mousedown', function(event) {
+                    const suggestion = event.target.closest('.master-sim-suggestion');
+
+                    if (!suggestion) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    input.value = suggestion.dataset.value;
+                    hideSuggestions(list);
+                });
+            }
+
+            function setupPhoneInputs() {
+                document.querySelectorAll('input[name="phone[]"]').forEach(setupPhoneInput);
+            }
+
+            setupPhoneInputs();
+
+            const phoneInputObserver = new MutationObserver(setupPhoneInputs);
+            phoneInputObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.master-sim-input-wrapper')) {
+                    document.querySelectorAll('.master-sim-suggestions').forEach(hideSuggestions);
+                }
             });
         });
     </script>

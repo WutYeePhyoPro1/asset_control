@@ -190,7 +190,7 @@
 
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}" style="color:#000;">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('laptop_asset_code.index') }}" style="color:#000;">Asset</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('laptop_asset_code.fix_asset') }}" style="color:#000;">Asset</a></li>
             </ol>
         </nav>
     </div><!-- End Page Title -->
@@ -270,6 +270,7 @@
                                                     <label for="validationCustom01" class="form-label card-title"
                                                         style="font-size: 12px;padding:0px;">User Name</label>
                                                         <input type="text" class="form-control" id="validationCustom01"
+                                                        placeholder="Search by user name"
                                                         name="username" value="{{ request('username') }}" style="box-shadow:1px 1px 1px #333;">
                                                 </div>
 
@@ -277,6 +278,7 @@
                                                     <label for="validationCustom01" class="form-label card-title"
                                                         style="font-size: 12px;padding:0px;">Employee ID</label>
                                                     <input type="text" class="form-control" id="validationCustom01"
+                                                        placeholder="Search by employee ID"
                                                         name="empcode" value="{{ request('empcode') }}" style="box-shadow:1px 1px 1px #333;">
                                                 </div>
 
@@ -295,7 +297,7 @@
                                                 <div class="col-md-2 col-lg-2">
                                                     <label for="validationCustom01" class="form-label card-title"
                                                         style="font-size: 12px;padding:0px;">Branch</label>
-                                                    <select class="form-select column_filter" id="branc_id"
+                                                    <select class="form-select column_filter" id="branch_id"
                                                         name="branch">
                                                         <option value="">Select Your Branch</option>
                                                         @foreach ($branches as $branch)

@@ -110,13 +110,13 @@
             color: #fff;
             border: 0;
             border-radius: 0;
-            background: #8b00d9;
+            background: #5b7c99;
             font-size: 14px;
             font-weight: 600;
         }
 
         .nonasset-create .employee-search-wrapper #employeeSearchButton:hover {
-            background: #7200b5;
+            background: #46677f;
         }
 
         .nonasset-create .employee-search-wrapper .list-group {
@@ -255,7 +255,7 @@
         {{-- <nav>
         <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{route('home')}}" style="color:#000;">Dashboard</a></li>
-          <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.index')}}" style="color:#000;">Back</a></li>
+          <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.nonasset_operator')}}" style="color:#000;">Back</a></li>
         </ol>
       </nav> --}}
     </div><!-- End Page Title -->

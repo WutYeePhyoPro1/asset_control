@@ -11,10 +11,13 @@ class PendingEmployeeUpdateService
     {
         $assetsQuery = FixAsset::query()
             ->where(function ($query) {
-                $query->whereRaw("LOWER(TRIM(asset_type_name)) = 'laptop'")
-                    ->orWhereRaw("LOWER(TRIM(asset_type_name)) = 'handset'");
+                $query->whereRaw("LOWER(REPLACE(TRIM(asset_type_name), ' ', '')) = 'handset+simcard'");
             })
-            ->whereRaw("LOWER(TRIM(status)) = 'ongoing'");
+
+            ->where(function ($query) {
+                $query->whereNull('status')
+                    ->orWhereRaw("LOWER(TRIM(status)) NOT IN ('sold', 'transfered', 'cancel', 's', 't', 'c')");
+            });
 
         if ($monthStart && $monthEnd) {
             $assetsQuery
@@ -22,7 +25,7 @@ class PendingEmployeeUpdateService
                 ->whereDate('purchase_date', '<', $monthEnd->toDateString());
         }
 
-        // asset_type_name is required for the Laptop/Handset breakdown.
+        // Only Handset+Simcard assets are included in this dashboard count.
         $assets = $assetsQuery->get([
             'asset_code',
             'branch_code',
@@ -65,14 +68,13 @@ class PendingEmployeeUpdateService
     private function summarize($branch, $assets)
     {
         $typeCounts = $assets->groupBy(function ($asset) {
-            return strtolower(trim((string) $asset->asset_type_name));
+            return preg_replace('/\s+/', '', strtolower(trim((string) $asset->asset_type_name)));
         })->map->count();
 
         return [
             'branch' => $branch,
             'pending_count' => $assets->count(),
-            'laptop_count' => $typeCounts->get('laptop', 0),
-            'handset_count' => $typeCounts->get('handset', 0),
+            'handset_simcard_count' => $typeCounts->get('handset+simcard', 0),
         ];
     }
 }

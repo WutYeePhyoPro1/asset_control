@@ -166,7 +166,7 @@
 
         .fixasset-detail .detail-form-card textarea {
             min-height: 112px;
-            border-color: #c4b5fd;
+            border-color: #c5dbe5;
             border-radius: 12px;
             box-shadow: none;
         }
@@ -233,7 +233,7 @@
         }
 
         .fixasset-detail .employee-search-component .input-group:focus-within {
-            border-color: #8b5cf6;
+            border-color: #6f9bb2;
             box-shadow: 0 0 0 .2rem rgba(139, 92, 246, .12);
         }
 
@@ -357,7 +357,12 @@
         .fixasset-detail .assignment-detail {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .fixasset-detail .assignment-detail>div {
+            flex: 1 1 auto;
             min-width: 0;
         }
 
@@ -378,12 +383,12 @@
 
         .fixasset-detail .assignment-value {
             display: block;
-            overflow: hidden;
+            overflow-wrap: anywhere;
             color: #334155;
             font-size: 13px;
             font-weight: 700;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            line-height: 1.35;
+            white-space: normal;
         }
 
         .fixasset-detail .assignment-card {
@@ -415,26 +420,26 @@
             font-weight: 800;
             background: #fff;
             border-color: #6ee7b7;
-            cursor : pointer
+            cursor: pointer
         }
 
         .fixasset-detail .assignment-grid {
             display: grid;
-            grid-template-columns: minmax(180px, 1.3fr) repeat(4, minmax(120px, 1fr));
+            grid-template-columns: minmax(190px, 1.25fr) repeat(5, minmax(0, 1fr));
             gap: 0;
         }
 
         .fixasset-detail .assignee-profile,
         .fixasset-detail .assignment-detail {
             min-height: 58px;
-            padding: 0 18px;
+            padding: 0 12px;
             border-right: 1px solid #dcfce7;
         }
 
         .fixasset-detail .assignee-profile {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             padding-left: 0;
         }
 
@@ -444,11 +449,11 @@
 
         .fixasset-detail .employee-avatar {
             display: inline-flex;
-            flex: 0 0 44px;
+            flex: 0 0 40px;
             align-items: center;
             justify-content: center;
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             color: #166534;
             font-size: 20px;
             background: #dcfce7;
@@ -457,7 +462,7 @@
 
         .fixasset-detail .employee-name {
             color: #0f172a;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
         }
 
@@ -479,7 +484,7 @@
 
         .fixasset-detail .operator-toolbar {
             padding: 15px 18px;
-            background: linear-gradient(120deg, #1d4ed8, #4f46e5);
+            background: linear-gradient(120deg, #1d4ed8, #5b7c99);
             border: 0;
             border-radius: 14px;
             box-shadow: 0 10px 22px rgba(37, 99, 235, .2);
@@ -504,8 +509,8 @@
         }
 
         .fixasset-detail .remark-card {
-            background: linear-gradient(125deg, #f5f3ff 0%, #fdf4ff 58%, #fff 100%);
-            border: 1px solid #c4b5fd;
+            background: linear-gradient(125deg, #f3f8fa 0%, #f7fbfc 58%, #fff 100%);
+            border: 1px solid #c5dbe5;
             box-shadow: 0 10px 24px rgba(124, 58, 237, .1);
         }
 
@@ -524,7 +529,7 @@
         }
 
         .fixasset-detail .remark-card-heading small {
-            color: #7c3aed;
+            color: #5b7c99;
             font-weight: 700;
         }
 
@@ -536,13 +541,13 @@
             height: 40px;
             color: #fff;
             font-size: 18px;
-            background: linear-gradient(135deg, #7c3aed, #db2777);
+            background: linear-gradient(135deg, #5b7c99, #86aabf);
             border-radius: 12px;
             box-shadow: 0 7px 14px rgba(124, 58, 237, .22);
         }
 
         .fixasset-detail .remark-card textarea[readonly] {
-            color: #312e81;
+            color: #46677f;
             font-weight: 650;
             background: rgba(255, 255, 255, .82);
             cursor: default;
@@ -571,7 +576,7 @@
 
         .fixasset-detail .asset-edit-modal .modal-header {
             padding: 18px 24px;
-            background: linear-gradient(135deg, #f8fbff, #f5f3ff);
+            background: linear-gradient(135deg, #f8fbff, #f3f8fa);
             border-bottom: 1px solid #e2e8f0;
         }
 
@@ -623,7 +628,7 @@
         }
 
         .fixasset-detail .current-contract-card strong {
-            color: #1e3a8a;
+            color: #46677f;
             font-size: 14px;
         }
 
@@ -662,7 +667,7 @@
 
         .fixasset-detail .contract-choice input:checked+label {
             color: #fff;
-            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            background: linear-gradient(135deg, #2563eb, #5b7c99);
             border-color: #2563eb;
             box-shadow: 0 5px 12px rgba(37, 99, 235, .22);
         }
@@ -745,7 +750,7 @@
 
         .fixasset-detail .create-assignment-card .form-control:focus,
         .fixasset-detail .create-assignment-card .form-select:focus {
-            border-color: #7c8cff;
+            border-color: #7fa6b8;
             box-shadow: 0 0 0 .2rem rgba(79, 70, 229, .1) !important;
         }
 
@@ -763,7 +768,7 @@
             padding: 0;
             color: #fff;
             font-size: 20px;
-            background: linear-gradient(135deg, #4f20ed, #2500c8);
+            background: linear-gradient(135deg, #5b7c99, #2500c8);
             border: 0;
             border-radius: 10px;
             box-shadow: 0 7px 14px rgba(67, 24, 221, .25);
@@ -798,6 +803,50 @@
             border: 0;
             border-radius: 4px;
             cursor: pointer;
+        }
+
+        .fixasset-detail .master-sim-input-wrapper {
+            position: relative;
+        }
+
+        .fixasset-detail .master-sim-suggestions {
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            left: 0;
+            z-index: 1055;
+            display: none;
+            max-height: 180px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #cfe1e8;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(54, 24, 120, .16);
+        }
+
+        .fixasset-detail .master-sim-suggestions.is-visible {
+            display: block;
+        }
+
+        .fixasset-detail .master-sim-suggestion {
+            display: block;
+            width: 100%;
+            padding: 9px 12px;
+            color: #202342;
+            text-align: left;
+            background: #fff;
+            border: 0;
+            border-bottom: 1px solid #eef5f8;
+            cursor: pointer;
+        }
+
+        .fixasset-detail .master-sim-suggestion:last-child {
+            border-bottom: 0;
+        }
+
+        .fixasset-detail .master-sim-suggestion:hover {
+            color: #5b7c99;
+            background: #f4f9fb;
         }
 
         /* Add operator modal rows must keep both fields aligned with the first row. */
@@ -866,13 +915,13 @@
 
         .fixasset-detail .create-contract-choice input:checked+label {
             color: #2f16c7;
-            border-color: #6c55ec;
+            border-color: #6f9bb2;
             background: #f7f5ff;
         }
 
         .fixasset-detail .create-contract-choice input:checked+label::before {
-            background: #4f20ed;
-            border-color: #4f20ed;
+            background: #5b7c99;
+            border-color: #5b7c99;
         }
 
         .fixasset-detail .create-assignment-card textarea.form-control {
@@ -1092,19 +1141,19 @@
 
         /* Calm, unified palette for the detail page. */
         .fixasset-detail {
-            --detail-primary: #6d28d9;
+            --detail-primary: #5b7c99;
             --detail-ink: #202342;
             --detail-muted: #718096;
-            --detail-border: #e3def4;
-            --detail-soft: #fbfaff;
-            --detail-accent: #8b5cf6;
+            --detail-border: #dce9ef;
+            --detail-soft: #f8fbfc;
+            --detail-accent: #6f9bb2;
         }
 
         .fixasset-detail .detail-heading i,
         .fixasset-detail .current-contract-card {
             color: var(--detail-primary);
-            background: #f3efff;
-            border-color: #ddd0ff;
+            background: #f0f7fa;
+            border-color: #d7e8ef;
         }
 
         .fixasset-detail .asset-summary-card,
@@ -1125,19 +1174,19 @@
 
         .fixasset-detail .asset-icon-box {
             color: var(--detail-primary);
-            background: #f3efff;
-            border-color: #ddd0ff;
+            background: #f0f7fa;
+            border-color: #d7e8ef;
         }
 
         .fixasset-detail .type-pill {
             color: var(--detail-primary);
-            background: #f1edff;
-            border-color: #d8caff;
+            background: #e7f1f5;
+            border-color: #cfe1e8;
         }
 
         .fixasset-detail .assignment-card {
-            background: #f8f5ff;
-            border-color: #ded4f7;
+            background: #f1f7fa;
+            border-color: #d9e8ef;
         }
 
         .fixasset-detail .assignment-heading,
@@ -1147,16 +1196,16 @@
         }
 
         .fixasset-detail .employee-avatar {
-            background: #ebe4ff;
+            background: #dcecf2;
         }
 
         .fixasset-detail .assignee-profile,
         .fixasset-detail .assignment-detail {
-            border-color: #e1d8f5;
+            border-color: #d9e7ee;
         }
 
         .fixasset-detail .operator-toolbar {
-            background: #6d28d9;
+            background: #5b7c99;
             box-shadow: 0 8px 18px rgba(109, 40, 217, .16);
         }
 
@@ -1238,7 +1287,7 @@
             width: 34px;
             height: 34px;
             color: #fff;
-            background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+            background: linear-gradient(135deg, #5b7c99, #6f9bb2);
             border-radius: 10px;
         }
 
@@ -1284,7 +1333,7 @@
         }
 
         .fixasset-detail .history-entry.is-current {
-            background: #f8f5ff;
+            background: #f1f7fa;
             border-color: #a9cdd7;
         }
 
@@ -1377,64 +1426,64 @@
 
         /* Final system theme overrides */
         .fixasset-detail .asset-hero-card {
-            border-top-color: #8b5cf6 !important;
+            border-top-color: #6f9bb2 !important;
         }
 
         .fixasset-detail .asset-icon-box,
         .fixasset-detail .detail-heading i,
         .fixasset-detail .employee-avatar {
-            color: #6d28d9 !important;
-            background: #f1edff !important;
-            border-color: #d8caff !important;
+            color: #5b7c99 !important;
+            background: #e7f1f5 !important;
+            border-color: #cfe1e8 !important;
         }
 
         .fixasset-detail .assignment-card {
-            background: #f8f5ff !important;
-            border-color: #ded4f7 !important;
+            background: #f1f7fa !important;
+            border-color: #d9e8ef !important;
         }
 
         .fixasset-detail .assignment-heading,
         .fixasset-detail .assignment-detail i,
         .fixasset-detail .assignment-label,
         .fixasset-detail .search-employee-btn {
-            color: #6d28d9 !important;
+            color: #5b7c99 !important;
         }
 
         .fixasset-detail .operator-toolbar {
-            background: linear-gradient(135deg, #6d28d9, #8b5cf6) !important;
+            background: linear-gradient(135deg, #5b7c99, #6f9bb2) !important;
             box-shadow: 0 10px 22px rgba(109, 40, 217, .18) !important;
         }
 
         .fixasset-detail .operator-card {
             background: #fff !important;
-            border-left-color: #8b5cf6 !important;
+            border-left-color: #6f9bb2 !important;
         }
 
         .fixasset-detail .remark-card {
-            background: #fbfaff !important;
-            border-color: #ded4f7 !important;
+            background: #f8fbfc !important;
+            border-color: #d9e8ef !important;
         }
 
         .fixasset-detail .remark-card-heading h6,
         .fixasset-detail .remark-card-heading small {
-            color: #6d28d9 !important;
+            color: #5b7c99 !important;
         }
 
         .fixasset-detail .remark-card-icon {
-            background: linear-gradient(135deg, #6d28d9, #8b5cf6) !important;
+            background: linear-gradient(135deg, #5b7c99, #6f9bb2) !important;
         }
 
         .fixasset-detail .add-operator-btn {
             color: #fff !important;
-            background: #6d28d9 !important;
-            border-color: #6d28d9 !important;
+            background: #5b7c99 !important;
+            border-color: #5b7c99 !important;
         }
 
         .fixasset-detail .add-operator-btn:hover,
         .fixasset-detail .add-operator-btn:focus {
             color: #fff !important;
-            background: #5b21b6 !important;
-            border-color: #5b21b6 !important;
+            background: #46677f !important;
+            border-color: #46677f !important;
         }
     </style>
     <div class="pagetitle">
@@ -1498,7 +1547,7 @@
                                     <div class="asset-code-line">Asset Code: {{ $item->asset_code }}</div>
                                     <div class="asset-badges">
                                         <span class="status-pill {{ $isClosedStatus ? 'is-closed' : '' }}">
-                                            {{ $statusLabel }}
+                                            {{ $statusLabel == 'Ongoing' ? 'Using' : $statusLabel }}
                                         </span>
                                         <span class="type-pill">{{ $item->asset_type_name ?: 'Unknown type' }}</span>
                                     </div>
@@ -1515,7 +1564,8 @@
                                             Asset Name History
                                         </h6>
                                         <span class="history-count">
-                                            {{ $assetHistories->count() }} record{{ $assetHistories->count() > 1 ? 's' : '' }}
+                                            {{ $assetHistories->count() }}
+                                            record{{ $assetHistories->count() > 1 ? 's' : '' }}
                                         </span>
                                     </div>
 
@@ -1552,11 +1602,11 @@
                                     <span class="assignment-heading-title">
                                         <i class="bi bi-bookmark-check-fill"></i> Currently Assigned To
                                     </span>
-                                    @if($statusLabel == 'Ongoing')
-                                    <button type="button" class="btn btn-sm search-employee-btn" data-bs-toggle="modal"
-                                        data-bs-target="#changeEmployeeModal">
-                                        <i class="bi bi-search me-1"></i>Update Employee
-                                    </button>
+                                    @if ($statusLabel == 'Ongoing')
+                                        <button type="button" class="btn btn-sm search-employee-btn" data-bs-toggle="modal"
+                                            data-bs-target="#changeEmployeeModal">
+                                            <i class="bi bi-search me-1"></i>Update Employee
+                                        </button>
                                     @endif
                                 </div>
                                 <div class="assignment-grid">
@@ -1572,20 +1622,27 @@
                                         <i class="bi bi-building"></i>
                                         <div>
                                             <span class="assignment-label">Branch</span>
-                                            <span class="assignment-value">{{ $item->branch_name }}</span>
+                                            <span class="assignment-value">{{ $remark->branch_name }}</span>
                                         </div>
                                     </div>
                                     <div class="assignment-detail">
                                         <i class="bi bi-briefcase"></i>
                                         <div>
                                             <span class="assignment-label">Department</span>
-                                            <span class="assignment-value">{{ $item->department ?: '-' }}</span>
+                                            <span class="assignment-value">{{ $remark->department ?: '-' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="assignment-detail">
+                                        <i class="bi bi-diagram-3"></i>
+                                        <div>
+                                            <span class="assignment-label">Sub Department</span>
+                                            <span class="assignment-value">{{ $remark->sub_department ?: '-' }}</span>
                                         </div>
                                     </div>
                                     <div class="assignment-detail">
                                         <i class="bi bi-award"></i>
                                         <div>
-                                            <span class="assignment-label">Position / Rank</span>
+                                            <span class="assignment-label">Rank</span>
                                             <span class="assignment-value">{{ $remark->rank ?: '-' }}</span>
                                         </div>
                                     </div>
@@ -1620,14 +1677,22 @@
                                                         </span>
                                                         <input type="text"
                                                             class="form-control border-start-0 employee-search-input"
-                                                            autocomplete="off" placeholder="Search employee Name Or ID...">
+                                                            autocomplete="off"
+                                                            placeholder="Search employee Name Or ID...">
                                                         <button type="button"
                                                             class="btn btn-primary employee-search-button">Search</button>
                                                     </div>
                                                     <input type="hidden" name="emp_id" class="selected-employee-id">
                                                     <input type="hidden" name="emp_name" class="selected-employee-name">
                                                     <input type="hidden" name="rank" class="selected-employee-rank">
-                         
+                                                    <input type="hidden" name="branch_code" class="selected-employee-branch">
+                                                    <input type="hidden" name="department"
+                                                        class="selected-employee-department">
+                                                    <input type="hidden" name="sub_department"
+                                                        class="selected-employee-sub-department">
+                                                    <input type="hidden" name="section"
+                                                        class="selected-employee-section">
+
                                                     <div class="employee-search-results list-group d-none"></div>
                                                 </div>
                                             </div>
@@ -1669,11 +1734,9 @@
                                                     <div class="create-form-grid">
                                                         <div class="create-form-field full-width">
                                                             <label class="create-form-label">Employee</label>
-                                                            <div
-                                                                class="employee-search-wrapper employee-search-component">
+                                                            <div class="employee-search-wrapper employee-search-component">
                                                                 <div class="input-group">
-                                                                    <span
-                                                                        class="input-group-text bg-white border-end-0">
+                                                                    <span class="input-group-text bg-white border-end-0">
                                                                         <i class="bi bi-search text-muted"></i>
                                                                     </span>
                                                                     <input type="text"
@@ -1684,7 +1747,7 @@
                                                                         class="selected-employee-id">
                                                                     <input type="hidden" name="emp_name"
                                                                         class="selected-employee-name">
-                                                                    
+
                                                                     <input type="hidden" name="rank"
                                                                         class="selected-employee-rank">
                                                                     <button type="button"
@@ -1692,8 +1755,7 @@
                                                                         <i class="bi bi-search me-1"></i>Search
                                                                     </button>
                                                                 </div>
-                                                                <div
-                                                                    class="employee-search-results list-group d-none">
+                                                                <div class="employee-search-results list-group d-none">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1720,7 +1782,8 @@
                                                                 for="create-operator">Operator</label>
                                                             <select class="form-select" id="create-operator"
                                                                 name="operator[]">
-                                                                <option value="" selected>Select your Operator</option>
+                                                                <option value="" selected>Select your Operator
+                                                                </option>
                                                                 <option value="ATOM">ATOM</option>
                                                                 <option value="Ooredoo">Ooredoo</option>
                                                                 <option value="MPT">MPT</option>
@@ -1732,7 +1795,8 @@
                                                             <label class="create-form-label" for="create-phone">Ph
                                                                 No:</label>
                                                             <input type="text" class="form-control" id="create-phone"
-                                                                name="phone[]" maxlength="11" placeholder="09" >
+                                                                name="phone[]" maxlength="11" autocomplete="off"
+                                                                placeholder="Search or enter phone number">
                                                         </div>
 
                                                         <div class="operator-add-row">
@@ -1750,12 +1814,12 @@
                                                             <div class="create-contract-options">
                                                                 <div class="create-contract-choice">
                                                                     <input type="radio" name="contract"
-                                                                        id="gridRadios1" value="Yes" >
+                                                                        id="gridRadios1" value="Yes">
                                                                     <label for="gridRadios1">Yes</label>
                                                                 </div>
                                                                 <div class="create-contract-choice">
                                                                     <input type="radio" name="contract"
-                                                                        id="gridRadios2" value="No" >
+                                                                        id="gridRadios2" value="No">
                                                                     <label for="gridRadios2">No</label>
                                                                 </div>
                                                             </div>
@@ -1764,8 +1828,7 @@
                                                         <div class="create-form-field full-width">
                                                             <label class="create-form-label"
                                                                 for="create-remark">Remark</label>
-                                                            <textarea class="form-control" id="create-remark" name="remark"
-                                                                placeholder="Add a remark (optional)"></textarea>
+                                                            <textarea class="form-control" id="create-remark" name="remark" placeholder="Add a remark (optional)"></textarea>
                                                         </div>
 
                                                         <div class="create-form-actions">
@@ -1778,267 +1841,295 @@
                                         </div>
                                     @endif
                                     <div class="col-12 asset-detail-panel">
-                            @if ($remark != null && $remark->asset_code)
-                                <div class="d-flex justify-content-end mb-3">
-                                    <button type="button"
-                                        class="btn btn-primary btn-sm add-operator-btn py-2 px-3" data-bs-toggle="modal"
-                                        data-bs-target="#addoperator"><i class="bi bi-plus-lg me-1"></i>Add
-                                        operator</button>
-                                </div>
-                            @endif
-
-                            <div class="modal fade" id="addoperator" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Add New Operator</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-
-
-                                        <div class="modal-body">
-
-                                            <div class="operator-add-controls">
-                                                <button type="button" class="btn btn-outline-primary btn-sm mt-2"
-                                                    id="addbtn1">
-                                                    <i class="bi bi-plus-lg me-1"></i>Add
-                                                </button>
+                                        @if ($remark != null && $remark->asset_code)
+                                            <div class="d-flex justify-content-end mb-3">
+                                                <button type="button"
+                                                    class="btn btn-primary btn-sm add-operator-btn py-2 px-3"
+                                                    data-bs-toggle="modal" data-bs-target="#addoperator"><i
+                                                        class="bi bi-plus-lg me-1"></i>Add
+                                                    operator</button>
                                             </div>
-                                            <form action="{{ route('operator-form') }}" method="POST">
-                                                @csrf
-                                                <div class="operator-form-row">
+                                        @endif
+
+                                        <div class="modal fade" id="addoperator" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Add New Operator</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+
+
+                                                    <div class="modal-body">
+
+                                                        <div class="operator-add-controls">
+                                                            <button type="button"
+                                                                class="btn btn-outline-primary btn-sm mt-2"
+                                                                id="addbtn1">
+                                                                <i class="bi bi-plus-lg me-1"></i>Add
+                                                            </button>
+                                                        </div>
+                                                        <form action="{{ route('operator-form') }}" method="POST">
+                                                            @csrf
+                                                            <div class="operator-form-row">
+                                                                <div>
+                                                                    @if ($remark != null && $remark->asset_code)
+                                                                        <input type="hidden"
+                                                                            class="form-control asset_code"
+                                                                            name="asset_code"
+                                                                            value="{{ $remark->asset_code }}">
+                                                                        <input type="hidden"
+                                                                            class="form-control asset_code"
+                                                                            name="department"
+                                                                            value="{{ $item->department }}">
+                                                                        <input type="hidden"
+                                                                            class="form-control asset_code"
+                                                                            name="asset_type"
+                                                                            value="{{ $item->asset_type_name }}">
+                                                                        <input type="hidden"
+                                                                            class="form-control asset_code"
+                                                                            name="asset_name"
+                                                                            value="{{ $item->asset_name }}">
+                                                                        <input type="hidden"
+                                                                            class="form-control asset_code" name="branch"
+                                                                            value="{{ $item->branch_name }}({{ $item->branch_code }})">
+                                                                    @endif
+                                                                    <h5 class="card-title">Operator</h5>
+                                                                    <select class="form-select"
+                                                                        aria-label="Default select example"
+                                                                        name="operator[]"
+                                                                        style="box-shadow:1px 1px 1px #333;">
+                                                                        <option value="" selected>Select your
+                                                                            Operator</option>
+                                                                        <option value="ATOM">ATOM</option>
+                                                                        <option value="Ooredoo">Ooredoo</option>
+                                                                        <option value="MPT">MPT</option>
+                                                                        <option value="Mytel">Mytel</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div>
+                                                                    <h5 class="card-title">Ph No:</h5>
+                                                                    <input type="text" class="form-control"
+                                                                        name="phone[]" maxlength="11" autocomplete="off"
+                                                                        placeholder="Search or enter phone number"
+                                                                        style="box-shadow:1px 1px 1px #333;">
+                                                                </div>
+                                                            </div>
+
+                                                            <div id="showope1">
+
+                                                            </div>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+
+                                                        <button type="submit" class="btn btn-primary">Save</button>
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div><!-- End Vertically centered Modal-->
+                                        <br>
+
+                                        @foreach ($operators as $operator)
+                                            <div class="operator-card">
+                                                <p class="operator-name">{{ $operator->operator }}</p>
+                                                <div class="operator-phone"><i
+                                                        class="bi bi-telephone me-1"></i>{{ $operator->phone }}</div>
+                                                <div class="operator-actions">
+
+                                                    <button type="button" data-bs-toggle="modal"
+                                                        data-bs-target="#editoperator{{ $operator->id }}"
+                                                        class="action-link"><i
+                                                            class="bi bi-pencil-square me-1"></i>Edit</button>
+
+                                                    @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
+                                                        <button type="button" class="action-link delete"
+                                                            onclick='deleteOperator("{{ $operator->id }}")'><i
+                                                                class="bi bi-trash3 me-1"></i>Delete</button>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="modal fade" id="editoperator{{ $operator->id }}" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Edit Operator</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form action="{{ route('update_operator', $operator->id) }}"
+                                                                method="POST">
+                                                                @csrf
+                                                                @method('PUT')
+
+                                                                <div class="row">
+
+                                                                    <div class="col-lg-6">
+                                                                        <h5 class="card-title">Operator</h5>
+                                                                        <select class="form-select"
+                                                                            aria-label="Default select example"
+                                                                            name="operator"
+                                                                            style="box-shadow:1px 1px 1px #333;">
+                                                                            <option value="{{ $operator->operator }}"
+                                                                                selected>
+                                                                                {{ $operator->operator }}</option>
+                                                                            <option value="ATOM">ATOM</option>
+                                                                            <option value="Ooredoo">Ooredoo</option>
+                                                                            <option value="MPT">MPT</option>
+                                                                            <option value="Mytel">Mytel</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-lg-6">
+                                                                        <h5 class="card-title">Ph No:</h5>
+                                                                        <input type="text" class="form-control"
+                                                                            name="phone" maxlength="11"
+                                                                            value="{{ $operator->phone }}"
+                                                                            style="box-shadow:1px 1px 1px #333;">
+                                                                    </div>
+                                                                </div>
+
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                            <button type="submit" class="btn btn-primary">Save</button>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div><!-- End Vertically centered Modal-->
+                                        @endforeach
+                                        @if ($remark != null && $remark->asset_code)
+                                            <div class="detail-form-card remark-card">
+                                                <div class="remark-card-heading">
+                                                    <span class="remark-card-icon"><i
+                                                            class="bi bi-chat-left-text"></i></span>
                                                     <div>
-                                                        @if ($remark != null && $remark->asset_code)
-                                                            <input type="hidden" class="form-control asset_code"
-                                                                name="asset_code" value="{{ $remark->asset_code }}">
-                                                            <input type="hidden" class="form-control asset_code"
-                                                                name="department" value="{{ $item->department }}">
-                                                            <input type="hidden" class="form-control asset_code"
-                                                                name="asset_type" value="{{ $item->asset_type_name }}">
-                                                            <input type="hidden" class="form-control asset_code"
-                                                                name="asset_name" value="{{ $item->asset_name }}">
-                                                            <input type="hidden" class="form-control asset_code"
-                                                                name="branch"
-                                                                value="{{ $item->branch_name }}({{ $item->branch_code }})">
+                                                        <h6>Remark</h6>
+                                                        <small>Additional note for this asset</small>
+                                                    </div>
+                                                </div>
+                                                <textarea class="form-control" id="remark{{ $remark->id }}" readonly placeholder="No remark added.">{{ $remark->remark }}</textarea>
+
+                                                <div class="remark-actions">
+                                                    @if ($operators->count() <= 0)
+                                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
+                                                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                                                onclick='deleteRemark("{{ $remark->id }}")'><i
+                                                                    class="bi bi-trash3 me-1"></i>Delete</button>
                                                         @endif
-                                                        <h5 class="card-title">Operator</h5>
-                                                        <select class="form-select" aria-label="Default select example"
-                                                            name="operator[]" style="box-shadow:1px 1px 1px #333;"
-                                                            >
-                                                            <option value="" selected>Select your
-                                                                Operator</option>
-                                                            <option value="ATOM">ATOM</option>
-                                                            <option value="Ooredoo">Ooredoo</option>
-                                                            <option value="MPT">MPT</option>
-                                                            <option value="Mytel">Mytel</option>
-                                                        </select>
-                                                    </div>
-                                                    <div>
-                                                        <h5 class="card-title">Ph No:</h5>
-                                                        <input type="text" class="form-control" name="phone[]"
-                                                            maxlength="11" style="box-shadow:1px 1px 1px #333;" >
-                                                    </div>
+                                                    @endif
+                                                    <button type="button" data-bs-toggle="modal"
+                                                        data-bs-target="#editremark{{ $remark->id }}"
+                                                        class="btn btn-primary text-white btn-sm rounded py-2 px-3"><i
+                                                            class="bi bi-pencil-square me-1"></i>Edit Asset Detail</button>
                                                 </div>
-
-
-                                                <div id="showope1">
-
-                                                </div>
-
-                                        </div>
-                                        <div class="modal-footer">
-
-                                            <button type="submit" class="btn btn-primary">Save</button>
-                                            <button type="button" class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Close</button>
-                                        </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div><!-- End Vertically centered Modal-->
-                            <br>
-
-                            @foreach ($operators as $operator)
-                                <div class="operator-card">
-                                    <p class="operator-name">{{ $operator->operator }}</p>
-                                    <div class="operator-phone"><i
-                                            class="bi bi-telephone me-1"></i>{{ $operator->phone }}</div>
-                                    <div class="operator-actions">
-
-                                        <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#editoperator{{ $operator->id }}" class="action-link"><i
-                                                class="bi bi-pencil-square me-1"></i>Edit</button>
-
-                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
-                                            <button type="button" class="action-link delete"
-                                                onclick='deleteOperator("{{ $operator->id }}")'><i
-                                                    class="bi bi-trash3 me-1"></i>Delete</button>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <div class="modal fade" id="editoperator{{ $operator->id }}" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Edit Operator</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
                                             </div>
-                                            <div class="modal-body">
-                                                <form action="{{ route('update_operator', $operator->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('PUT')
 
-                                                    <div class="row">
-
-                                                        <div class="col-lg-6">
-                                                            <h5 class="card-title">Operator</h5>
-                                                            <select class="form-select"
-                                                                aria-label="Default select example" name="operator"
-                                                                style="box-shadow:1px 1px 1px #333;" >
-                                                                <option value="{{ $operator->operator }}" selected>
-                                                                    {{ $operator->operator }}</option>
-                                                                <option value="ATOM">ATOM</option>
-                                                                <option value="Ooredoo">Ooredoo</option>
-                                                                <option value="MPT">MPT</option>
-                                                                <option value="Mytel">Mytel</option>
-                                                            </select>
+                                            <div class="modal fade" id="editremark{{ $remark->id }}" tabindex="-1">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content asset-edit-modal">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Edit Asset Details</h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
-                                                        <div class="col-lg-6">
-                                                            <h5 class="card-title">Ph No:</h5>
-                                                            <input type="text" class="form-control" name="phone"
-                                                                maxlength="11" value="{{ $operator->phone }}"
-                                                                style="box-shadow:1px 1px 1px #333;" >
-                                                        </div>
-                                                    </div>
+                                                        <form action="{{ route('update_contract', $remark->id) }}"
+                                                            method="POST">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="modal-body">
+                                                                <div class="row g-4">
+                                                                    <div class="col-12">
+                                                                        <label class="field-label"
+                                                                            for="asset-type-name-edit-{{ $remark->id }}">Asset
+                                                                            Type Name</label>
+                                                                        <select class="form-select"
+                                                                            id="asset-type-name-edit-{{ $remark->id }}"
+                                                                            name="asset_type_name" required>
+                                                                            <option value="">Select Asset Type
+                                                                            </option>
+                                                                            @foreach (['Laptop', 'Handset', 'Handset+Simcard', 'Other'] as $assetType)
+                                                                                <option value="{{ $assetType }}"
+                                                                                    {{ $item->asset_type_name === $assetType ? 'selected' : '' }}>
+                                                                                    {{ $assetType }}
+                                                                                </option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
 
-                                            </div>
-                                            <div class="modal-footer">
+                                                                    <div class="col-lg-4">
+                                                                        <span class="field-label">Contract</span>
+                                                                        <div class="current-contract-card">
+                                                                            <i class="bi bi-bookmark-check-fill"></i>
+                                                                            <div><small>Currently
+                                                                                    assigned</small><strong>{{ $remark->contract ?: 'Not set' }}</strong>
+                                                                            </div>
+                                                                        </div>
+                                                                        <input type="hidden" name="contract_edit"
+                                                                            value="{{ $remark->contract }}">
+                                                                        <div class="contract-choice-list"
+                                                                            role="radiogroup"
+                                                                            aria-label="Select contract status">
+                                                                            <div class="contract-choice">
+                                                                                <input type="radio" name="contract"
+                                                                                    id="contract-yes-{{ $remark->id }}"
+                                                                                    value="Yes"
+                                                                                    {{ $remark->contract == 'Yes' ? 'checked' : '' }}>
+                                                                                <label
+                                                                                    for="contract-yes-{{ $remark->id }}"><i
+                                                                                        class="bi bi-check-circle"></i>
+                                                                                    Yes</label>
+                                                                            </div>
+                                                                            <div class="contract-choice">
+                                                                                <input type="radio" name="contract"
+                                                                                    id="contract-no-{{ $remark->id }}"
+                                                                                    value="No"
+                                                                                    {{ $remark->contract == 'No' ? 'checked' : '' }}>
+                                                                                <label
+                                                                                    for="contract-no-{{ $remark->id }}"><i
+                                                                                        class="bi bi-x-circle"></i>
+                                                                                    No</label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
 
-                                                <button type="submit" class="btn btn-primary">Save</button>
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Close</button>
-                                            </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div><!-- End Vertically centered Modal-->
-                            @endforeach
-                            @if ($remark != null && $remark->asset_code)
-                                <div class="detail-form-card remark-card">
-                                    <div class="remark-card-heading">
-                                        <span class="remark-card-icon"><i class="bi bi-chat-left-text"></i></span>
-                                        <div>
-                                            <h6>Remark</h6>
-                                            <small>Additional note for this asset</small>
-                                        </div>
-                                    </div>
-                                    <textarea class="form-control" id="remark{{ $remark->id }}" readonly placeholder="No remark added.">{{ $remark->remark }}</textarea>
-
-                                    <div class="remark-actions">
-                                        @if ($operators->count() <= 0)
-                                            @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
-                                                <button type="button" class="btn btn-outline-danger btn-sm"
-                                                    onclick='deleteRemark("{{ $remark->id }}")'><i
-                                                        class="bi bi-trash3 me-1"></i>Delete</button>
-                                            @endif
-                                        @endif
-                                        <button type="button" data-bs-toggle="modal"
-                                            data-bs-target="#editremark{{ $remark->id }}"
-                                            class="btn btn-primary text-white btn-sm rounded py-2 px-3"><i
-                                                class="bi bi-pencil-square me-1"></i>Edit Asset Detail</button>
-                                    </div>
-                                </div>
-
-                                <div class="modal fade" id="editremark{{ $remark->id }}" tabindex="-1">
-                                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                                        <div class="modal-content asset-edit-modal">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Edit Asset Details</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <form action="{{ route('update_contract', $remark->id) }}" method="POST">
-                                                @csrf
-                                                @method('PUT')
-                                                <div class="modal-body">
-                                                    <div class="row g-4">
-                                                        {{-- <div class="col-lg-4">
-                                                            <label class="field-label"
-                                                                for="rank-{{ $remark->id }}">Rank</label>
-                                                            <select class="form-select" id="rank-{{ $remark->id }}"
-                                                                name="rank" >
-                                                                @foreach (['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9'] as $rank)
-                                                                    <option value="{{ $rank }}"
-                                                                        {{ $remark->rank == $rank ? 'selected' : '' }}>
-                                                                        {{ $rank }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div> --}}
-                                                        <div class="col-lg-4">
-                                                            <span class="field-label">Contract</span>
-                                                            <div class="current-contract-card">
-                                                                <i class="bi bi-bookmark-check-fill"></i>
-                                                                <div><small>Currently
-                                                                        assigned</small><strong>{{ $remark->contract ?: 'Not set' }}</strong>
+                                                                    <div class="col-lg-8">
+                                                                        <label class="field-label"
+                                                                            for="remark-edit-{{ $remark->id }}">Remark</label>
+                                                                        <textarea class="form-control" id="remark-edit-{{ $remark->id }}" style="height: 112px" name="remark"
+                                                                            placeholder="Add a note...">{{ $remark->remark }}</textarea>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <input type="hidden" name="contract_edit"
-                                                                value="{{ $remark->contract }}">
-                                                            <div class="contract-choice-list" role="radiogroup"
-                                                                aria-label="Select contract status">
-                                                                <div class="contract-choice">
-                                                                    <input type="radio" name="contract"
-                                                                        id="contract-yes-{{ $remark->id }}"
-                                                                        value="Yes"
-                                                                        {{ $remark->contract == 'Yes' ? 'checked' : '' }}
-                                                                        >
-                                                                    <label for="contract-yes-{{ $remark->id }}"><i
-                                                                            class="bi bi-check-circle"></i> Yes</label>
-                                                                </div>
-                                                                <div class="contract-choice">
-                                                                    <input type="radio" name="contract"
-                                                                        id="contract-no-{{ $remark->id }}"
-                                                                        value="No"
-                                                                        {{ $remark->contract == 'No' ? 'checked' : '' }}>
-                                                                    <label for="contract-no-{{ $remark->id }}"><i
-                                                                            class="bi bi-x-circle"></i> No</label>
-                                                                </div>
+                                                            <div class="modal-footer">
+                                                                <button type="submit" class="btn btn-primary"><i
+                                                                        class="bi bi-check2 me-1"></i>Save changes</button>
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Close</button>
                                                             </div>
-                                                        </div>
-
-                                                        <div class="col-lg-8">
-                                                            <label class="field-label"
-                                                                for="remark-edit-{{ $remark->id }}">Remark</label>
-                                                            <textarea class="form-control" id="remark-edit-{{ $remark->id }}" style="height: 112px" name="remark"
-                                                                placeholder="Add a note...">{{ $remark->remark }}</textarea>
-                                                        </div>
+                                                        </form>
                                                     </div>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-primary"><i
-                                                            class="bi bi-check2 me-1"></i>Save changes</button>
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Close</button>
-                                                </div>
-                                            </form>
-                                        </div>
+                                            </div><!-- End Vertically centered Modal-->
+
+                                        @endif
+
                                     </div>
-                                </div><!-- End Vertically centered Modal-->
 
-                            @endif
-
+                                </div>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
-        </div>
-        </div>
-        </div>
     </section>
 
 @endsection
@@ -2055,6 +2146,10 @@
                 const selectedEmployeeId = component.find('.selected-employee-id');
                 const selectedEmployeeName = component.find('.selected-employee-name');
                 const selectedEmployeeRank = component.find('.selected-employee-rank');
+                const selectedEmployeeBranch = component.find('.selected-employee-branch');
+                const selectedEmployeeDepartment = component.find('.selected-employee-department');
+                const selectedEmployeeSubDepartment = component.find('.selected-employee-sub-department');
+                const selectedEmployeeSection = component.find('.selected-employee-section');
 
                 function showMessage(message, className = 'text-muted') {
                     resultList
@@ -2093,7 +2188,6 @@
                             }
 
                             response.data.forEach(function(employee) {
-                                console.log('Employee', employee);
                                 $('<button>', {
                                         type: 'button',
                                         class: 'list-group-item list-group-item-action'
@@ -2115,6 +2209,12 @@
                                         selectedEmployeeId.val(employee.emp_id);
                                         selectedEmployeeName.val(employee.name);
                                         selectedEmployeeRank.val(employee.rank);
+                                        selectedEmployeeBranch.val(employee.branch_code || '');
+                                        selectedEmployeeDepartment.val(employee.department || '');
+                                        selectedEmployeeSubDepartment.val(employee
+                                            .sub_department || '');
+                                        selectedEmployeeSection.val(employee
+                                            .section || '');
                                         resultList.addClass('d-none').empty();
                                     })
                                     .appendTo(resultList);
@@ -2148,6 +2248,10 @@
                     selectedEmployeeId.val('');
                     selectedEmployeeName.val('');
                     selectedEmployeeRank.val('');
+                    selectedEmployeeBranch.val('');
+                    selectedEmployeeDepartment.val('');
+                    selectedEmployeeSubDepartment.val('');
+                    selectedEmployeeSection.val('');
                 });
             });
 
@@ -2271,7 +2375,8 @@
                     </div>
                     <div class="create-form-field">
                         <label class="create-form-label">Ph No:</label>
-                        <input type="text" class="form-control" name="phone[]" maxlength="11" placeholder="09" >
+                        <input type="text" class="form-control" name="phone[]" maxlength="11"
+                            autocomplete="off" placeholder="Search or enter phone number" >
                     </div>
                     <button type="button" class="operator-remove-button removebtn"
                         title="Remove operator" aria-label="Remove operator">
@@ -2320,7 +2425,9 @@
                         </div>
                         <div>
                             <h5 class="card-title">Ph No:</h5>
-                            <input type="text" class="form-control" name="phone[]" maxlength="11" >
+                                <input type="text" class="form-control" name="phone[]" maxlength="11"
+                                    autocomplete="off"
+                                    placeholder="Search or enter phone number" >
                         </div>
                         <button type="button" class="operator-remove-button removebtn1"
                             title="Remove operator" aria-label="Remove operator">
@@ -2342,6 +2449,94 @@
             $('#showope1').on('click', '.removebtn1', function() {
                 $(this).closest('.operator-form-row').remove();
                 x--;
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const masterSimNumbers = @json($masterSims->pluck('simcard')->values());
+            const maxSuggestions = 10;
+            const minimumSearchLength = 2;
+
+            function hideSuggestions(list) {
+                list.classList.remove('is-visible');
+                list.replaceChildren();
+            }
+
+            function getMatchingNumbers(inputValue) {
+                const keyword = inputValue.trim().toLowerCase();
+
+                if (keyword.length < minimumSearchLength) {
+                    return [];
+                }
+
+                return masterSimNumbers
+                    .filter(number => String(number).toLowerCase().includes(keyword))
+                    .slice(0, maxSuggestions);
+            }
+
+            function renderSuggestions(input, list) {
+                const matches = getMatchingNumbers(input.value);
+                list.replaceChildren();
+
+                matches.forEach(function(number) {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'master-sim-suggestion';
+                    button.textContent = number;
+                    button.dataset.value = number;
+                    list.appendChild(button);
+                });
+
+                list.classList.toggle('is-visible', matches.length > 0);
+            }
+
+            function setupPhoneInput(input) {
+                if (input.dataset.masterSimReady) {
+                    return;
+                }
+
+                input.dataset.masterSimReady = 'true';
+                const wrapper = input.parentElement;
+                wrapper.classList.add('master-sim-input-wrapper');
+
+                const list = document.createElement('div');
+                list.className = 'master-sim-suggestions';
+                wrapper.appendChild(list);
+
+                input.addEventListener('input', () => renderSuggestions(input, list));
+                input.addEventListener('focus', () => renderSuggestions(input, list));
+
+                list.addEventListener('mousedown', function(event) {
+                    const suggestion = event.target.closest('.master-sim-suggestion');
+
+                    if (!suggestion) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    input.value = suggestion.dataset.value;
+                    hideSuggestions(list);
+                });
+            }
+
+            function setupPhoneInputs() {
+                document.querySelectorAll('input[name="phone[]"]').forEach(setupPhoneInput);
+            }
+
+            setupPhoneInputs();
+
+            const phoneInputObserver = new MutationObserver(setupPhoneInputs);
+            phoneInputObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.master-sim-input-wrapper')) {
+                    document.querySelectorAll('.master-sim-suggestions').forEach(hideSuggestions);
+                }
             });
         });
     </script>

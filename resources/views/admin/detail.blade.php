@@ -15,7 +15,7 @@
         <ol class="breadcrumb">
 
         <li class="breadcrumb-item"><a href="{{route('home')}}" style="color:#000;">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.index')}}" style="color:#000;">Asset</a></li>
+        <li class="breadcrumb-item"><a href="{{route('laptop_asset_code.fix_asset')}}" style="color:#000;">Asset</a></li>
         <li class="breadcrumb-item"><a href="  {{route('all_user.index')}}" style="color:#000;">Back</a></li>
         </ol>
       </nav>

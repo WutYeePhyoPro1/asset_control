@@ -2,16 +2,12 @@
 
 use App\Http\Controllers\AssetImportExcelController;
 use App\Http\Controllers\LaptopAssetCodeController;
-use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\UserController;
 use App\Models\Branch;
-use App\Models\Department;
-use App\Http\Controllers\AssetOperatorController;
 use App\Http\Controllers\NonAssetImportController;
-use App\Models\LaptopAssetCode;
+use App\Http\Controllers\MasterSimController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,24 +30,14 @@ Route::group(['middleware' => ['auth']], function () {
         return redirect()->route('home');
     });
 
-    Route::resource('employee_benefic/laptop_asset_code', LaptopAssetCodeController::class);
     Route::resource('employee_benefic/all_user', UserController::class);
-    Route::match(['get', 'post'], '/employee_benefic/search', [LaptopAssetCodeController::class, 'search'])->name('employee_benefic.search');
     Route::match(['get', 'post'], '/all_user/search', [UserController::class, 'search'])->name('all_user.search');
     Route::delete('/employee_benefic/delete_record/{id}', [LaptopAssetCodeController::class, 'deletRecord']);
     Route::delete('/all_user/delete_record/{id}', [UserController::class, 'destroy']);
-    Route::delete('/employee_asset/delete_upload_record/{id}', [LaptopAssetCodeController::class, 'deletUpload']);
-    Route::delete('/employee_asset/delete_asset_record/{id}', [LaptopAssetCodeController::class, 'deletasset']);
     Route::post('change_password/{id}', [App\Http\Controllers\UserController::class, 'changePassword'])->name('change_password');
-    Route::get('branch_name/all_branchcode/{branch_name}', [LaptopAssetCodeController::class, 'branchSearch']);
     Route::post('employee_asset/excel_import', [AssetImportExcelController::class, 'importExcel'])->name('excel_import');
 
-    Route::get('employee_asset/search_emp_id/{emp_id}', [LaptopAssetCodeController::class, 'empIDsearch']);
     Route::get('/search_employee', [LaptopAssetCodeController::class, 'search_employee'])->name('search_employee');
-    Route::get('employee_asset/search_asset_code/{asset_code}', [LaptopAssetCodeController::class, 'assetCodesearch']);
-    Route::get('employee_asset/search_asset_code2/{asset_code2}', [LaptopAssetCodeController::class, 'assetCodesearch']);
-    Route::get('/limit_rows', [LaptopAssetCodeController::class, 'paginateData']);
-    Route::get('/laptop-asset-code/export', [LaptopAssetCodeController::class, 'export'])->name('laptop-asset-code.export');
     Route::get('/laptop_asset_code/fix-asset', [LaptopAssetCodeController::class, 'fix_asset'])->name('laptop_asset_code.fix_asset');
     Route::post('/laptop_asset_code/fix-asset/refresh', [LaptopAssetCodeController::class, 'refreshFixAssets'])->name('laptop_asset_code.fix_asset.refresh');
 
@@ -70,7 +56,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('/update_contract/{id}', [LaptopAssetCodeController::class, 'update_contract'])->name('update_contract');
     Route::put('/remarks/{id}/employee', [LaptopAssetCodeController::class, 'update_remark_employee'])
         ->name('remarks.update_employee');
-    Route::post('operator_import/excel_import_operator', [OperatorController::class, 'importExcelOperator'])->name('excel_import_operator');
 
     //--------------------------------------------------non asset code operator------------------------------
     Route::get('/non_asset_code_operator', [LaptopAssetCodeController::class, 'non_asset_operator'])->name('laptop_asset_code.nonasset_operator');
@@ -89,8 +74,10 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::delete('/non-remark/delete_remark/{id}', [LaptopAssetCodeController::class, 'deletRemarknon']);
     Route::get('/non-operator/delete_operator/{id}', [LaptopAssetCodeController::class, 'deleteOperatornon']);
-    Route::post('/assetoperator_import', [AssetOperatorController::class, 'import'])->name('assetoperator.import');
     Route::post('/assetnonoperator_import', [NonAssetImportController::class, 'import'])->name('nonassetoperator.import');
+    Route::get('/master-sim', [MasterSimController::class, 'index'])->name('master_sim.index');
+    Route::get('/master-sim/sample', [MasterSimController::class, 'sample'])->name('master_sim.sample');
+    Route::post('/master-sim/import', [MasterSimController::class, 'import'])->name('master_sim.import');
     Route::put('/nonoperator_move_assetoperator/{id}', [LaptopAssetCodeController::class, 'moveAsset'])->name('asset.move');
 });
 

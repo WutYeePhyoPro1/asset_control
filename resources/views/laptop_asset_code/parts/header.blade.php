@@ -18,7 +18,7 @@
     }
 
     .asset-global-search-form:focus-within {
-      border-color: #a78bfa;
+      border-color: #8fb4c5;
       box-shadow: 0 0 0 3px rgba(109, 40, 217, .12);
     }
 
@@ -50,13 +50,13 @@
       color: #fff;
       font-size: 12px;
       font-weight: 800;
-      background: #6d28d9;
+      background: #5b7c99;
       border: 0;
       border-radius: 7px;
     }
 
     .asset-global-search-form button:hover {
-      background: #5b21b6;
+      background: #46677f;
     }
 
     @media (max-width: 767.98px) {
@@ -102,7 +102,7 @@
 
     .asset-notification-link:hover,
     .asset-notification-link:focus {
-      color: #6d28d9;
+      color: #5b7c99;
       background: #f3e8ff;
     }
 
@@ -130,7 +130,7 @@
       overflow-x: hidden;
       overflow-y: auto;
       scrollbar-width: thin;
-      scrollbar-color: #c4b5fd transparent;
+      scrollbar-color: #c5dbe5 transparent;
     }
 
     .asset-notification-menu::-webkit-scrollbar {
@@ -138,7 +138,7 @@
     }
 
     .asset-notification-menu::-webkit-scrollbar-thumb {
-      background: #c4b5fd;
+      background: #c5dbe5;
       border-radius: 999px;
     }
 
@@ -162,7 +162,7 @@
     }
 
     .asset-notification-menu .notification-item strong {
-      color: #6d28d9;
+      color: #5b7c99;
     }
   </style>
 
@@ -335,35 +335,21 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{{route('home')}}">
-          <i class="bi bi-grid"></i>
+        <a class="nav-link collapsed" href="{{route('home')}}" title="Dashboard">
+          <i class="bi bi-grid-1x2"></i>
           <span>Dashboard</span>
         </a>
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        {{-- <a class="nav-link collapsed" href="{{route('laptop_asset_code.index')}}">
-          <i class="bi bi-menu-button-wide"></i><span>Asset Control</span>
-        </a> --}}
-
-        <a class="nav-link collapsed" href="{{route('laptop_asset_code.fix_asset')}}">
-            <i class="bi bi-menu-button-wide"></i><span>Fix Asset</span>
+        <a class="nav-link collapsed" href="{{route('laptop_asset_code.fix_asset')}}" title="Fix Asset">
+            <i class="bi bi-box-seam"></i><span>Fix Asset</span>
         </a>
-        {{-- <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{{route('laptop_asset_code.index')}}">
-              <i class="bi bi-circle"></i><span>Laptop Asset Code</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('laptop_asset_code.create')}}">
-              <i class="bi bi-circle"></i><span>Add New</span>
-            </a>
-          </li>
-
-        </ul> --}}
-        <a class="nav-link collapsed" href="{{route('laptop_asset_code.nonasset_operator')}}">
-            <i class="bi bi-menu-button-wide"></i><span>Non Asset Code Operator</span>
+        <a class="nav-link collapsed" href="{{route('laptop_asset_code.nonasset_operator')}}" title="Sim Only">
+            <i class="bi bi-sim"></i><span>Sim Only</span>
+        </a>
+        <a class="nav-link collapsed" href="{{ route('master_sim.index') }}" title="Master Sim List">
+            <i class="bi bi-phone"></i><span>Master Sim List</span>
         </a>
       </li><!-- End Components Nav -->
 
@@ -371,9 +357,9 @@
       <li class="nav-heading"><hr></li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="{{route('all_user.index')}}">
-          <i class="bi bi-card-list"></i>
-          <span>Register</span>
+        <a class="nav-link collapsed" href="{{route('all_user.index')}}" title="User Management">
+          <i class="bi bi-people"></i>
+          <span>User Management</span>
         </a>
       </li><!-- End Register Page Nav -->
       @else

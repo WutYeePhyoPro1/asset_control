@@ -64,7 +64,7 @@
                         <option value="{{ $branch->branch_code }}"
                             {{ !Auth::user()->hasRole('manager') && Auth::user()->branch_id == $branch->id ? 'selected' : '' }}
                             {{ request('branch') == $branch->branch_code ? 'selected' : '' }}>
-                            {{ $branch->branch_name }} ({{ $branch->branch_code }})
+                            {{ $branch->branch_short_name ?: $branch->branch_name }}
                         </option>
                     @endforeach
                 </select>
@@ -122,11 +122,11 @@
                 <div class="card">
                     <div class="card-body">
 
-                        <h5 class="card-title">Handset and Asset Code Operator</h5>
+                        <h5 class="card-title">Handset + Simcard</h5>
                         <div class="col-md-12 chart-shell">
 
-                            <div id="container-pi-h-o" style="height:600px;"></div>
-                            <p id="totalHandsetAsset"></p>
+                            <div id="container-pi-hs"></div>
+                            <p id="totalAssetCountHs"></p>
                         </div>
 
                     </div>
@@ -153,7 +153,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row chart-shell">
-                            <h5 class="card-title">Laptop, Handset, Operator </h5>
+                            <h5 class="card-title">Asset breakdown by branch / sub-department</h5>
                             <div class="col-md-12">
 
                                 <div id="container-fix-lh" style="height: 600px;"></div>
@@ -171,7 +171,7 @@
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Employee ID / Name မပြည့်သေးသော Asset များ</h5>
+                            <h5 class="card-title">Handset + Simcard — Employee ID / Name မပြည့်သေးသော Asset များ</h5>
                             <div class="col-md-12 chart-shell">
                                 <div id="container-pending-employee" style="height: 500px;"></div>
                             </div>
@@ -222,83 +222,16 @@
 @endsection
 @section('js')
     <script>
-        var mergedData = @json($mergedData);
+        var branchShortNames = @json($branchShortNames);
 
-        var categories = mergedData.map(function(item) {
-            return item.branch;
-        });
+        function displayBranchName(branchValue) {
+            var value = String(branchValue || '').trim();
+            var codeMatch = value.match(/MM-\d+/i);
+            var code = codeMatch ? codeMatch[0].toUpperCase() : value;
 
-        var laptopCounts = mergedData.map(function(item) {
-            return (item.asset_type_count || {}).Laptop || 0;
-        });
+            return branchShortNames[code] || value;
+        }
 
-        var handsetCounts = mergedData.map(function(item) {
-            return (item.asset_type_count || {}).Handset || 0;
-        });
-
-        var operatorCounts = mergedData.map(function(item) {
-            return item.operator_count || 0;
-        });
-
-        // var nonoperatorCounts = mergedData.map(function(item) {
-        //     return item.non_operator_count || 0;
-        // });
-
-        // Summing up counts for Laptop, Handset, and Operator
-        Highcharts.chart('container-fix-lh', {
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Laptop, Handset, Operator By Branch'
-            },
-            xAxis: {
-                categories: categories,
-                crosshair: true,
-                labels: {
-                    rotation: -45,
-                    align: 'right',
-                    style: {
-                        fontSize: '12px',
-                        fontFamily: 'Arial, sans-serif'
-                    }
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Counts'
-                }
-            },
-            series: [{
-                name: 'Laptop',
-                data: laptopCounts,
-                dataLabels: {
-                    enabled: true,
-                    formatter: function() {
-                        return this.y !== 0 ? this.y : null;
-                    }
-                }
-            }, {
-                name: 'Handset',
-                data: handsetCounts,
-                dataLabels: {
-                    enabled: true,
-                    formatter: function() {
-                        return this.y !== 0 ? this.y : null;
-                    }
-                }
-            }, {
-                name: 'Operator Sim(ph)',
-                data: operatorCounts,
-                dataLabels: {
-                    enabled: true,
-                    formatter: function() {
-                        return this.y !== 0 ? this.y : null;
-                    }
-                }
-            }]
-        });
     </script>
     {{--
 <script>
@@ -422,70 +355,6 @@
             });
 
         });
-    </script>
-
-    <script>
-        var assetCounts = @json($assetCounts);
-
-        var data = [];
-        assetCounts.forEach(function(item) {
-            data.push({
-                name: item.branch + ' - ' + item.asset_type_count,
-                y: item.asset_type_count
-            });
-        });
-
-        Highcharts.chart('container-pi', {
-            chart: {
-                type: 'pie'
-            },
-            title: {
-                text: 'Laptop By Branch'
-            },
-            series: [{
-                name: 'Laptop',
-                data: data
-            }]
-        });
-
-
-        var totalCount = assetCounts.reduce(function(total, item) {
-            return total + item.asset_type_count;
-        }, 0);
-
-        document.getElementById('totalAssetCount').innerText = 'Total Laptop: ' + totalCount;
-    </script>
-
-    <script>
-        var assetCounts = @json($assetCounts1);
-
-        var data = [];
-        assetCounts.forEach(function(item) {
-            data.push({
-                name: item.branch + ' - ' + item.asset_type_count,
-                y: item.asset_type_count
-            });
-        });
-
-        Highcharts.chart('container-pi-h', {
-            chart: {
-                type: 'pie'
-            },
-            title: {
-                text: 'Handset By Branch'
-            },
-            series: [{
-                name: 'Handset',
-                data: data
-            }]
-        });
-
-
-        var totalCount = assetCounts.reduce(function(total, item) {
-            return total + item.asset_type_count;
-        }, 0);
-
-        document.getElementById('totalAssetCounth').innerText = 'Total Handset: ' + totalCount;
     </script>
 
     {{-- <script>
@@ -768,89 +637,13 @@ Highcharts.chart('container-fix-lh', {
         }
     </script>
     <script>
-        var categories = mergedData.map(function(item) {
-            return item.branch;
-        });
-
-        var handsetCounts = mergedData.map(function(item) {
-            return (item.asset_type_count || {}).Handset || 0;
-        });
-
-        var operatorCounts = mergedData.map(function(item) {
-            return item.operator_count || 0;
-        });
-
-        var totalHandsets = handsetCounts.reduce(function(acc, count) {
-            return acc + count;
-        }, 0);
-
-        var totalOperators = operatorCounts.reduce(function(acc, count) {
-            return acc + count;
-        }, 0);
-
-        Highcharts.chart('container-pi-h-o', {
-            chart: {
-                type: 'bar'
-            },
-            title: {
-                text: 'Handset and Operator Counts By Branch'
-            },
-            subtitle: {
-                text: `Total Handsets: ${totalHandsets} | Total Operators: ${totalOperators}`
-            },
-            xAxis: {
-                categories: categories,
-                title: {
-                    text: 'Branch'
-                }
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Counts',
-                    align: 'high'
-                },
-                labels: {
-                    overflow: 'justify'
-                }
-            },
-            plotOptions: {
-                bar: {
-                    dataLabels: {
-                        enabled: true,
-                        style: {
-                            fontSize: '10px',
-                            fontWeight: 'bold'
-                        }
-                    }
-                }
-            },
-            series: [{
-                name: 'Handsets',
-                data: handsetCounts,
-                color: '#1f77b4' // Optional: Color for Handsets
-            }, {
-                name: 'Operators',
-                data: operatorCounts,
-                color: '#ff7f0e' // Optional: Color for Operators
-            }],
-            credits: {
-                enabled: false
-            },
-            legend: {
-                reversed: true // Optional: Reverse the legend order
-            }
-        });
-    </script>
-
-    <script>
         document.addEventListener('DOMContentLoaded', function() {
             var phoneData = @json($nonopers);
 
 
             var pieData = phoneData.map(function(item) {
                 return {
-                    name: item.branch,
+                    name: displayBranchName(item.branch),
                     y: parseInt(item.phone_count)
                 };
             });
@@ -894,6 +687,8 @@ Highcharts.chart('container-fix-lh', {
                 var branchFilter = document.getElementById('branchFilter');
                 var laptopData = @json($assetCounts);
                 var handsetData = @json($assetCounts1);
+                var handsetSimcardData = @json($assetCountsSim);
+                var subDepartmentAssetData = @json($subDepartmentAssetData);
                 var branchSummaryData = @json($mergedData);
                 var nonAssetOperatorData = @json($nonopers);
                 var pendingEmployeeData = @json($pendingEmployeeUpdateData);
@@ -912,7 +707,7 @@ Highcharts.chart('container-fix-lh', {
                         })
                         .map(function(item) {
                             return {
-                                name: item.branch,
+                                name: displayBranchName(item.branch),
                                 y: Number(item.asset_type_count || item.phone_count || 0)
                             };
                         });
@@ -931,10 +726,9 @@ Highcharts.chart('container-fix-lh', {
                         })
                         .map(function(item) {
                             return {
-                                name: item.branch,
+                                name: displayBranchName(item.branch),
                                 y: Number(item.pending_count || 0),
-                                laptop_count: Number(item.laptop_count || 0),
-                                handset_count: Number(item.handset_count || 0)
+                                handset_simcard_count: Number(item.handset_simcard_count || 0)
                             };
                         });
                 }
@@ -988,6 +782,7 @@ Highcharts.chart('container-fix-lh', {
                     var selectedLabel = branchFilter.options[branchFilter.selectedIndex].text;
                     var laptopChartData = toPieData(laptopData, branchCode);
                     var handsetChartData = toPieData(handsetData, branchCode);
+                    var handsetSimcardChartData = toPieData(handsetSimcardData, branchCode);
                     var nonAssetChartData = toPieData(nonAssetOperatorData, branchCode);
                     var pendingEmployeeChartData = pendingEmployeeChartDataForBranch(branchCode);
                     var filteredSummary = branchSummaryData.filter(function(item) {
@@ -996,6 +791,8 @@ Highcharts.chart('container-fix-lh', {
 
                     pieChart('container-pi', 'Laptop by Branch', 'Laptop', laptopChartData);
                     pieChart('container-pi-h', 'Handset by Branch', 'Handset', handsetChartData);
+                    pieChart('container-pi-hs', 'Handset + Simcard by Branch', 'Handset + Simcard',
+                        handsetSimcardChartData);
                     pieChart('container-pi-non', 'Non Asset Code Operator by Branch', 'Operators',
                         nonAssetChartData);
 
@@ -1003,6 +800,8 @@ Highcharts.chart('container-fix-lh', {
                         laptopChartData);
                     document.getElementById('totalAssetCounth').textContent = 'Total Handset: ' + total(
                         handsetChartData);
+                    document.getElementById('totalAssetCountHs').textContent = 'Total Handset + Simcard: ' +
+                        total(handsetSimcardChartData);
                     document.getElementById('totalNonAssetCount').textContent = 'Total Operators: ' + total(
                         nonAssetChartData);
 
@@ -1012,7 +811,7 @@ Highcharts.chart('container-fix-lh', {
                             type: 'bar'
                         },
                         title: {
-                            text: 'Employee ID / Name မပြည့်သေးသော Asset အရေအတွက်'
+                            text: 'Handset + Simcard — Employee ID / Name မပြည့်သေးသော အရေအတွက်'
                         },
                         subtitle: {
                             text: selectedLabel
@@ -1038,10 +837,7 @@ Highcharts.chart('container-fix-lh', {
                                 var point = this.point;
                                 return '<b>' + this.x + '</b><br/>' +
                                     '<span style="color:#dc3545">●</span> Pending employee update: <b>' +
-                                    point.y + ' items</b><br/>' +
-                                    '&nbsp;&nbsp;For Laptop: <b>' + point.laptop_count +
-                                    ' items</b><br/>' +
-                                    '&nbsp;&nbsp;For Handset: <b>' + point.handset_count + ' items</b>';
+                                    point.y + ' Handset+Simcard items</b>';
                             }
                         },
                         plotOptions: {
@@ -1082,7 +878,7 @@ Highcharts.chart('container-fix-lh', {
                     }, []);
 
                     var categories = filteredSummary.map(function(item) {
-                        return item.branch;
+                        return displayBranchName(item.branch);
                     });
                     var laptops = filteredSummary.map(function(item) {
                         return Number((item.asset_type_count || {}).Laptop || 0);
@@ -1094,12 +890,34 @@ Highcharts.chart('container-fix-lh', {
                         return Number(item.operator_count || 0);
                     });
 
+                    // Once a branch is selected, drill the comparison down to
+                    // its sub-departments. The combined series is the total
+                    // Laptop + Handset asset count for each sub-department.
+                    var selectedSubDepartments = subDepartmentAssetData.filter(function(item) {
+                        return !branchCode || item.branch_code === branchCode;
+                    });
+                    var useSubDepartmentBreakdown = Boolean(branchCode) && selectedSubDepartments.length;
+
+                    if (useSubDepartmentBreakdown) {
+                        categories = selectedSubDepartments.map(function(item) {
+                            return item.sub_department;
+                        });
+                        laptops = selectedSubDepartments.map(function(item) {
+                            return Number(item.laptop_count || 0);
+                        });
+                        handsets = selectedSubDepartments.map(function(item) {
+                            return Number(item.handset_count || 0);
+                        });
+                    }
+
                     Highcharts.chart('container-fix-lh', {
                         chart: {
                             type: 'column'
                         },
                         title: {
-                            text: 'Laptop, Handset, Operator by Branch'
+                            text: useSubDepartmentBreakdown ?
+                                'Laptop, Handset, Laptop + Handset by Sub-department' :
+                                'Laptop, Handset, Operator by Branch'
                         },
                         subtitle: {
                             text: selectedLabel
@@ -1134,7 +952,12 @@ Highcharts.chart('container-fix-lh', {
                                 name: 'Handset',
                                 data: handsets
                             },
-                            {
+                            useSubDepartmentBreakdown ? {
+                                name: 'Laptop + Handset',
+                                data: laptops.map(function(count, index) {
+                                    return count + handsets[index];
+                                })
+                            } : {
                                 name: 'Operator Sim(ph)',
                                 data: operators
                             }
@@ -1144,52 +967,6 @@ Highcharts.chart('container-fix-lh', {
                         }
                     });
 
-                    Highcharts.chart('container-pi-h-o', {
-                        chart: {
-                            type: 'bar'
-                        },
-                        title: {
-                            text: 'Handset and Operator Counts by Branch'
-                        },
-                        subtitle: {
-                            text: selectedLabel
-                        },
-                        xAxis: {
-                            categories: categories
-                        },
-                        yAxis: {
-                            min: 0,
-                            title: {
-                                text: 'Counts'
-                            }
-                        },
-                        tooltip: {
-                            shared: true,
-                            valueSuffix: ' items',
-                            headerFormat: '<b>{point.key}</b><br/>'
-                        },
-                        plotOptions: {
-                            bar: {
-                                dataLabels: {
-                                    enabled: true
-                                }
-                            }
-                        },
-                        series: [{
-                                name: 'Handsets',
-                                data: handsets,
-                                color: '#1f77b4'
-                            },
-                            {
-                                name: 'Operators',
-                                data: operators,
-                                color: '#ff7f0e'
-                            }
-                        ],
-                        credits: {
-                            enabled: false
-                        }
-                    });
                 }
 
                 branchFilter.addEventListener('change', function() {

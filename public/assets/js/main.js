@@ -42,8 +42,19 @@
    * Sidebar toggle
    */
   if (select('.toggle-sidebar-btn')) {
+    const desktopSidebar = window.matchMedia('(min-width: 1200px)').matches;
+
+    if (desktopSidebar && localStorage.getItem('assetSidebarExpanded') === '1') {
+      select('body').classList.add('toggle-sidebar');
+    }
+
     on('click', '.toggle-sidebar-btn', function(e) {
-      select('body').classList.toggle('toggle-sidebar')
+      const body = select('body');
+      body.classList.toggle('toggle-sidebar');
+
+      if (desktopSidebar) {
+        localStorage.setItem('assetSidebarExpanded', body.classList.contains('toggle-sidebar') ? '1' : '0');
+      }
     })
   }
 

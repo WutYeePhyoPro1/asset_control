@@ -16,7 +16,10 @@ class Remark extends Model
         'phone',
         'contract',
         'remark',
-        'rank'
+        'rank',
+        'branch_name',
+        'department',
+        'sub_department',
     ];
 
     public function Remarkelq(){
