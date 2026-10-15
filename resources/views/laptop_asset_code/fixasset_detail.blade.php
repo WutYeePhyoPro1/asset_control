@@ -1750,6 +1750,12 @@
 
                                                                     <input type="hidden" name="rank"
                                                                         class="selected-employee-rank">
+                                                                    <input type="hidden" name="employee_branch_code"
+                                                                        class="selected-employee-branch">
+                                                                    <input type="hidden" name="employee_department"
+                                                                        class="selected-employee-department">
+                                                                    <input type="hidden" name="employee_sub_department"
+                                                                        class="selected-employee-sub-department">
                                                                     <button type="button"
                                                                         class="btn btn-primary px-4 employee-search-button">
                                                                         <i class="bi bi-search me-1"></i>Search
@@ -1760,22 +1766,7 @@
                                                             </div>
                                                         </div>
 
-                                                        {{-- <div class="create-form-field full-width">
-                                                            <label class="create-form-label" for="create-rank">Rank</label>
-                                                            <select class="form-select" id="create-rank" name="rank"
-                                                                >
-                                                                <option value="" selected>Select your rank</option>
-                                                                <option value="R1">R1</option>
-                                                                <option value="R2">R2</option>
-                                                                <option value="R3">R3</option>
-                                                                <option value="R4">R4</option>
-                                                                <option value="R5">R5</option>
-                                                                <option value="R6">R6</option>
-                                                                <option value="R7">R7</option>
-                                                                <option value="R8">R8</option>
-                                                                <option value="R9">R9</option>
-                                                            </select>
-                                                        </div> --}}
+                                   
 
                                                         <div class="create-form-field">
                                                             <label class="create-form-label"

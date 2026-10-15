@@ -272,6 +272,9 @@ class LaptopAssetCodeController extends Controller
         $request->validate([
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
+            'employee_branch_code' => ['required', 'string', 'max:255'],
+            'employee_department' => ['required', 'string', 'max:255'],
+            'employee_sub_department' => ['nullable', 'string', 'max:255'],
             'phone' => ['required', 'array'],
             'phone.*' => ['nullable', 'regex:/^09(?:\d{9})?$/'],
         ], [
@@ -289,8 +292,12 @@ class LaptopAssetCodeController extends Controller
         Remark::create([
             'asset_code' => $request->input('asset_code'),
             'emp_id' => $request->input('emp_id'),
+            'branch_code' => $request->input('employee_branch_code'),
             'emp_name' => $request->input('emp_name'),
             'rank' => $request->input('rank'),
+            'branch_name' => Branch::where('branch_code', $request->input('employee_branch_code'))->value('branch_name'),
+            'department' => $request->input('employee_department'),
+            'sub_department' => $request->input('employee_sub_department'),
             'contract' => $request->input('contract'),
             'remark' => $request->input('remark'),
         ]);
@@ -615,6 +622,7 @@ class LaptopAssetCodeController extends Controller
         $branchName = Branch::where('branch_code', $validated['branch_code'])->value('branch_name');
         $remark->update([
             'emp_id' => $validated['emp_id'],
+            'branch_code' => $validated['branch_code'],
             'emp_name' => $validated['emp_name'],
             'rank' => trim($validated['rank']),
             'branch_name' => $branchName,
