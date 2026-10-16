@@ -299,10 +299,35 @@
         }
 
         .fixasset-detail .asset-code-line {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             margin-bottom: 10px;
             color: #64748b;
             font-size: 14px;
             font-weight: 600;
+        }
+
+        .fixasset-detail .copy-code-button,
+        .nonasset-detail .copy-code-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            color: #4f7895;
+            background: #fff;
+            border: 1px solid #b8d6e2;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .fixasset-detail .copy-code-button:hover,
+        .nonasset-detail .copy-code-button:hover {
+            color: #fff;
+            background: #4f7895;
         }
 
         .fixasset-detail .asset-badges {
@@ -1545,7 +1570,14 @@
                                 </div>
                                 <div class="asset-hero-content">
                                     <h2 class="asset-hero-title">{{ $item->asset_name }}</h2>
-                                    <div class="asset-code-line">Asset Code: {{ $item->asset_code }}</div>
+                                    <div class="asset-code-line">
+                                        <span>Asset Code: {{ $item->asset_code }}</span>
+                                        <button type="button" class="copy-code-button"
+                                            data-copy-code="{{ $item->asset_code }}" title="Copy asset code"
+                                            aria-label="Copy asset code">
+                                            <i class="bi bi-copy"></i>
+                                        </button>
+                                    </div>
                                     <div class="asset-badges">
                                         <span class="status-pill {{ $isClosedStatus ? 'is-closed' : '' }}">
                                             {{ $statusLabel == 'Ongoing' ? 'Using' : $statusLabel }}
@@ -2127,6 +2159,34 @@
 
 @endsection
 @section('js')
+    <script>
+        document.querySelectorAll('[data-copy-code]').forEach(function(button) {
+            button.addEventListener('click', async function() {
+                const value = button.getAttribute('data-copy-code') || '';
+                const icon = button.querySelector('i');
+
+                try {
+                    await navigator.clipboard.writeText(value);
+                    icon.className = 'bi bi-check2';
+                    button.title = 'Copied';
+                } catch (error) {
+                    const helper = document.createElement('textarea');
+                    helper.value = value;
+                    document.body.appendChild(helper);
+                    helper.select();
+                    document.execCommand('copy');
+                    helper.remove();
+                    icon.className = 'bi bi-check2';
+                    button.title = 'Copied';
+                }
+
+                setTimeout(function() {
+                    icon.className = 'bi bi-copy';
+                    button.title = 'Copy asset code';
+                }, 1200);
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             const searchEmployeeUrl = @json(route('search_employee'));

@@ -387,6 +387,9 @@
                                                                     required>
                                                                 <input type="hidden" name="rank" id="rank"
                                                                     required>
+                                                                <input type="hidden" name="sub_department"
+                                                                    id="sub_department">
+                                                                <input type="hidden" name="section" id="section">
                                                                 <div id="employeeSearchResults" class="list-group d-none"
                                                                     style="position:absolute;left:0;right:0;z-index:1050;">
                                                                 </div>
@@ -681,6 +684,8 @@
             const selectedId = $('#empID');
             const selectedName = $('#employee_name');
             const selectedRank = $('#rank');
+            const selectedSubDepartment = $('#sub_department');
+            const selectedSection = $('#section');
 
             function message(text, className = 'text-muted') {
                 results.empty().append($('<div>', {
@@ -734,6 +739,8 @@
                                 selectedId.val(employee.emp_id);
                                 selectedName.val(employee.name);
                                 selectedRank.val(employeeRank === '-' ? '' : employeeRank);
+                                selectedSubDepartment.val(employee.sub_department || '');
+                                selectedSection.val(employee.section || '');
                                 if (employee.branch_code) {
                                     $('#branch option').filter(function() {
                                         return $(this).val().indexOf('(' + employee
@@ -764,6 +771,8 @@
                 selectedId.val('');
                 selectedName.val('');
                 selectedRank.val('');
+                selectedSubDepartment.val('');
+                selectedSection.val('');
                 results.addClass('d-none').empty();
             });
         });

@@ -605,6 +605,8 @@ class LaptopAssetCodeController extends Controller
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
             'rank' => ['required', 'string', 'max:255'],
+            'section' => ['nullable', 'string', 'max:255'],
+            'sub_department' => ['nullable', 'string', 'max:255'],
             'branch_code' => ['required', 'string', 'max:255'],
             'department' => ['required', 'string', 'max:255'],
             'sub_department' => ['required', 'string', 'max:255'],
@@ -647,6 +649,7 @@ class LaptopAssetCodeController extends Controller
         }
         $departments = Department::all();
         $branches = Branch::all();
+        //
         return view('laptop_asset_code.nonasset_operator', compact('nonoperators', 'branches', 'departments'));
     }
 
@@ -672,6 +675,8 @@ class LaptopAssetCodeController extends Controller
         $request->validate([
             'phone' => ['required', 'array'],
             'phone.*' => ['required', 'regex:/^09\d{9}$/'],
+            'section' => ['nullable', 'string', 'max:255'],
+            'sub_department' => ['nullable', 'string', 'max:255'],
         ], [
             'phone.*.regex' => 'Phone number must start with 09 and contain 11 digits.',
         ]);
@@ -686,11 +691,18 @@ class LaptopAssetCodeController extends Controller
         $doc_no = 'NASOP' . $date . '-' . $data;
         // dd($doc_no);
 
+        $request->merge([
+            'sub_department' => trim((string) $request->section) !== 'Infrastructure'
+                ? trim((string) $request->section)
+                : trim((string) $request->sub_department),
+        ]);
+
         $nonremark = NonRemark::create([
             'doc_no' => $doc_no,
             'emp_id' => $request->emp_id,
             'branch' => $request->branch,
             'department' => $request->department,
+            'sub_department' => $request->sub_department,
             'name' => $request->name,
             'contract' => $request->contract,
             'remark' => $request->remark,
@@ -723,9 +735,17 @@ class LaptopAssetCodeController extends Controller
 
     public function deletRecordNon($id)
     {
-        // dd('hi');
-        NonOperator::find($id)->delete($id);
-        return back()->with('success', 'Successfully Deleted.');
+        $nonRemark = NonRemark::findOrFail($id);
+
+        // The list passes the NonRemark id. Remove its related operators first,
+        // then remove the parent non-asset record.
+        NonOperator::where('doc_no', $nonRemark->doc_no)->delete();
+        $nonRemark->delete();
+
+        return response()->json([
+            'message' => 'Successfully deleted.',
+            'redirect' => route('laptop_asset_code.nonasset_operator'),
+        ]);
     }
 
     public function getEditnonOp($doc_no)
@@ -822,10 +842,18 @@ class LaptopAssetCodeController extends Controller
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
             'rank' => ['required', 'string', 'max:255'],
+            'section' => ['nullable', 'string', 'max:255'],
+            'sub_department' => ['nullable', 'string', 'max:255'],
         ], [
             'emp_id.required' => 'Please search and select an employee.',
             'emp_name.required' => 'Please search and select an employee.',
             'rank.required' => 'Please search and select an employee.',
+        ]);
+
+        $request->merge([
+            'sub_department' => trim((string) $request->section) !== 'Infrastructure'
+                ? trim((string) $request->section)
+                : trim((string) $request->sub_department),
         ]);
 
         $nonRemark = NonRemark::findOrFail($id);
@@ -833,6 +861,7 @@ class LaptopAssetCodeController extends Controller
             'emp_id' => $validated['emp_id'],
             'name' => $validated['emp_name'],
             'rank' => $validated['rank'],
+            'sub_department' => $request->sub_department,
         ]);
 
         return back()->with('success', 'Assigned employee updated successfully.');

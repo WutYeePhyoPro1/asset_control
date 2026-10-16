@@ -232,7 +232,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <h5
-                                                            style="font-size:15px;;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
+                                                            style="font-size:15px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
                                                             <a href="{{ asset('assets/img/assetcontrolExcel.xlsx') }}"
                                                                 download><u>Download Sample Excel File</u></a>
                                                         </h5>
@@ -436,7 +436,6 @@
                                                                 <td>{{ $data->branch }}</td>
                                                                 <td>{{ $data->department }}</td>
                                                                 <td>
-                                                                    {{-- {{ getnonRemark($data->doc_no)->emp_id  }} --}}
 
                                                                     @foreach (getnonRemark208($data->doc_no) as $nonremark)
                                                                         {{ $nonremark->emp_id }}
@@ -597,17 +596,16 @@
                 }
             });
             $.ajax({
-                url: "/non_asset_operator/delete_record/" + id,
+                url: "{{ url('/non_asset_operator/delete_record') }}/" + id,
                 type: 'DELETE',
-                data: {
-
-                    "id": id,
+                success: function(response) {
+                    window.location.href = response.redirect || "{{ route('laptop_asset_code.nonasset_operator') }}";
+                },
+                error: function(xhr) {
+                    console.error('Unable to delete non-asset record.', xhr.responseText);
+                    alert('Unable to delete the non-asset record.');
                 }
             });
-
-            setTimeout(function() {
-                window.location.reload(); // Reload the page on success
-            }, 1000);
         }
 
 

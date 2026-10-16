@@ -14,6 +14,7 @@ class NonRemark extends Model
         'name',
         'branch',
         'department',
+        'sub_department',
         'contract',
         'remark',
         'rank',

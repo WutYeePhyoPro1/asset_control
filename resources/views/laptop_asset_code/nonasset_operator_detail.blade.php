@@ -127,10 +127,33 @@
         }
 
         .nonasset-detail .nonasset-hero-subtitle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             margin: 0;
             color: #64748b;
             font-size: 14px;
             font-weight: 700;
+        }
+
+        .nonasset-detail .copy-code-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            color: #4f7895;
+            background: #fff;
+            border: 1px solid #b8d6e2;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .nonasset-detail .copy-code-button:hover {
+            color: #fff;
+            background: #4f7895;
         }
 
         .nonasset-detail .nonasset-assignment-card {
@@ -153,7 +176,7 @@
 
         .nonasset-detail .nonasset-assignment-grid {
             display: grid;
-            grid-template-columns: 1.5fr repeat(4, 1fr);
+            grid-template-columns: 1.5fr repeat(5, 1fr);
             padding: 6px 18px 17px;
         }
 
@@ -892,7 +915,7 @@
         }
 
         .nonasset-detail .assignment-grid {
-            grid-template-columns: minmax(180px, 1.3fr) repeat(4, minmax(120px, 1fr));
+            grid-template-columns: minmax(190px, 1.25fr) repeat(5, minmax(0, 1fr));
             gap: 0;
             padding: 0;
         }
@@ -1082,7 +1105,14 @@
                                 <span class="nonasset-hero-icon"><i class="bi bi-person-vcard"></i></span>
                                 <div class="nonasset-hero-content">
                                     <h2 class="nonasset-hero-title">Non Asset Code Operator</h2>
-                                    <p class="nonasset-hero-subtitle">Document No: {{ $getnonRemark->doc_no }}</p>
+                                    <p class="nonasset-hero-subtitle">
+                                        <span>Document No: {{ $getnonRemark->doc_no }}</span>
+                                        <button type="button" class="copy-code-button"
+                                            data-copy-code="{{ $getnonRemark->doc_no }}" title="Copy document number"
+                                            aria-label="Copy document number">
+                                            <i class="bi bi-copy"></i>
+                                        </button>
+                                    </p>
                                 </div>
                             </div>
 
@@ -1113,6 +1143,11 @@
                                         <i class="bi bi-briefcase"></i>
                                         <div><span class="assignment-label">Department</span><span
                                                 class="assignment-value">{{ $getnonRemark->department ?: '-' }}</span></div>
+                                    </div>
+                                    <div class="assignment-detail">
+                                        <i class="bi bi-diagram-3"></i>
+                                        <div><span class="assignment-label">Sub Department</span><span
+                                                class="assignment-value">{{ $getnonRemark->sub_department ?: '-' }}</span></div>
                                     </div>
                                     <div class="assignment-detail">
                                         <i class="bi bi-award"></i>
@@ -1156,6 +1191,10 @@
                                                     <input type="hidden" name="emp_id" class="selected-employee-id">
                                                     <input type="hidden" name="emp_name" class="selected-employee-name">
                                                     <input type="hidden" name="rank" class="selected-employee-rank">
+                                                    <input type="hidden" name="sub_department"
+                                                        class="selected-employee-sub-department">
+                                                    <input type="hidden" name="section"
+                                                        class="selected-employee-section">
                                                     <div class="employee-search-results list-group d-none"></div>
                                                 </div>
                                             </div>
@@ -1548,6 +1587,34 @@
 @endsection
 @section('js')
     <script>
+        document.querySelectorAll('[data-copy-code]').forEach(function(button) {
+            button.addEventListener('click', async function() {
+                const value = button.getAttribute('data-copy-code') || '';
+                const icon = button.querySelector('i');
+
+                try {
+                    await navigator.clipboard.writeText(value);
+                    icon.className = 'bi bi-check2';
+                    button.title = 'Copied';
+                } catch (error) {
+                    const helper = document.createElement('textarea');
+                    helper.value = value;
+                    document.body.appendChild(helper);
+                    helper.select();
+                    document.execCommand('copy');
+                    helper.remove();
+                    icon.className = 'bi bi-check2';
+                    button.title = 'Copied';
+                }
+
+                setTimeout(function() {
+                    icon.className = 'bi bi-copy';
+                    button.title = 'Copy document number';
+                }, 1200);
+            });
+        });
+    </script>
+    <script>
         $(document).ready(function() {
             const searchEmployeeUrl = @json(route('search_employee'));
             $('.employee-search-component').each(function() {
@@ -1558,6 +1625,8 @@
                 const selectedId = component.find('.selected-employee-id');
                 const selectedName = component.find('.selected-employee-name');
                 const selectedRank = component.find('.selected-employee-rank');
+                const selectedSubDepartment = component.find('.selected-employee-sub-department');
+                const selectedSection = component.find('.selected-employee-section');
 
                 function message(text, className = 'text-muted') {
                     results.empty().append($('<div>', {
@@ -1607,6 +1676,8 @@
                                         selectedId.val(employee.emp_id);
                                         selectedName.val(employee.name);
                                         selectedRank.val(employee.rank);
+                                        selectedSubDepartment.val(employee.sub_department || '');
+                                        selectedSection.val(employee.section || '');
                                         results.addClass('d-none').empty();
                                     }).appendTo(results);
                             });
@@ -1630,6 +1701,8 @@
                     selectedId.val('');
                     selectedName.val('');
                     selectedRank.val('');
+                    selectedSubDepartment.val('');
+                    selectedSection.val('');
                 });
             });
             $(document).on('click', function(event) {
