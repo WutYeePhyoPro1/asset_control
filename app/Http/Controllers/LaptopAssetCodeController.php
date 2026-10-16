@@ -157,6 +157,7 @@ class LaptopAssetCodeController extends Controller
             ->get()
             ->groupBy('asset_code');
 
+        
 
         return view('laptop_asset_code.fix_asset', array_merge(
             compact(

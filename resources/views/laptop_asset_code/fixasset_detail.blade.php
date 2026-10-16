@@ -756,7 +756,8 @@
 
         .fixasset-detail .operator-add-row {
             grid-column: 1 / -1;
-            margin-top: -10px;
+            display:flex;
+            justify-content: end;   
         }
 
         .fixasset-detail .operator-add-button {
@@ -1685,7 +1686,8 @@
                                                     <input type="hidden" name="emp_id" class="selected-employee-id">
                                                     <input type="hidden" name="emp_name" class="selected-employee-name">
                                                     <input type="hidden" name="rank" class="selected-employee-rank">
-                                                    <input type="hidden" name="branch_code" class="selected-employee-branch">
+                                                    <input type="hidden" name="branch_code"
+                                                        class="selected-employee-branch">
                                                     <input type="hidden" name="department"
                                                         class="selected-employee-department">
                                                     <input type="hidden" name="sub_department"
@@ -1766,8 +1768,14 @@
                                                             </div>
                                                         </div>
 
-                                   
 
+                                                        <div class="operator-add-row">
+                                                            <button type="button" class="operator-add-button"
+                                                                id="addbtn" title="Add another operator"
+                                                                aria-label="Add another operator">
+                                                                <i class="bi bi-plus-lg"></i>
+                                                            </button>
+                                                        </div>
                                                         <div class="create-form-field">
                                                             <label class="create-form-label"
                                                                 for="create-operator">Operator</label>
@@ -1790,13 +1798,7 @@
                                                                 placeholder="Search or enter phone number">
                                                         </div>
 
-                                                        <div class="operator-add-row">
-                                                            <button type="button" class="operator-add-button"
-                                                                id="addbtn" title="Add another operator"
-                                                                aria-label="Add another operator">
-                                                                <i class="bi bi-plus-lg"></i>
-                                                            </button>
-                                                        </div>
+
 
                                                         <div class="operator-list" id="showope"></div>
 
@@ -2200,8 +2202,10 @@
                                         selectedEmployeeId.val(employee.emp_id);
                                         selectedEmployeeName.val(employee.name);
                                         selectedEmployeeRank.val(employee.rank);
-                                        selectedEmployeeBranch.val(employee.branch_code || '');
-                                        selectedEmployeeDepartment.val(employee.department || '');
+                                        selectedEmployeeBranch.val(employee
+                                            .branch_code || '');
+                                        selectedEmployeeDepartment.val(employee
+                                            .department || '');
                                         selectedEmployeeSubDepartment.val(employee
                                             .sub_department || '');
                                         selectedEmployeeSection.val(employee

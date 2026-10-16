@@ -47,7 +47,8 @@
                         <label for="simTypeFilter" class="form-label">Type</label>
                         <select name="type" id="simTypeFilter" class="form-select">
                             <option value="">All Types</option>
-                            <option value="new" @selected(request('type') === 'new')>New</option>
+                            <option value="reserve" @selected(request('type') === 'reserve')>Reserve</option>
+                            <option value="available" @selected(request('type') === 'available')>Available</option>
                             <option value="used" @selected(request('type') === 'used')>Used</option>
                         </select>
                     </div>
