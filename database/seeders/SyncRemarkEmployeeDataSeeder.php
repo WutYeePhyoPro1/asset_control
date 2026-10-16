@@ -13,7 +13,7 @@ class SyncRemarkEmployeeDataSeeder extends Seeder
     {
         $employees = DB::connection('Hremployee')
             ->table('hremployee.all_employee')
-            ->select('employeecode as emp_id', 'brchcode as branch_code', 'department', 'sub_department')
+            ->select('employeecode as emp_id', 'brchcode as branch_code', 'department', 'sub_department', 'section')
             ->whereNotNull('employeecode')
             ->get();
 

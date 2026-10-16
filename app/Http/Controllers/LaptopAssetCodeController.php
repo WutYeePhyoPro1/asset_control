@@ -136,7 +136,7 @@ class LaptopAssetCodeController extends Controller
 
             return [
                 'asset_code'      => $asset->asset_code,
-                'branch_name'     => $remark?->branch_name ?? $asset->branch_name,
+                'branch_name'     => $remark?->branch_name,
                 'department'      => $remark?->department,
                 'sub_department'  => $remark?->sub_department,
                 'asset_type_name' => $asset->asset_type_name,
