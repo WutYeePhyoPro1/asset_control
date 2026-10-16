@@ -68,7 +68,16 @@ class HomeController extends Controller
             ];
         }
 
-        $assetCounts = $conn->select("
+        /*
+         * ================================================================
+         * 1. LAPTOP COUNTS
+         * ----------------------------------------------------------------
+         * Laptop data comes from the Fixasset database. The query counts
+         * active Laptop records by the original branch code/name.
+         * Result: $laptopCountsByBranch -> branch, asset_type_name, asset_type_count
+         * ================================================================
+         */
+        $laptopCountsByBranch = $conn->select("
                     SELECT branch_name || '(' || branch_code || ')' AS branch,
                 asset_type_name,
                 COUNT(asset_type_name) AS asset_type_count
@@ -100,7 +109,16 @@ class HomeController extends Controller
          ORDER BY branch_code;
                 ", $dateBindings);
 
-        $assetCounts1 = $conn->select("
+        /*
+         * ================================================================
+         * 2. HANDSET COUNTS
+         * ----------------------------------------------------------------
+         * Handset data uses the same Fixasset database query pattern as
+         * Laptop, but filters asset_type_name = 'Handset'.
+         * Result: $handsetCountsByBranch -> branch, asset_type_name, asset_type_count
+         * ================================================================
+         */
+        $handsetCountsByBranch = $conn->select("
             SELECT branch_name || '(' || branch_code || ')' AS branch,
             asset_type_name,
             COUNT(asset_type_name) AS asset_type_count
@@ -132,52 +150,93 @@ class HomeController extends Controller
      ORDER BY branch_code;
             ", $dateBindings);
 
-        // Handset + Simcard assets are maintained in the local FixAsset table.
-        // Use the same source as the Fix Asset page so the dashboard cannot
-        // disagree with the records users see there.
-        $assetCountsSim = FixAsset::query()
-            ->select('branch_code', 'branch_name', 'asset_type_name')
-            ->selectRaw('COUNT(*) AS asset_type_count')
-            ->whereRaw("REPLACE(LOWER(TRIM(asset_type_name)), ' ', '') = ?", ['handset+simcard'])
-            ->whereNotIn('status', ['S', 'T', 'C', 'Sold', 'Transfered', 'Cancel'])
-            ->groupBy('branch_code', 'branch_name', 'asset_type_name')
-            ->orderBy('branch_code')
-            ->get()
-            ->map(function ($asset) {
-                return (object) [
-                    'branch' => trim((string) $asset->branch_name) . ' (' . trim((string) $asset->branch_code) . ')',
-                    'asset_type_name' => $asset->asset_type_name,
-                    'asset_type_count' => (int) $asset->asset_type_count,
-                ];
-            })
-            ->values();
+        /*
+         * ================================================================
+         * 3. HANDSET + SIMCARD COUNTS
+         * ----------------------------------------------------------------
+         * Handset+Simcard records are stored in the local fix_assets table.
+         * Their branch assignment must come from the latest Remark record:
+         *   - Remark.branch_code -> branch filter/group key
+         *   - Remark.branch_name -> display branch name
+         * Records without a complete Remark branch assignment are excluded
+         * from these branch-based dashboard counts. No FixAsset branch
+         * fallback is used, so branch data cannot be mixed accidentally.
+         * ================================================================
+         */
+        $activeFixAssetStatuses = ['S', 'T', 'C', 'Sold', 'Transfered', 'Cancel'];
 
-        // Keep the detail chart at the same grain users maintain in Fix Asset:
-        // branch -> sub-department -> asset type. The latest remark is used
-        // because employee/sub-department assignments can change over time.
-        $dashboardAssets = FixAsset::query()
-            ->whereNotIn('status', ['S', 'T', 'C', 'Sold', 'Transfered', 'Cancel'])
+
+        $activeFixAssets = FixAsset::query()
+            ->where(function ($query) use ($activeFixAssetStatuses) {
+                $query->whereNotIn('status', $activeFixAssetStatuses)->orWhereNull('status');
+            })
             ->get(['asset_code', 'branch_code', 'branch_name', 'asset_type_name']);
-        $dashboardRemarks = Remark::query()
-            ->whereIn('asset_code', $dashboardAssets->pluck('asset_code'))
+
+        $latestRemarksByAssetCode = Remark::query()
+            ->whereIn('asset_code', $activeFixAssets->pluck('asset_code'))
             ->latest('updated_at')
             ->latest('id')
             ->get()
             ->unique('asset_code')
             ->keyBy('asset_code');
 
-        $subDepartmentAssetData = $dashboardAssets
-            ->map(function ($asset) use ($dashboardRemarks) {
-                $remark = $dashboardRemarks->get($asset->asset_code);
-                $type = preg_replace('/\s+/', '', strtolower(trim((string) $asset->asset_type_name)));
+        /* Read branch information directly from Remark. */
+        $resolveRemarkBranch = static function ($asset, $remarks) {
+            $remark = $remarks->get($asset->asset_code);
 
-                if (!in_array($type, ['laptop', 'handset'], true)) {
+            if (!$remark || blank($remark->branch_code) || blank($remark->branch_name)) {
+                return null;
+            }
+
+            return [
+                'code' => trim((string) $remark->branch_code),
+                'name' => trim((string) $remark->branch_name),
+            ];
+        };
+        $normalizeAssetType = static fn ($value) => preg_replace(
+            '/\s+/',
+            '',
+            strtolower(trim((string) $value))
+        );
+
+        /* Group Handset+Simcard assets by Remark.branch_code. */
+        $handsetSimcardAssetsGroupedByBranch = $activeFixAssets
+            ->filter(function ($asset) use ($normalizeAssetType, $latestRemarksByAssetCode, $resolveRemarkBranch) {
+                return $normalizeAssetType($asset->asset_type_name) === 'handset+simcard'
+                    && $resolveRemarkBranch($asset, $latestRemarksByAssetCode) !== null;
+            })
+            ->groupBy(function ($asset) use ($latestRemarksByAssetCode, $resolveRemarkBranch) {
+                return $resolveRemarkBranch($asset, $latestRemarksByAssetCode)['code'];
+            });
+
+
+        /* Convert grouped records into the format expected by the pie chart. */
+        $handsetSimcardCountsByBranch = $handsetSimcardAssetsGroupedByBranch
+            ->map(function ($assets, $branchCode) use ($latestRemarksByAssetCode, $resolveRemarkBranch) {
+                $branch = $resolveRemarkBranch($assets->first(), $latestRemarksByAssetCode);
+
+                return (object) [
+                    'branch' => $branch['name'] . ' (' . $branch['code'] . ')',
+                    'asset_type_name' => 'Handset+Simcard',
+                    'asset_type_count' => $assets->count(),
+                ];
+            })
+            ->values();
+
+        /* Build the column-chart data: branch -> sub-department -> asset type. */
+        $subDepartmentAssetData = $activeFixAssets
+            ->map(function ($asset) use ($latestRemarksByAssetCode, $resolveRemarkBranch, $normalizeAssetType) {
+                $remark = $latestRemarksByAssetCode->get($asset->asset_code);
+                $branch = $resolveRemarkBranch($asset, $latestRemarksByAssetCode);
+                $type = $normalizeAssetType($asset->asset_type_name);
+
+                if ($branch === null || !in_array($type, ['laptop', 'handset', 'handset+simcard'], true)) {
                     return null;
                 }
 
                 return [
-                    'branch_code' => trim((string) $asset->branch_code),
-                    'branch' => trim((string) $asset->branch_name) . ' (' . trim((string) $asset->branch_code) . ')',
+                    'branch_code' => $branch['code'],
+                    'branch' => $branch['name'] . ' (' . $branch['code'] . ')',
                     'sub_department' => trim((string) ($remark?->sub_department ?: 'Unassigned')),
                     'asset_type' => $type,
                 ];
@@ -193,11 +252,15 @@ class HomeController extends Controller
                     'sub_department' => $first['sub_department'],
                     'laptop_count' => $assets->where('asset_type', 'laptop')->count(),
                     'handset_count' => $assets->where('asset_type', 'handset')->count(),
+                    'handset_simcard_count' => $assets->where('asset_type', 'handset+simcard')->count(),
                 ];
             })
             ->values();
 
-        $assetCountslh = $conn->select("
+        $handsetSimcardCountsByBranchCode = $handsetSimcardAssetsGroupedByBranch->map(fn ($assets) => $assets->count());
+
+
+        $laptopAndHandsetCountsByBranch = $conn->select("
                 SELECT branch_name || '(' || branch_code || ')' AS branch,
                 asset_type_name,
                 COUNT(asset_type_name) AS asset_type_count
@@ -230,7 +293,7 @@ class HomeController extends Controller
                 ", $dateBindings);
 
 
-        $ongoingAssetCodes = collect($conn->select("
+        $activeExternalAssetCodes = collect($conn->select("
             SELECT fxdt.fxassetdetailcode AS asset_code
             FROM asset.fxassetdetail fxdt
             WHERE COALESCE(fxdt.fxstatus, 'A') NOT IN ('S', 'T', 'C')
@@ -239,17 +302,17 @@ class HomeController extends Controller
             ->filter(fn ($assetCode) => trim((string) $assetCode) !== '')
             ->values();
 
-        $opers = $ongoingAssetCodes->isEmpty()
+        $operatorPhoneCountsByBranch = $activeExternalAssetCodes->isEmpty()
             ? collect()
             : DB::table('operators')
                 ->select('branch')
                 ->selectRaw('COUNT(phone) AS phone_count')
-                ->whereIn('asset_code', $ongoingAssetCodes->all())
+                ->whereIn('asset_code', $activeExternalAssetCodes->all())
                 ->whereNotNull('phone')
                 ->whereRaw("TRIM(phone) <> ''")
                 ->groupBy('branch')
                 ->get();
-        $nonopers = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
+        $nonAssetOperatorCountsByBranch = DB::select("SELECT branch, COUNT(phone) AS phone_count FROM non_operators GROUP BY branch");
         $pendingEmployeeUpdateData = $user->hasRole('manager')
             ? $pendingEmployeeUpdates->get(
                 $selectedMonth ? $monthStart : null,
@@ -257,11 +320,8 @@ class HomeController extends Controller
             )
             : collect();
 
-        $totalPhoneCount = collect($nonopers)->sum('phone_count');
-
-        // dd($nonopers);
-
-        $mergedData = [];
+        $totalPhoneCount = collect($nonAssetOperatorCountsByBranch)->sum('phone_count');
+        $branchAssetSummary = [];
         $normalizeBranch = static function ($branch) {
             $branch = trim((string) $branch);
             $branch = preg_replace('/\s+/', ' ', $branch);
@@ -274,51 +334,59 @@ class HomeController extends Controller
 
             return preg_replace('/\s*\(\s*/', '(', preg_replace('/\s*\)\s*/', ')', $branch));
         };
-
-        foreach ($assetCountslh as $asset) {
-            $branchKey = $normalizeBranch($asset->branch);
-            $mergedData[$branchKey]['branch'] = $branchKey;
-            $mergedData[$branchKey]['asset_type_count'][$asset->asset_type_name] =
-                ($mergedData[$branchKey]['asset_type_count'][$asset->asset_type_name] ?? 0)
-                + (int) $asset->asset_type_count;
+        
+        foreach ($laptopAndHandsetCountsByBranch as $assetCountByBranch) {
+            $branchKey = $normalizeBranch($assetCountByBranch->branch);
+            $branchAssetSummary[$branchKey]['branch'] = $branchKey;
+        
+            $branchAssetSummary[$branchKey]['asset_type_count'][$assetCountByBranch->asset_type_name] =
+                ($branchAssetSummary[$branchKey]['asset_type_count'][$assetCountByBranch->asset_type_name] ?? 0)
+                + (int) $assetCountByBranch->asset_type_count;
         }
 
-        foreach ($assetCounts1 as $asset) {
-            $branchKey = $normalizeBranch($asset->branch);
-            $mergedData[$branchKey]['branch'] = $branchKey;
-            $mergedData[$branchKey]['handset_count'] =
-                ($mergedData[$branchKey]['handset_count'] ?? 0) + (int) $asset->asset_type_count;
+        foreach ($handsetCountsByBranch as $handsetCountByBranch) {
+            $branchKey = $normalizeBranch($handsetCountByBranch->branch);
+            $branchAssetSummary[$branchKey]['branch'] = $branchKey;
+            $branchAssetSummary[$branchKey]['handset_count'] =
+                ($branchAssetSummary[$branchKey]['handset_count'] ?? 0) + (int) $handsetCountByBranch->asset_type_count;
         }
 
-        foreach ($opers as $oper) {
-            $branchKey = $normalizeBranch($oper->branch);
-            if (!isset($mergedData[$branchKey])) {
-                $mergedData[$branchKey] = [
+        foreach ($handsetSimcardCountsByBranchCode as $branchCode => $count) {
+            $branchKey = trim((string) $branchCode);
+            $branchAssetSummary[$branchKey]['branch'] = $branchKey;
+            $branchAssetSummary[$branchKey]['handset_simcard_count'] =
+                ($branchAssetSummary[$branchKey]['handset_simcard_count'] ?? 0) + (int) $count;
+        }
+
+        foreach ($operatorPhoneCountsByBranch as $operatorPhoneCountByBranch) {
+            $branchKey = $normalizeBranch($operatorPhoneCountByBranch->branch);
+            if (!isset($branchAssetSummary[$branchKey])) {
+                $branchAssetSummary[$branchKey] = [
                     'branch' => $branchKey,
                     'handset_count' => 0,
                     'operator_count' => 0,
                 ];
             }
 
-            $mergedData[$branchKey]['operator_count'] =
-                ($mergedData[$branchKey]['operator_count'] ?? 0) + (int) $oper->phone_count;
+            $branchAssetSummary[$branchKey]['operator_count'] =
+                ($branchAssetSummary[$branchKey]['operator_count'] ?? 0) + (int) $operatorPhoneCountByBranch->phone_count;
         }
 
-        foreach ($nonopers as $nonoper) {
-            $branchKey = $normalizeBranch($nonoper->branch);
-            if (!isset($mergedData[$branchKey])) {
-                $mergedData[$branchKey] = [
+        foreach ($nonAssetOperatorCountsByBranch as $nonAssetOperatorCountByBranch) {
+            $branchKey = $normalizeBranch($nonAssetOperatorCountByBranch->branch);
+            if (!isset($branchAssetSummary[$branchKey])) {
+                $branchAssetSummary[$branchKey] = [
                     'branch' => $branchKey,
                     'handset_count' => 0,
                     'operator_count' => 0,
                 ];
             }
 
-            $mergedData[$branchKey]['operator_count'] =
-                ($mergedData[$branchKey]['operator_count'] ?? 0) + (int) $nonoper->phone_count;
+            $branchAssetSummary[$branchKey]['operator_count'] =
+                ($branchAssetSummary[$branchKey]['operator_count'] ?? 0) + (int) $nonAssetOperatorCountByBranch->phone_count;
         }
 
-        $mergedData = array_values($mergedData);
+        $branchAssetSummary = array_values($branchAssetSummary);
 
         $branchShortNames = [];
         $branchesWithShortNames = Branch::query()
@@ -333,7 +401,20 @@ class HomeController extends Controller
             $branchShortNames[$branchCode] = $shortName;
         }
 
-        return view('dashboard', compact('datas', 'branches', 'departments', 'assetCounts', 'assetCounts1', 'assetCountsSim', 'subDepartmentAssetData', 'mergedData', 'nonopers', 'totalPhoneCount', 'pendingEmployeeUpdateData', 'branchShortNames'));
+        return view('dashboard', compact(
+            'datas',
+            'branches',
+            'departments',
+            'laptopCountsByBranch',
+            'handsetCountsByBranch',
+            'handsetSimcardCountsByBranch',
+            'subDepartmentAssetData',
+            'branchAssetSummary',
+            'nonAssetOperatorCountsByBranch',
+            'totalPhoneCount',
+            'pendingEmployeeUpdateData',
+            'branchShortNames'
+        ));
     }
 
     public function logout()

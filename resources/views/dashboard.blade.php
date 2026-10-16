@@ -236,12 +236,12 @@
     {{--
 <script>
 
-    var opers = @json($opers);
+    var operatorPhoneCountsByBranch = @json($operatorPhoneCountsByBranch);
 
 
     var branches = [];
     var phoneCounts = [];
-    opers.forEach(function(item) {
+    operatorPhoneCountsByBranch.forEach(function(item) {
         branches.push(item.branch);
         phoneCounts.push(item.phone_count);
     });
@@ -359,10 +359,10 @@
 
     {{-- <script>
 
-var assetCounts = @json($assetCountslh);
+var laptopAndHandsetCountsByBranch = @json($laptopAndHandsetCountsByBranch);
 
 var data = {};
-assetCounts.forEach(function(item) {
+laptopAndHandsetCountsByBranch.forEach(function(item) {
     if (!data[item.branch]) {
         data[item.branch] = {};
     }
@@ -638,7 +638,7 @@ Highcharts.chart('container-fix-lh', {
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var phoneData = @json($nonopers);
+            var phoneData = @json($nonAssetOperatorCountsByBranch);
 
 
             var pieData = phoneData.map(function(item) {
@@ -685,12 +685,15 @@ Highcharts.chart('container-fix-lh', {
         document.addEventListener('DOMContentLoaded', function() {
             (function() {
                 var branchFilter = document.getElementById('branchFilter');
-                var laptopData = @json($assetCounts);
-                var handsetData = @json($assetCounts1);
-                var handsetSimcardData = @json($assetCountsSim);
+                // Pie-chart data sources:
+                // - Laptop and Handset: Fixasset database counts
+                // - Handset+Simcard: local FixAsset counts grouped by Remark branch
+                var laptopDataByBranch = @json($laptopCountsByBranch);
+                var handsetDataByBranch = @json($handsetCountsByBranch);
+                var handsetSimcardDataByBranch = @json($handsetSimcardCountsByBranch);
                 var subDepartmentAssetData = @json($subDepartmentAssetData);
-                var branchSummaryData = @json($mergedData);
-                var nonAssetOperatorData = @json($nonopers);
+                var branchAssetSummary = @json($branchAssetSummary);
+                var nonAssetOperatorDataByBranch = @json($nonAssetOperatorCountsByBranch);
                 var pendingEmployeeData = @json($pendingEmployeeUpdateData);
 
                 function belongsToBranch(branchValue, branchCode) {
@@ -778,14 +781,18 @@ Highcharts.chart('container-fix-lh', {
                     });
                 }
 
+                // Rebuild all four pie charts and the branch/sub-department chart.
+                // branchCode is the selected Branch.branch_code (for example MM-001),
+                // while the chart label may show the short name (for example HO).
                 function renderDashboard(branchCode) {
+                    // 1. Prepare each asset section's pie-chart data.
                     var selectedLabel = branchFilter.options[branchFilter.selectedIndex].text;
-                    var laptopChartData = toPieData(laptopData, branchCode);
-                    var handsetChartData = toPieData(handsetData, branchCode);
-                    var handsetSimcardChartData = toPieData(handsetSimcardData, branchCode);
-                    var nonAssetChartData = toPieData(nonAssetOperatorData, branchCode);
+                    var laptopChartData = toPieData(laptopDataByBranch, branchCode);
+                    var handsetChartData = toPieData(handsetDataByBranch, branchCode);
+                    var handsetSimcardChartData = toPieData(handsetSimcardDataByBranch, branchCode);
+                    var nonAssetChartData = toPieData(nonAssetOperatorDataByBranch, branchCode);
                     var pendingEmployeeChartData = pendingEmployeeChartDataForBranch(branchCode);
-                    var filteredSummary = branchSummaryData.filter(function(item) {
+                    var filteredSummary = branchAssetSummary.filter(function(item) {
                         return belongsToBranch(item.branch, branchCode);
                     });
 
@@ -872,6 +879,7 @@ Highcharts.chart('container-fix-lh', {
                         } else {
                             existing.asset_type_count = Object.assign({}, existing.asset_type_count || {}, item.asset_type_count || {});
                             existing.handset_count = Math.max(Number(existing.handset_count || 0), Number(item.handset_count || 0));
+                            existing.handset_simcard_count = Math.max(Number(existing.handset_simcard_count || 0), Number(item.handset_simcard_count || 0));
                             existing.operator_count = Math.max(Number(existing.operator_count || 0), Number(item.operator_count || 0));
                         }
                         return rows;
@@ -885,6 +893,9 @@ Highcharts.chart('container-fix-lh', {
                     });
                     var handsets = filteredSummary.map(function(item) {
                         return Number(item.handset_count || (item.asset_type_count || {}).Handset || 0);
+                    });
+                    var handsetSimcards = filteredSummary.map(function(item) {
+                        return Number(item.handset_simcard_count || 0);
                     });
                     var operators = filteredSummary.map(function(item) {
                         return Number(item.operator_count || 0);
@@ -908,6 +919,30 @@ Highcharts.chart('container-fix-lh', {
                         handsets = selectedSubDepartments.map(function(item) {
                             return Number(item.handset_count || 0);
                         });
+                        handsetSimcards = selectedSubDepartments.map(function(item) {
+                            return Number(item.handset_simcard_count || 0);
+                        });
+                    }
+
+                    var chartSeries = [{
+                            name: 'Laptop',
+                            data: laptops
+                        },
+                        {
+                            name: 'Handset',
+                            data: handsets
+                        },
+                        {
+                            name: 'Handset + Simcard',
+                            data: handsetSimcards
+                        }
+                    ];
+
+                    if (!useSubDepartmentBreakdown) {
+                        chartSeries.push({
+                            name: 'Operator Sim(ph)',
+                            data: operators
+                        });
                     }
 
                     Highcharts.chart('container-fix-lh', {
@@ -916,8 +951,8 @@ Highcharts.chart('container-fix-lh', {
                         },
                         title: {
                             text: useSubDepartmentBreakdown ?
-                                'Laptop, Handset, Laptop + Handset by Sub-department' :
-                                'Laptop, Handset, Operator by Branch'
+                                'Laptop, Handset, Handset + Simcard by Sub-department' :
+                                'Laptop, Handset, Handset + Simcard, Operator by Branch'
                         },
                         subtitle: {
                             text: selectedLabel
@@ -944,24 +979,7 @@ Highcharts.chart('container-fix-lh', {
                                 }
                             }
                         },
-                        series: [{
-                                name: 'Laptop',
-                                data: laptops
-                            },
-                            {
-                                name: 'Handset',
-                                data: handsets
-                            },
-                            useSubDepartmentBreakdown ? {
-                                name: 'Laptop + Handset',
-                                data: laptops.map(function(count, index) {
-                                    return count + handsets[index];
-                                })
-                            } : {
-                                name: 'Operator Sim(ph)',
-                                data: operators
-                            }
-                        ],
+                        series: chartSeries,
                         credits: {
                             enabled: false
                         }
