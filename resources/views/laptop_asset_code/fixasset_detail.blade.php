@@ -1655,21 +1655,21 @@
                                         <i class="bi bi-building"></i>
                                         <div>
                                             <span class="assignment-label">Branch</span>
-                                            <span class="assignment-value">{{ $remark->branch_name }}</span>
+                                            <span class="assignment-value">{{ $fixAsset?->branch_name ?: '-' }}</span>
                                         </div>
                                     </div>
                                     <div class="assignment-detail">
                                         <i class="bi bi-briefcase"></i>
                                         <div>
                                             <span class="assignment-label">Department</span>
-                                            <span class="assignment-value">{{ $remark->department ?: '-' }}</span>
+                                            <span class="assignment-value">{{ $fixAsset?->department ?: '-' }}</span>
                                         </div>
                                     </div>
                                     <div class="assignment-detail">
                                         <i class="bi bi-diagram-3"></i>
                                         <div>
                                             <span class="assignment-label">Sub Department</span>
-                                            <span class="assignment-value">{{ $remark->sub_department ?: '-' }}</span>
+                                            <span class="assignment-value">{{ $fixAsset?->sub_department ?: '-' }}</span>
                                         </div>
                                     </div>
                                     <div class="assignment-detail">

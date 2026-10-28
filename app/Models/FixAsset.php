@@ -17,6 +17,7 @@ class FixAsset extends Model
         'branch_code',
         'branch_name',
         'department',
+        'sub_department',
         'asset_type_name',
         'asset_name',
         'purchase_date',

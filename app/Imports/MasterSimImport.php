@@ -3,43 +3,78 @@
 namespace App\Imports;
 
 use App\Models\MasterSim;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class MasterSimImport implements ToModel, WithHeadingRow, WithValidation, SkipsEmptyRows
+class MasterSimImport implements ToCollection, WithHeadingRow, WithValidation, SkipsEmptyRows
 {
-    public function model(array $row): ?MasterSim
+    private int $added = 0;
+
+    private int $updated = 0;
+
+    private int $unchanged = 0;
+
+    public function collection(Collection $rows): void
     {
-        $simcard = $this->cleanSimcard($row['simcard'] ?? null);
-
-        if ($simcard === '') {
-            return null;
+        foreach ($rows as $row) {
+            $this->importRow($row);
         }
+    }
 
-        $sim = MasterSim::where('simcard', $simcard)
-            ->orWhere('simcard', '"' . $simcard . '"')
-            ->first();
+    public function prepareForValidation(array $row): array
+    {
+        $row['simcard'] = $this->cleanSimcard($row['simcard'] ?? null);
+        $row['type'] = $this->cleanType($row['type'] ?? null);
 
-        if (!$sim) {
-            $sim = new MasterSim();
-        }
+        return $row;
+    }
 
-        $sim->simcard = $simcard;
-        $sim->type = $this->cleanType($row['type'] ?? null);
-        $sim->save();
-
-        return $sim;
+    public function summary(): array
+    {
+        return [
+            'added' => $this->added,
+            'updated' => $this->updated,
+            'unchanged' => $this->unchanged,
+            'total' => $this->added + $this->updated + $this->unchanged,
+        ];
     }
 
     public function rules(): array
     {
         return [
             'simcard' => ['required'],
-            'type' => ['required', 'in:Reserve,Available,Used'],
+            'type' => ['required', 'in:reserve,available,used'],
         ];
+    }
+
+    private function importRow(Collection $row): void
+    {
+        $simcard = $row['simcard'];
+        $type = $row['type'];
+
+        $sim = MasterSim::where('simcard', $simcard)
+            ->orWhere('simcard', '"' . $simcard . '"')
+            ->first();
+
+        if ($sim === null) {
+            MasterSim::create(['simcard' => $simcard, 'type' => $type]);
+            $this->added++;
+
+            return;
+        }
+
+        if ($this->cleanType($sim->type) === $type) {
+            $this->unchanged++;
+
+            return;
+        }
+
+        $sim->update(['type' => $type]);
+        $this->updated++;
     }
 
     private function cleanSimcard(mixed $value): string

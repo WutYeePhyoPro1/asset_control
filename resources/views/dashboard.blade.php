@@ -1,6 +1,19 @@
 @extends('laptop_asset_code.layouts.master')
 @section('content')
-    <style>.chart-shell{border:0;border-radius:18px;padding:8px;background:#fff;box-shadow:none!important;transition:none;}.chart-shell:hover{box-shadow:none!important;transform:none;}</style>
+    <style>
+        .chart-shell{border:0;border-radius:18px;padding:8px;background:#fff;box-shadow:none!important;transition:none;}.chart-shell:hover{box-shadow:none!important;transform:none;}
+        .asset-kpi-card{position:relative;min-height:156px;overflow:hidden;border:0;border-radius:18px;color:#fff;box-shadow:0 10px 24px rgba(15,39,71,.12);}
+        .asset-kpi-card::after{content:"";position:absolute;right:-28px;bottom:-42px;width:145px;height:145px;border:18px solid rgba(255,255,255,.12);border-radius:50%;}
+        .asset-kpi-card .card-body{position:relative;z-index:1;padding:22px 22px 18px;}
+        .asset-kpi-card .asset-kpi-icon{display:flex;align-items:center;justify-content:center;width:48px;height:48px;margin-bottom:14px;border-radius:14px;color:#fff;font-size:27px;background:rgba(255,255,255,.2);}
+        .asset-kpi-card .asset-kpi-label{margin:0;color:rgba(255,255,255,.88);font-size:14px;font-weight:800;}
+        .asset-kpi-card .asset-kpi-value{margin:2px 0 0;color:#fff;font-size:34px;line-height:1.1;font-weight:900;}
+        .asset-kpi-card .asset-kpi-scope{margin:7px 0 0;color:rgba(255,255,255,.76);font-size:12px;font-weight:700;}
+        .asset-kpi-laptop{background:linear-gradient(135deg,#1769e0,#438df0);}
+        .asset-kpi-handset{background:linear-gradient(135deg,#0c9f9a,#27c0b2);}
+        .asset-kpi-sim{background:linear-gradient(135deg,#e58b1b,#f2b63f);}
+        .asset-kpi-combo{background:linear-gradient(135deg,#7a54c9,#9a76e5);}
+    </style>
 
     <script src="{{ asset('assets/js/highcharts.js') }}"></script>
 
@@ -86,68 +99,65 @@
 
 
     <section class="section">
+        <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card asset-kpi-card asset-kpi-laptop"><div class="card-body">
+                    <div class="asset-kpi-icon"><i class="bi bi-laptop"></i></div>
+                    <p class="asset-kpi-label">Laptop</p><p class="asset-kpi-value" id="totalAssetCount">0</p>
+                    <p class="asset-kpi-scope" id="totalAssetCountScope">All branches</p>
+                </div></div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card asset-kpi-card asset-kpi-handset"><div class="card-body">
+                    <div class="asset-kpi-icon"><i class="bi bi-phone"></i></div>
+                    <p class="asset-kpi-label">Handset Only</p><p class="asset-kpi-value" id="totalAssetCounth">0</p>
+                    <p class="asset-kpi-scope" id="totalAssetCounthScope">All branches</p>
+                </div></div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card asset-kpi-card asset-kpi-sim"><div class="card-body">
+                    <div class="asset-kpi-icon"><i class="bi bi-sim"></i></div>
+                    <p class="asset-kpi-label">Sim Only</p><p class="asset-kpi-value" id="totalNonAssetCount">0</p>
+                    <p class="asset-kpi-scope" id="totalNonAssetCountScope">All branches</p>
+                </div></div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="card asset-kpi-card asset-kpi-combo"><div class="card-body">
+                    <div class="asset-kpi-icon"><i class="bi bi-phone-vibrate"></i></div>
+                    <p class="asset-kpi-label">Handset + Simcard</p><p class="asset-kpi-value" id="totalAssetCountHs">0</p>
+                    <p class="asset-kpi-scope" id="totalAssetCountHsScope">All branches</p>
+                </div></div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-lg-6">
+                <div class="card"><div class="card-body">
+                    <h5 class="card-title">Laptop by Branch</h5>
+                    <div id="container-pi" class="chart-shell" style="min-height:300px;"></div>
+                </div></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card"><div class="card-body">
+                    <h5 class="card-title">Handset Only by Branch</h5>
+                    <div id="container-pi-h" class="chart-shell" style="min-height:300px;"></div>
+                </div></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card"><div class="card-body">
+                    <h5 class="card-title">Sim Only by Branch</h5>
+                    <div id="container-pi-non" class="chart-shell" style="min-height:300px;"></div>
+                </div></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card"><div class="card-body">
+                    <h5 class="card-title">Handset + Simcard by Branch</h5>
+                    <div id="container-pi-hs" class="chart-shell" style="min-height:300px;"></div>
+                </div></div>
+            </div>
+        </div>
+
         <div class="row">
-
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-
-                        <h5 class="card-title">Laptop</h5>
-                        <div class="col-md-12 chart-shell">
-
-                            <div id="container-pi"></div>
-                            <p id="totalAssetCount"></p>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-
-                        <h5 class="card-title">Handset</h5>
-                        <div class="col-md-12 chart-shell">
-
-                            <div id="container-pi-h"></div>
-                            <p id="totalAssetCounth"></p>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-
-                        <h5 class="card-title">Handset + Simcard</h5>
-                        <div class="col-md-12 chart-shell">
-
-                            <div id="container-pi-hs"></div>
-                            <p id="totalAssetCountHs"></p>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-
-                        <h5 class="card-title">Non Asset Code Operator</h5>
-                        <div class="col-md-12 chart-shell">
-
-                            <div id="container-pi-non"></div>
-                            <p id="totalNonAssetCount" style="margin: 10px 0px 10px 100px;">Total
-                                Operators:{{ $totalPhoneCount }}</p>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
 
             <div class="col-lg-12">
                 <div class="card">
@@ -803,14 +813,15 @@ Highcharts.chart('container-fix-lh', {
                     pieChart('container-pi-non', 'Non Asset Code Operator by Branch', 'Operators',
                         nonAssetChartData);
 
-                    document.getElementById('totalAssetCount').textContent = 'Total Laptop: ' + total(
-                        laptopChartData);
-                    document.getElementById('totalAssetCounth').textContent = 'Total Handset: ' + total(
-                        handsetChartData);
-                    document.getElementById('totalAssetCountHs').textContent = 'Total Handset + Simcard: ' +
-                        total(handsetSimcardChartData);
-                    document.getElementById('totalNonAssetCount').textContent = 'Total Operators: ' + total(
-                        nonAssetChartData);
+                    var scopeLabel = branchCode ? selectedLabel.trim() : 'All branches';
+                    document.getElementById('totalAssetCount').textContent = total(laptopChartData).toLocaleString();
+                    document.getElementById('totalAssetCounth').textContent = total(handsetChartData).toLocaleString();
+                    document.getElementById('totalAssetCountHs').textContent = total(handsetSimcardChartData).toLocaleString();
+                    document.getElementById('totalNonAssetCount').textContent = total(nonAssetChartData).toLocaleString();
+                    document.getElementById('totalAssetCountScope').textContent = scopeLabel;
+                    document.getElementById('totalAssetCounthScope').textContent = scopeLabel;
+                    document.getElementById('totalAssetCountHsScope').textContent = scopeLabel;
+                    document.getElementById('totalNonAssetCountScope').textContent = scopeLabel;
 
                     if (document.getElementById('container-pending-employee')) {
                         Highcharts.chart('container-pending-employee', {
@@ -901,9 +912,6 @@ Highcharts.chart('container-fix-lh', {
                         return Number(item.operator_count || 0);
                     });
 
-                    // Once a branch is selected, drill the comparison down to
-                    // its sub-departments. The combined series is the total
-                    // Laptop + Handset asset count for each sub-department.
                     var selectedSubDepartments = subDepartmentAssetData.filter(function(item) {
                         return !branchCode || item.branch_code === branchCode;
                     });

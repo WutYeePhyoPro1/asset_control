@@ -5,6 +5,17 @@
         <h1>Master Sim List</h1>
     </div>
 
+    @if (session('import_summary'))
+        @php($summary = session('import_summary'))
+        <div class="alert alert-success" role="status">
+            <strong>Import complete.</strong>
+            {{ $summary['total'] }} rows processed:
+            {{ $summary['unchanged'] }} identical skipped,
+            {{ $summary['added'] }} added,
+            {{ $summary['updated'] }} updated.
+        </div>
+    @endif
+
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif

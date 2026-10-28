@@ -351,6 +351,9 @@
         <a class="nav-link collapsed" href="{{ route('master_sim.index') }}" title="Master Sim List">
             <i class="bi bi-phone"></i><span>Master Sim List</span>
         </a>
+        <a class="nav-link collapsed" href="{{ route('user-guide') }}" target="_blank" rel="noopener noreferrer" title="User Guide ကို tab အသစ်တွင် ဖွင့်ရန်">
+            <i class="bi bi-book"></i><span>User Guide</span>
+        </a>
       </li><!-- End Components Nav -->
 
       @if(Auth::user()->hasRole('manager'))

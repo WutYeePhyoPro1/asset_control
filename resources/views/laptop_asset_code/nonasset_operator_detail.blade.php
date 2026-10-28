@@ -1191,6 +1191,8 @@
                                                     <input type="hidden" name="emp_id" class="selected-employee-id">
                                                     <input type="hidden" name="emp_name" class="selected-employee-name">
                                                     <input type="hidden" name="rank" class="selected-employee-rank">
+                                                    <input type="hidden" name="branch" class="selected-employee-branch">
+                                                    <input type="hidden" name="department" class="selected-employee-department">
                                                     <input type="hidden" name="sub_department"
                                                         class="selected-employee-sub-department">
                                                     <input type="hidden" name="section"
@@ -1439,14 +1441,7 @@
                                                         onblur="remarkUpdate({{ $getnonRemark->id }})" placeholder="Add a remark...">{{ $getnonRemark->remark }}</textarea>
 
 
-                                                    @if ($getnonOperator->count() <= 0)
-                                                        @if (Auth::user()->type == 'superadmin' || Auth::user()->hasRole('manager'))
-                                                            <button type="button" class="btn btn-outline-danger btn-sm"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#delnon{{ $getnonRemark->id }}"><i
-                                                                    class="bi bi-trash3 me-1"></i>Delete</button>
-                                                        @endif
-                                                    @endif
+                                 
                                                     <div class="form-actions">
                                                         <button type="button" data-bs-toggle="modal"
                                                             data-bs-target="#editremark{{ $getnonRemark->id }}"
@@ -1544,36 +1539,6 @@
 
                                         </div>
 
-                                        <div class="modal fade" id="delnon{{ $getnonRemark->id }}"
-                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12 col-12">
-                                                                <center>
-                                                                    <img
-                                                                        src="{{ asset('assets/img/external-warning.png') }}" />
-                                                                    <p style="color:#000;">Do you want to
-                                                                        delete?</p>
-                                                                    <i class="bi bi-x-circle btn btn-danger"
-                                                                        onclick='deleteRecordnon("{{ $getnonRemark->id }}")'
-                                                                        style="font-size:20px;color:fff;width:200px;">
-                                                                        Yes, delete it!</i>
-                                                                    <button type="button" class="btn btn-light-secondary"
-                                                                        data-bs-dismiss="modal">
-                                                                        <i class="bx bx-x d-block d-sm-none"></i>
-                                                                        <span class="d-none d-sm-block">Cancel</span>
-                                                                    </button>
-                                                                </center>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1625,6 +1590,8 @@
                 const selectedId = component.find('.selected-employee-id');
                 const selectedName = component.find('.selected-employee-name');
                 const selectedRank = component.find('.selected-employee-rank');
+                const selectedBranch = component.find('.selected-employee-branch');
+                const selectedDepartment = component.find('.selected-employee-department');
                 const selectedSubDepartment = component.find('.selected-employee-sub-department');
                 const selectedSection = component.find('.selected-employee-section');
 
@@ -1676,6 +1643,8 @@
                                         selectedId.val(employee.emp_id);
                                         selectedName.val(employee.name);
                                         selectedRank.val(employee.rank);
+                                        selectedBranch.val(employee.branch_name || employee.branch_code || '');
+                                        selectedDepartment.val(employee.department || '');
                                         selectedSubDepartment.val(employee.sub_department || '');
                                         selectedSection.val(employee.section || '');
                                         results.addClass('d-none').empty();
@@ -1701,6 +1670,8 @@
                     selectedId.val('');
                     selectedName.val('');
                     selectedRank.val('');
+                    selectedBranch.val('');
+                    selectedDepartment.val('');
                     selectedSubDepartment.val('');
                     selectedSection.val('');
                 });

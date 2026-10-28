@@ -169,7 +169,7 @@
                                                                 <div class="modal-body">
                                                                     <h5
                                                                         style="font-size:15px;;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
-                                                                        <a href="{{ asset('assets/img/nonassetoperatorimport.xlsx') }}"
+                                                                        <a href="{{ asset('assets/templates/non-asset-operator.xlsx') }}"
                                                                             download><u>Download Sample Excel File</u></a>
                                                                     </h5>
                                                                     <form action="{{ route('nonassetoperator.import') }}"
@@ -233,7 +233,7 @@
                                                     <div class="modal-body">
                                                         <h5
                                                             style="font-size:15px;font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
-                                                            <a href="{{ asset('assets/img/assetcontrolExcel.xlsx') }}"
+                                                            <a href="{{ asset('assets/templates/assetcontrol.xlsx') }}"
                                                                 download><u>Download Sample Excel File</u></a>
                                                         </h5>
                                                         <form action="{{ route('excel_import') }}"

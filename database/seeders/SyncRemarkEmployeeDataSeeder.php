@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Branch;
+use App\Models\FixAsset;
 use App\Models\Remark;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,6 @@ class SyncRemarkEmployeeDataSeeder extends Seeder
             ->whereNotNull('employeecode')
             ->get();
 
-        $matched = 0;
         $updated = 0;
 
         foreach ($employees as $employee) {
@@ -32,17 +32,23 @@ class SyncRemarkEmployeeDataSeeder extends Seeder
                 'updated_at' => now(),
             ];
 
-            $rows = Remark::where('emp_id', $employee->emp_id)->update($changes);
+            $assetCodes = Remark::where('emp_id', $employee->emp_id)
+                ->pluck('asset_code')
+                ->filter()
+                ->unique()
+                ->values();
 
-            if ($rows > 0) {
-                $matched += $rows;
-                $updated += $rows;
+            if ($assetCodes->isEmpty()) {
+                continue;
             }
+
+            $updated += FixAsset::whereIn('asset_code', $assetCodes)
+                ->update($changes);
         }
 
         if ($this->command) {
             $this->command->info(
-                "HR employee sync complete. Matched: {$matched}, updated: {$updated}."
+                "HR employee sync complete. Updated FixAsset rows: {$updated}."
             );
         }
     }

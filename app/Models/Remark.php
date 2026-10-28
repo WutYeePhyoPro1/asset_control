@@ -11,16 +11,12 @@ class Remark extends Model
     protected $fillable=[
         'asset_code',
         'emp_id',
-        'branch_code',
         'emp_name',
         'operator',
         'phone',
         'contract',
         'remark',
-        'rank',
-        'branch_name',
-        'department',
-        'sub_department',
+        'rank'
     ];
 
     public function Remarkelq(){

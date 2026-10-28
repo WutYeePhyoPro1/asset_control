@@ -18,6 +18,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use App\Services\EmployeeDirectoryService;
+use App\Services\MasterSimService;
+use App\Services\OperatorService;
 
 class LaptopAssetCodeController extends Controller
 {
@@ -55,39 +58,13 @@ class LaptopAssetCodeController extends Controller
     }
 
 
-    public function search_employee(Request $request)
+    public function search_employee(Request $request, EmployeeDirectoryService $employeeDirectory)
     {
         $validated = $request->validate([
             'employee_data' => ['required', 'string', 'max:100'],
         ]);
 
-        $employeeData = trim($validated['employee_data']);
-        $searchTerm = '%' . $employeeData . '%';
-        $bindings = [
-            'employee_id' => $searchTerm,
-            'employee_name' => $searchTerm,
-        ];
-
-        $conn = DB::connection('Hremployee');
-        $users = $conn->select("
-            SELECT
-                emp.employeecode AS emp_id,
-                emp.employeename AS name,
-                emp.positionlevel AS rank,
-                emp.department AS department,
-                emp.sub_department AS sub_department,
-                emp.section AS section,
-                emp.brchcode AS branch_code,
-                brch.branch_name
-            FROM hremployee.all_employee emp
-            LEFT JOIN master_data.master_branch brch
-                ON brch.branch_code = emp.brchcode
-            WHERE (emp.employeecode ILIKE :employee_id
-               OR emp.employeename ILIKE :employee_name
-               )
-            ORDER BY emp.employeename
-            LIMIT 20
-        ", $bindings);
+        $users = $employeeDirectory->search($validated['employee_data']);
 
         return response()->json([
             'status' => 'success',
@@ -136,9 +113,10 @@ class LaptopAssetCodeController extends Controller
 
             return [
                 'asset_code'      => $asset->asset_code,
-                'branch_name'     => $remark?->branch_name,
-                'department'      => $remark?->department,
-                'sub_department'  => $remark?->sub_department,
+                'branch_code'     => $asset->branch_code,
+                'branch_name'     => $asset->branch_name,
+                'department'      => $asset->department,
+                'sub_department'  => $asset->sub_department,
                 'asset_type_name' => $asset->asset_type_name,
                 'asset_name'      => $asset->asset_name,
                 'purchase_date'   => $asset->purchase_date,
@@ -267,7 +245,7 @@ class LaptopAssetCodeController extends Controller
 
     // fix asset update data
 
-    public function reMark(Request $request)
+    public function reMark(Request $request, OperatorService $operators)
     {
         // dd($request->all());
         $request->validate([
@@ -303,30 +281,20 @@ class LaptopAssetCodeController extends Controller
             'remark' => $request->input('remark'),
         ]);
 
-        for ($i = 0; $i < count($request->phone); $i++) {
-            $phone = trim((string) ($request->phone[$i] ?? ''));
-            $savedPhone = $phone === '09' ? null : $phone;
-
-            $addasset = [
-                'asset_code' => $asset_code,
-                'department' => $department,
-                'branch'     => $branch,
-                'asset_name' => $asset_name,
-                'asset_type' => $asset_type,
-                'operator'   => $request->operator[$i],
-                'phone'      => $savedPhone,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-
-            DB::table('operators')->insert($addasset);
-            $this->markMasterSimAsUsed($savedPhone);
-        }
+        $operators->addAssetOperators([
+            'asset_code' => $asset_code,
+            'department' => $department,
+            'branch' => $branch,
+            'asset_name' => $asset_name,
+            'asset_type' => $asset_type,
+            'operators' => $request->operator,
+            'phones' => $request->phone,
+        ]);
 
         return back()->with('success', 'Successfully saved.');
     }
 
-    public function OpNew(Request $request)
+    public function OpNew(Request $request, OperatorService $operators)
     {
         // dd($request->all());
         $request->validate([
@@ -342,44 +310,18 @@ class LaptopAssetCodeController extends Controller
         $asset_name = $request->asset_name;
         $asset_type = $request->asset_type;
 
-        for ($i = 0; $i < count($request->phone); $i++) {
-            $phone = trim((string) ($request->phone[$i] ?? ''));
-            $savedPhone = $phone === '09' ? null : $phone;
-
-            $addasset = [
-                'asset_code' => $asset_code,
-                'department' => $department,
-                'branch' => $branch,
-                'asset_name' => $asset_name,
-                'asset_type' => $asset_type,
-                'operator' => $request->operator[$i],
-                'phone' => $savedPhone,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-
-            DB::table('operators')->insert($addasset);
-
-            // A number not found in Master SIM is still allowed to save.
-            $this->markMasterSimAsUsed($savedPhone);
-        }
+        $operators->addAssetOperators([
+            'asset_code' => $asset_code,
+            'department' => $department,
+            'branch' => $branch,
+            'asset_name' => $asset_name,
+            'asset_type' => $asset_type,
+            'operators' => $request->operator,
+            'phones' => $request->phone,
+        ]);
 
         return back()->with('success', 'Data inserted successfully!');
     }
-
-    private function markMasterSimAsUsed(?string $phone): void
-    {
-        if ($phone === null || $phone === '') {
-            return;
-        }
-
-        MasterSim::query()
-            ->where('simcard', $phone)
-            ->whereRaw('LOWER(type) = ?', ['available'])
-            ->update(['type' => 'used']);
-    }
-
-
 
     public function updateRemark($id, Request $request)
     {
@@ -506,7 +448,7 @@ class LaptopAssetCodeController extends Controller
         return redirect()->route('detail_fixasset', $asset->asset_code);
     }
 
-    public function fix_detail($asset_code)
+    public function fix_detail($asset_code, MasterSimService $masterSims)
     {
         $conn = DB::connection('Fixasset');
         $query = $conn->select("SELECT fxdt.fxbranchcode AS branch_code, fxbr.fxbranchname AS branch_name, fxdp.fxdepartmentname AS department, fxtp.fxassettypename AS asset_type_name,
@@ -529,26 +471,25 @@ class LaptopAssetCodeController extends Controller
         }
 
         $remark = getRemark($asset_code);
+        $fixAsset = FixAsset::where('asset_code', $asset_code)->first();
         $operators = getOperator($asset_code);
         $assetHistories = AssetHistory::query()
             ->where('asset_code', $asset_code)
             ->orderBy('created_at')
             ->orderBy('id')
             ->get();
-        $masterSims = MasterSim::query()
-            ->whereRaw('LOWER(type) = ?', ['available'])
-            ->orderBy('simcard')
-            ->get(['simcard', 'type']);
+        $masterSims = $masterSims->available();
         return view('laptop_asset_code.fixasset_detail', compact(
             'query',
             'remark',
             'operators',
             'assetHistories',
-            'masterSims'
+            'masterSims',
+            'fixAsset'
         ));
     }
 
-    public function update_operator(Request $request, $id)
+    public function update_operator(Request $request, $id, OperatorService $operators)
     {
 
         $request->validate([
@@ -557,10 +498,7 @@ class LaptopAssetCodeController extends Controller
             'phone.regex' => 'Phone number must start with 09 and contain 11 digits.',
         ]);
 
-        $updateop = Operator::find($id);
-        $updateop->operator = $request->operator;
-        $updateop->phone = $request->phone === '09' ? null : $request->phone;
-        $updateop->update();
+        $operators->updateAsset($id, $request->operator, $request->phone);
         return back()->with('success', 'Successfully updated.');
     }
 
@@ -605,8 +543,6 @@ class LaptopAssetCodeController extends Controller
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
             'rank' => ['required', 'string', 'max:255'],
-            'section' => ['nullable', 'string', 'max:255'],
-            'sub_department' => ['nullable', 'string', 'max:255'],
             'branch_code' => ['required', 'string', 'max:255'],
             'department' => ['required', 'string', 'max:255'],
             'sub_department' => ['required', 'string', 'max:255'],
@@ -623,14 +559,24 @@ class LaptopAssetCodeController extends Controller
 
         $remark = Remark::findOrFail($id);
         $branchName = Branch::where('branch_code', $validated['branch_code'])->value('branch_name');
-        $remark->update([
-            'emp_id' => $validated['emp_id'],
+        $subDepartment = trim($validated['section']) !== 'Infrastructure'
+            ? trim($validated['section'])
+            : trim($validated['sub_department']);
+
+        $fixAsset = FixAsset::where('asset_code', $remark->asset_code)->firstOrFail();
+        $fixAsset->update([
             'branch_code' => $validated['branch_code'],
-            'emp_name' => $validated['emp_name'],
-            'rank' => trim($validated['rank']),
             'branch_name' => $branchName,
             'department' => $validated['department'],
-            'sub_department' => trim($validated['section']) != 'Infrastructure' ? trim($validated['section']) : trim($validated['sub_department']),
+            'sub_department' => $subDepartment,
+        ]);
+
+        // Keep employee identity in the assignment record. Organizational
+        // fields now live in fix_assets and are not rewritten on remarks.
+        $remark->update([
+            'emp_id' => $validated['emp_id'],
+            'emp_name' => $validated['emp_name'],
+            'rank' => trim($validated['rank']),
         ]);
 
         return back()->with('success', 'Assigned employee updated successfully.');
@@ -668,7 +614,7 @@ class LaptopAssetCodeController extends Controller
         return view('laptop_asset_code.nonasset_op_create', compact('departments', 'branches'));
     }
 
-    public function NonOpCreate(Request $request)
+    public function NonOpCreate(Request $request, OperatorService $operators)
     {
 
         // dd($request->all());
@@ -711,24 +657,16 @@ class LaptopAssetCodeController extends Controller
         ]);
 
 
-        $operators = $request->operator;
+        $operatorNames = $request->operator;
         $phones = $request->phone;
 
-        foreach ($phones as $i => $phone) {
-            $addnon = [
-                'doc_no' => $nonremark->doc_no,
-                'branch' => $nonremark->branch,
-                'department' => $nonremark->department,
-                'operator' => $operators[$i],
-                'phone' => $phone,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-
-
-            NonOperator::create($addnon);
-            $this->markMasterSimAsUsed($phone[$i]);
-        }
+        $operators->addNonAssetOperators([
+            'doc_no' => $nonremark->doc_no,
+            'branch' => $nonremark->branch,
+            'department' => $nonremark->department,
+            'operators' => $operatorNames,
+            'phones' => $phones,
+        ]);
 
         return redirect('detail_non_asset_code/' . $nonremark->doc_no);
     }
@@ -748,14 +686,11 @@ class LaptopAssetCodeController extends Controller
         ]);
     }
 
-    public function getEditnonOp($doc_no)
+    public function getEditnonOp($doc_no, MasterSimService $masterSims)
     {
         $getnonRemark = getnonRemark($doc_no);
         $getnonOperator = getnonOperator($doc_no);
-        $masterSims = MasterSim::query()
-            ->whereRaw('LOWER(type) = ?', ['available'])
-            ->orderBy('simcard')
-            ->get(['simcard', 'type']);
+        $masterSims = $masterSims->available();
 
         return view('laptop_asset_code.nonasset_operator_detail', compact(
             'getnonOperator',
@@ -764,7 +699,7 @@ class LaptopAssetCodeController extends Controller
         ));
     }
 
-    public function OpNonNew(Request $request)
+    public function OpNonNew(Request $request, OperatorService $operators)
     {
         // dd($request->all());
         $request->validate([
@@ -775,29 +710,23 @@ class LaptopAssetCodeController extends Controller
         ]);
 
         $doc_no = $request->doc_no;
-        $phone = $request->phone;
+        $phones = $request->phone;
         $name = $request->name;
         $department = $request->department;
         $branch = $request->branch;
 
-        for ($i = 0; $i < count($request->phone); $i++) {
-            $addnon = [
-                'doc_no' => $doc_no,
-                'department' => $department,
-                'branch' => $branch,
-                'operator' => $request->operator[$i],
-                'phone' => $request->phone[$i] === '09' ? null : $request->phone[$i],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-
-            DB::table('non_operators')->insert($addnon);
-        }
+        $operators->addNonAssetOperators([
+            'doc_no' => $doc_no,
+            'department' => $department,
+            'branch' => $branch,
+            'operators' => $request->operator,
+            'phones' => $phones,
+        ]);
 
         return back()->with('success', 'Data inserted successfully!');
     }
 
-    public function update_operator_non(Request $request, $id)
+    public function update_operator_non(Request $request, $id, OperatorService $operators)
     {
         $request->validate([
             'phone' => ['nullable', 'regex:/^09(?:\d{9})?$/'],
@@ -805,10 +734,7 @@ class LaptopAssetCodeController extends Controller
             'phone.regex' => 'Phone number must start with 09 and contain 11 digits.',
         ]);
 
-        $updateop = NonOperator::find($id);
-        $updateop->operator = $request->operator;
-        $updateop->phone = $request->phone;
-        $updateop->update();
+        $operators->updateNonAsset($id, $request->operator, $request->phone);
         return back()->with('success', 'Successfully updated.');
     }
 
@@ -842,6 +768,8 @@ class LaptopAssetCodeController extends Controller
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
             'rank' => ['required', 'string', 'max:255'],
+            'branch' => ['nullable', 'string', 'max:255'],
+            'department' => ['nullable', 'string', 'max:255'],
             'section' => ['nullable', 'string', 'max:255'],
             'sub_department' => ['nullable', 'string', 'max:255'],
         ], [
@@ -861,7 +789,16 @@ class LaptopAssetCodeController extends Controller
             'emp_id' => $validated['emp_id'],
             'name' => $validated['emp_name'],
             'rank' => $validated['rank'],
+            'branch' => trim((string) ($validated['branch'] ?? '')),
+            'department' => trim((string) ($validated['department'] ?? '')),
             'sub_department' => $request->sub_department,
+        ]);
+
+        // Keep the operator rows under this document in sync with the
+        // employee assignment shown on the detail page.
+        NonOperator::where('doc_no', $nonRemark->doc_no)->update([
+            'branch' => trim((string) ($validated['branch'] ?? '')),
+            'department' => trim((string) ($validated['department'] ?? '')),
         ]);
 
         return back()->with('success', 'Assigned employee updated successfully.');

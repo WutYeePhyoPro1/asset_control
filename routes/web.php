@@ -30,6 +30,17 @@ Route::group(['middleware' => ['auth']], function () {
         return redirect()->route('home');
     });
 
+    Route::get('/user-guide', function () {
+        $path = public_path('assets/user-guide/Asset Control.pdf');
+
+        abort_unless(is_file($path), 404);
+
+        return response()->file($path, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="Asset Control.pdf"',
+        ]);
+    })->name('user-guide');
+
     Route::resource('employee_benefic/all_user', UserController::class);
     Route::match(['get', 'post'], '/all_user/search', [UserController::class, 'search'])->name('all_user.search');
     Route::delete('/employee_benefic/delete_record/{id}', [LaptopAssetCodeController::class, 'deletRecord']);

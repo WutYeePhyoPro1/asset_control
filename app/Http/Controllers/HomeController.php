@@ -156,9 +156,9 @@ class HomeController extends Controller
          * ----------------------------------------------------------------
          * Handset+Simcard records are stored in the local fix_assets table.
          * Their branch assignment must come from the latest Remark record:
-         *   - Remark.branch_code -> branch filter/group key
-         *   - Remark.branch_name -> display branch name
-         * Records without a complete Remark branch assignment are excluded
+         *   - FixAsset.branch_code -> branch filter/group key
+         *   - FixAsset.branch_name -> display branch name
+         * Records without a complete FixAsset branch assignment are excluded
          * from these branch-based dashboard counts. No FixAsset branch
          * fallback is used, so branch data cannot be mixed accidentally.
          * ================================================================
@@ -170,27 +170,17 @@ class HomeController extends Controller
             ->where(function ($query) use ($activeFixAssetStatuses) {
                 $query->whereNotIn('status', $activeFixAssetStatuses)->orWhereNull('status');
             })
-            ->get(['asset_code', 'branch_code', 'branch_name', 'asset_type_name']);
+            ->get(['asset_code', 'branch_code', 'branch_name', 'department', 'sub_department', 'asset_type_name']);
 
-        $latestRemarksByAssetCode = Remark::query()
-            ->whereIn('asset_code', $activeFixAssets->pluck('asset_code'))
-            ->latest('updated_at')
-            ->latest('id')
-            ->get()
-            ->unique('asset_code')
-            ->keyBy('asset_code');
-
-        /* Read branch information directly from Remark. */
-        $resolveRemarkBranch = static function ($asset, $remarks) {
-            $remark = $remarks->get($asset->asset_code);
-
-            if (!$remark || blank($remark->branch_code) || blank($remark->branch_name)) {
+        /* Read branch information from the FixAsset assignment snapshot. */
+        $resolveAssetBranch = static function ($asset) {
+            if (blank($asset->branch_code) || blank($asset->branch_name)) {
                 return null;
             }
 
             return [
-                'code' => trim((string) $remark->branch_code),
-                'name' => trim((string) $remark->branch_name),
+                'code' => trim((string) $asset->branch_code),
+                'name' => trim((string) $asset->branch_name),
             ];
         };
         $normalizeAssetType = static fn ($value) => preg_replace(
@@ -199,21 +189,21 @@ class HomeController extends Controller
             strtolower(trim((string) $value))
         );
 
-        /* Group Handset+Simcard assets by Remark.branch_code. */
+        /* Group Handset+Simcard assets by FixAsset.branch_code. */
         $handsetSimcardAssetsGroupedByBranch = $activeFixAssets
-            ->filter(function ($asset) use ($normalizeAssetType, $latestRemarksByAssetCode, $resolveRemarkBranch) {
+            ->filter(function ($asset) use ($normalizeAssetType, $resolveAssetBranch) {
                 return $normalizeAssetType($asset->asset_type_name) === 'handset+simcard'
-                    && $resolveRemarkBranch($asset, $latestRemarksByAssetCode) !== null;
+                    && $resolveAssetBranch($asset) !== null;
             })
-            ->groupBy(function ($asset) use ($latestRemarksByAssetCode, $resolveRemarkBranch) {
-                return $resolveRemarkBranch($asset, $latestRemarksByAssetCode)['code'];
+            ->groupBy(function ($asset) use ($resolveAssetBranch) {
+                return $resolveAssetBranch($asset)['code'];
             });
 
 
         /* Convert grouped records into the format expected by the pie chart. */
         $handsetSimcardCountsByBranch = $handsetSimcardAssetsGroupedByBranch
-            ->map(function ($assets, $branchCode) use ($latestRemarksByAssetCode, $resolveRemarkBranch) {
-                $branch = $resolveRemarkBranch($assets->first(), $latestRemarksByAssetCode);
+            ->map(function ($assets, $branchCode) use ($resolveAssetBranch) {
+                $branch = $resolveAssetBranch($assets->first());
 
                 return (object) [
                     'branch' => $branch['name'] . ' (' . $branch['code'] . ')',
@@ -225,9 +215,8 @@ class HomeController extends Controller
 
         /* Build the column-chart data: branch -> sub-department -> asset type. */
         $subDepartmentAssetData = $activeFixAssets
-            ->map(function ($asset) use ($latestRemarksByAssetCode, $resolveRemarkBranch, $normalizeAssetType) {
-                $remark = $latestRemarksByAssetCode->get($asset->asset_code);
-                $branch = $resolveRemarkBranch($asset, $latestRemarksByAssetCode);
+            ->map(function ($asset) use ($resolveAssetBranch, $normalizeAssetType) {
+                $branch = $resolveAssetBranch($asset);
                 $type = $normalizeAssetType($asset->asset_type_name);
 
                 if ($branch === null || !in_array($type, ['laptop', 'handset', 'handset+simcard'], true)) {
@@ -237,7 +226,7 @@ class HomeController extends Controller
                 return [
                     'branch_code' => $branch['code'],
                     'branch' => $branch['name'] . ' (' . $branch['code'] . ')',
-                    'sub_department' => trim((string) ($remark?->sub_department ?: 'Unassigned')),
+                    'sub_department' => trim((string) ($asset->sub_department ?: 'Unassigned')),
                     'asset_type' => $type,
                 ];
             })
