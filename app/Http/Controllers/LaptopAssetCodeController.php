@@ -135,7 +135,7 @@ class LaptopAssetCodeController extends Controller
             ->get()
             ->groupBy('asset_code');
 
-        
+
 
         return view('laptop_asset_code.fix_asset', array_merge(
             compact(
@@ -272,11 +272,14 @@ class LaptopAssetCodeController extends Controller
 
 
         $fixAsset = FixAsset::where('asset_code', $asset_code)->firstOrFail();
+        $subDepartment = trim($validated['section']) !== 'Infrastructure'
+            ? trim($validated['section'])
+            : trim($validated['sub_department']);
         $fixAsset->update([
             'branch_code' => $branchCode,
             'branch_name' => $branchName,
             'department' => $validated['employee_department'],
-            'sub_department' => $validated['employee_sub_department'] ?? null,
+            'sub_department' => $subDepartment ?? null,
         ]);
 
         Remark::create([
@@ -545,7 +548,7 @@ class LaptopAssetCodeController extends Controller
      */
     public function update_remark_employee(Request $request, $id)
     {
-   
+
         $validated = $request->validate([
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
