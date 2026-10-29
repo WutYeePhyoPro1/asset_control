@@ -245,10 +245,9 @@ class LaptopAssetCodeController extends Controller
 
     // fix asset update data
 
-    public function reMark(Request $request, OperatorService $operators)
+    public function reMark(Request $request, OperatorService $operatorService)
     {
-        // dd($request->all());
-        $request->validate([
+        $validated = $request->validate([
             'emp_id' => ['required', 'string', 'max:100'],
             'emp_name' => ['required', 'string', 'max:255'],
             'employee_branch_code' => ['required', 'string', 'max:255'],
@@ -263,25 +262,33 @@ class LaptopAssetCodeController extends Controller
         ]);
 
         $asset_code = $request->asset_code;
-        $department = $request->department;
-        $branch = $request->branch;
         $asset_name = $request->asset_name;
         $asset_type = $request->asset_type;
 
+        $branchCode = $validated['employee_branch_code'];
+        $branchName = Branch::where('branch_code', $branchCode)->value('branch_name');
+        $department = $validated['employee_department'];
+        $branch = $branchName ? "{$branchName}({$branchCode})" : $branchCode;
+
+
+        $fixAsset = FixAsset::where('asset_code', $asset_code)->firstOrFail();
+        $fixAsset->update([
+            'branch_code' => $branchCode,
+            'branch_name' => $branchName,
+            'department' => $validated['employee_department'],
+            'sub_department' => $validated['employee_sub_department'] ?? null,
+        ]);
+
         Remark::create([
-            'asset_code' => $request->input('asset_code'),
-            'emp_id' => $request->input('emp_id'),
-            'branch_code' => $request->input('employee_branch_code'),
-            'emp_name' => $request->input('emp_name'),
+            'asset_code' => $asset_code,
+            'emp_id' => $validated['emp_id'],
+            'emp_name' => $validated['emp_name'],
             'rank' => $request->input('rank'),
-            'branch_name' => Branch::where('branch_code', $request->input('employee_branch_code'))->value('branch_name'),
-            'department' => $request->input('employee_department'),
-            'sub_department' => $request->input('employee_sub_department'),
             'contract' => $request->input('contract'),
             'remark' => $request->input('remark'),
         ]);
 
-        $operators->addAssetOperators([
+        $operatorService->addAssetOperators([
             'asset_code' => $asset_code,
             'department' => $department,
             'branch' => $branch,
@@ -294,7 +301,7 @@ class LaptopAssetCodeController extends Controller
         return back()->with('success', 'Successfully saved.');
     }
 
-    public function OpNew(Request $request, OperatorService $operators)
+    public function OpNew(Request $request, OperatorService $operatorService)
     {
         // dd($request->all());
         $request->validate([
@@ -310,7 +317,7 @@ class LaptopAssetCodeController extends Controller
         $asset_name = $request->asset_name;
         $asset_type = $request->asset_type;
 
-        $operators->addAssetOperators([
+        $operatorService->addAssetOperators([
             'asset_code' => $asset_code,
             'department' => $department,
             'branch' => $branch,
