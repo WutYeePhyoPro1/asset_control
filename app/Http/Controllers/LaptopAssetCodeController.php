@@ -253,6 +253,7 @@ class LaptopAssetCodeController extends Controller
             'employee_branch_code' => ['required', 'string', 'max:255'],
             'employee_department' => ['required', 'string', 'max:255'],
             'employee_sub_department' => ['nullable', 'string', 'max:255'],
+            'employee_section' => ['nullable', 'string', 'max:255'],
             'phone' => ['required', 'array'],
             'phone.*' => ['nullable', 'regex:/^09(?:\d{9})?$/'],
         ], [
@@ -272,9 +273,10 @@ class LaptopAssetCodeController extends Controller
 
 
         $fixAsset = FixAsset::where('asset_code', $asset_code)->firstOrFail();
-        $subDepartment = trim($validated['section']) !== 'Infrastructure'
-            ? trim($validated['section'])
-            : trim($validated['sub_department']);
+        $section = trim((string) ($validated['employee_section'] ?? ''));
+        $subDepartment = $section !== '' && $section !== 'Infrastructure'
+            ? $section
+            : trim((string) ($validated['employee_sub_department'] ?? ''));
         $fixAsset->update([
             'branch_code' => $branchCode,
             'branch_name' => $branchName,

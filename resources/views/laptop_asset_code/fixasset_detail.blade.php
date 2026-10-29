@@ -1790,6 +1790,8 @@
                                                                         class="selected-employee-department">
                                                                     <input type="hidden" name="employee_sub_department"
                                                                         class="selected-employee-sub-department">
+                                                                    <input type="hidden" name="employee_section"
+                                                                        class="selected-employee-section">
                                                                     <button type="button"
                                                                         class="btn btn-primary px-4 employee-search-button">
                                                                         <i class="bi bi-search me-1"></i>Search
