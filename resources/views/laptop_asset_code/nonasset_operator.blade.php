@@ -404,6 +404,7 @@
                                                             <th scope="col">Document No</th>
                                                             <th scope="col">Branch</th>
                                                             <th scope="col">Department</th>
+                                                            <th scope="col">Sub Department</th>
                                                             <th scope="col">Employee ID</th>
                                                             <th scope="col">Employee Name</th>
                                                             <th scope="col">Phone Number</th>
@@ -435,6 +436,7 @@
                                                                 <td>{{ $data->doc_no }}</td>
                                                                 <td>{{ $data->branch }}</td>
                                                                 <td>{{ $data->department }}</td>
+                                                                <td>{{ $data->sub_department }}</td>
                                                                 <td>
 
                                                                     @foreach (getnonRemark208($data->doc_no) as $nonremark)
@@ -695,7 +697,7 @@
                         text: 'Export to Excel',
 
                         exportOptions: {
-                            columns: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                            columns: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
                         },
 
                     },
