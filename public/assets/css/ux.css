@@ -1,0 +1,160 @@
+/* ==========================================================================
+   UX layer: form polish + motion. Loaded after style.css on every page.
+   All motion is disabled for users who prefer reduced motion.
+   ========================================================================== */
+:root {
+  --ux-accent: #4154f1;
+  --ux-accent-soft: rgba(65, 84, 241, .16);
+  --ux-ink: #012970;
+  --ux-danger: #dc3545;
+  --ux-danger-soft: rgba(220, 53, 69, .16);
+  --ux-success: #198754;
+  --ux-ease: cubic-bezier(.2, .8, .2, 1);
+  --ux-fast: .16s;
+  --ux-med: .28s;
+}
+
+/* ---- Page entrance ---------------------------------------------------- */
+@keyframes ux-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes ux-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+#main .pagetitle { animation: ux-fade-in var(--ux-med) var(--ux-ease) backwards; }
+#main .card {
+  animation: ux-fade-up .38s var(--ux-ease) backwards;
+  transition: box-shadow var(--ux-med) var(--ux-ease);
+}
+#main .card:hover { box-shadow: 0 6px 22px rgba(1, 41, 112, .10); }
+/* light stagger for the first few cards */
+#main .row > [class*="col"]:nth-child(2) > .card { animation-delay: .04s; }
+#main .row > [class*="col"]:nth-child(3) > .card { animation-delay: .08s; }
+#main .row > [class*="col"]:nth-child(4) > .card { animation-delay: .12s; }
+
+/* ---- Form fields ------------------------------------------------------ */
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border-color: #cfd6e4;
+  transition: border-color var(--ux-fast) ease, box-shadow var(--ux-fast) ease,
+              background-color var(--ux-fast) ease;
+}
+.form-control:hover:not(:disabled):not([readonly]),
+.form-select:hover:not(:disabled) { border-color: #9fb0d6; }
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--ux-accent);
+  box-shadow: 0 0 0 .22rem var(--ux-accent-soft);
+}
+.form-control[readonly] { background-color: #f6f8fc; }
+
+.form-check-input { transition: background-color var(--ux-fast) ease, border-color var(--ux-fast) ease, box-shadow var(--ux-fast) ease; }
+.form-check-input:checked { background-color: var(--ux-accent); border-color: var(--ux-accent); }
+
+/* Label highlights while its field has focus */
+.ux-field-focus > label,
+.ux-field-focus > .form-label { color: var(--ux-accent) !important; transition: color var(--ux-fast) ease; }
+
+/* Required marker, added by ux.js only where a label has none */
+.ux-required::after { content: " *"; color: var(--ux-danger); font-weight: 700; }
+
+/* Invalid state: only after the user has interacted or tried to submit */
+.form-control.is-invalid, .form-select.is-invalid,
+.was-validated .form-control:invalid, .was-validated .form-select:invalid,
+.form-control:user-invalid, .form-select:user-invalid {
+  border-color: var(--ux-danger);
+}
+.form-control.is-invalid:focus, .form-select.is-invalid:focus,
+.was-validated .form-control:invalid:focus, .was-validated .form-select:invalid:focus,
+.form-control:user-invalid:focus, .form-select:user-invalid:focus {
+  box-shadow: 0 0 0 .22rem var(--ux-danger-soft);
+}
+.invalid-feedback { animation: ux-fade-in var(--ux-fast) ease both; }
+
+@keyframes ux-shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(3px); }
+  30%, 50%, 70% { transform: translateX(-5px); }
+  40%, 60% { transform: translateX(5px); }
+}
+.ux-shake { animation: ux-shake .42s ease both; }
+
+/* Select2 matches the native fields */
+.select2-container--bootstrap-5 .select2-selection {
+  border-radius: 8px !important;
+  transition: border-color var(--ux-fast) ease, box-shadow var(--ux-fast) ease;
+}
+.select2-container--bootstrap-5.select2-container--focus .select2-selection,
+.select2-container--bootstrap-5.select2-container--open .select2-selection {
+  border-color: var(--ux-accent) !important;
+  box-shadow: 0 0 0 .22rem var(--ux-accent-soft) !important;
+}
+.select2-dropdown { animation: ux-fade-up var(--ux-fast) var(--ux-ease) both; }
+
+/* ---- Buttons ---------------------------------------------------------- */
+.btn {
+  transition: transform var(--ux-fast) var(--ux-ease), box-shadow var(--ux-fast) ease,
+              background-color var(--ux-fast) ease, border-color var(--ux-fast) ease, color var(--ux-fast) ease;
+}
+.btn:not(:disabled):not(.disabled):hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(1, 41, 112, .14); }
+.btn:not(:disabled):not(.disabled):active { transform: translateY(0) scale(.98); box-shadow: none; }
+.btn-close { transition: transform var(--ux-fast) ease, opacity var(--ux-fast) ease; }
+.btn-close:hover { transform: rotate(90deg); }
+
+/* Loading state while a form submits */
+.btn.ux-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+.btn.ux-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 1.05em;
+  height: 1.05em;
+  border: 2px solid currentColor;
+  border-color: #fff #fff #fff transparent;
+  border-radius: 50%;
+  animation: ux-spin .7s linear infinite;
+}
+.btn-light.ux-loading::after,
+.btn-outline-primary.ux-loading::after,
+.btn-outline-secondary.ux-loading::after { border-color: var(--ux-ink) var(--ux-ink) var(--ux-ink) transparent; }
+@keyframes ux-spin { to { transform: rotate(360deg); } }
+
+/* ---- Modals ----------------------------------------------------------- */
+.modal.fade .modal-dialog {
+  transform: translateY(14px) scale(.97);
+  opacity: 0;
+  transition: transform var(--ux-med) var(--ux-ease), opacity var(--ux-med) var(--ux-ease);
+}
+.modal.show .modal-dialog { transform: none; opacity: 1; }
+.modal-content { border: 0; border-radius: 14px; box-shadow: 0 18px 50px rgba(1, 41, 112, .22); }
+
+/* ---- Tables, dropdowns, alerts --------------------------------------- */
+main .table tbody tr td, main .table tbody tr th { transition: background-color var(--ux-fast) ease; }
+main .table-hover tbody tr:hover > * { background-color: #f3f6ff !important; }
+
+.dropdown-menu.show { animation: ux-fade-up var(--ux-fast) var(--ux-ease) both; }
+
+.alert { animation: ux-fade-up var(--ux-med) var(--ux-ease) both; }
+.alert.ux-leave { transition: opacity var(--ux-med) ease, transform var(--ux-med) ease; opacity: 0; transform: translateY(-6px); }
+
+/* SweetAlert popups match the modal motion */
+.swal2-popup { border-radius: 14px !important; }
+
+/* ---- Reduced motion --------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+  .btn.ux-loading::after { animation: ux-spin 1.4s linear infinite !important; }
+  .btn:hover, .btn-close:hover { transform: none !important; }
+}

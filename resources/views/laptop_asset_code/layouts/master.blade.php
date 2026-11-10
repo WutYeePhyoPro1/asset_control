@@ -21,26 +21,15 @@
 
   <link href="{{asset('assets/vendor/bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
   <link href="{{asset('assets/vendor/bootstrap-icons/bootstrap-icons.css')}}" rel="stylesheet">
-  <link href="{{asset('assets/vendor/boxicons/css/boxicons.min.css')}}" rel="stylesheet">
-  @if (empty($minimalAssets))
-    <link href="{{asset('assets/vendor/quill/quill.snow.css')}}" rel="stylesheet">
-    <link href="{{asset('assets/vendor/quill/quill.bubble.css')}}" rel="stylesheet">
-  @endif
-  <link href="{{asset('assets/vendor/remixicon/remixicon.css')}}" rel="stylesheet">
-  @if (empty($minimalAssets))
-    <link href="{{asset('assets/vendor/simple-datatables/style.css')}}" rel="stylesheet">
-  @endif
 
   <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
+  <link href="{{ asset('assets/css/ux.css') }}" rel="stylesheet">
 
   @if (empty($minimalAssets))
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
   @endif
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
-  @if (empty($minimalAssets))
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.3/css/selectize.min.css">
-  @endif
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
@@ -533,16 +522,10 @@ main .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 <!-- Vendor JS Files -->
 <script src="{{asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-@if (empty($minimalAssets))
-  <script src="{{asset('assets/vendor/quill/quill.min.js')}}"></script>
-  <script src="{{asset('assets/vendor/simple-datatables/simple-datatables.js')}}"></script>
-  <script src="{{asset('assets/vendor/tinymce/tinymce.min.js')}}"></script>
-  <script src="{{asset('assets/vendor/php-email-form/validate.js')}}"></script>
-@endif
 <script src="{{asset('assets/js/main.js')}}"></script>
+<script src="{{ asset('assets/js/ux.js') }}"></script>
 @if (empty($minimalAssets))
   <script src="{{asset('assets/js/select2.full.min.js')}}"></script>
-  <script src="{{asset('assets/js/selectize.min.js')}}"></script>
 @endif
 
 <link rel="stylesheet" href="{{ asset('assets/css/buttons.bootstrap5.min.css') }}">
@@ -557,11 +540,6 @@ main .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
 <script src="{{asset('assets/js/jszip.min.js')}}"></script>
 <script src="{{asset('assets/js/buttons.html5.min.js')}}"></script>
 <script src="{{asset('assets/js/buttons.colVis.min.js')}}"></script>
-@if (empty($minimalAssets))
-  <script src="{{asset('assets/js/pdfmake.min.js')}}"></script>
-  <script src="{{asset('assets/js/vfs_fonts.js')}}"></script>
-  <script src="{{asset('assets/js/buttons.print.min.js')}}"></script>
-@endif
 
 
 <script>

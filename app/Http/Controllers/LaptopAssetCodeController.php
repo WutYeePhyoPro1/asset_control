@@ -603,12 +603,18 @@ class LaptopAssetCodeController extends Controller
         if ($user->hasRole('manager')) {
             $nonoperators = NonRemark::latest()->get();
         } elseif ($branch_id) {
-            $nonoperators = NonRemark::where('branch', 'like', "%$branch_id%")->get();
+            $nonoperators = NonRemark::where('branch', 'like', "%$branch_id%")->latest()->get();
+        } else {
+            $nonoperators = collect();
         }
+        $operatorsByDoc = NonOperator::whereIn('doc_no', $nonoperators->pluck('doc_no'))
+            ->orderByDesc('id')
+            ->get()
+            ->groupBy('doc_no');
         $departments = Department::all();
         $branches = Branch::all();
         //
-        return view('laptop_asset_code.nonasset_operator', compact('nonoperators', 'branches', 'departments'));
+        return view('laptop_asset_code.nonasset_operator', compact('nonoperators', 'operatorsByDoc', 'branches', 'departments'));
     }
 
     public function nonasset_operator_create()

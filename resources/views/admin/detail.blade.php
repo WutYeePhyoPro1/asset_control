@@ -144,7 +144,7 @@
                         <div class="col-md-12 col-lg-12">
                         <div class="row g-3">
                         <div class="col-md-4 col-lg-4">
-                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;"><i class="ri-information-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> User Profile</label>
+                        <label for="validationCustom01" class="form-label card-title" style="font-size: 15px;"><i class="bi bi-info-circle-fill" style="font-size: 16px;" data-bs-toggle="tooltip" data-bs-placement="top" title="We can accept file types as jpg, png, gif,webp or jpeg."></i> User Profile</label>
                         <label for="my_file">
                         <i class="bi bi-upload btn btn-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="user account profile click the button."></i>
                         </label>

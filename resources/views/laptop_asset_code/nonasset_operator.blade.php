@@ -150,7 +150,7 @@
                                                     <button class="btn btn-success" data-bs-toggle="modal"
                                                         data-bs-target="#import_non" type="button">
                                                         <font class="card-title" style="color:#fff;font-size: 13px;">
-                                                            <i class="ri-file-excel-2-line" style="font-size: 12px;"></i>
+                                                            <i class="bi bi-file-earmark-excel" style="font-size: 12px;"></i>
                                                             Excel Import
                                                         </font>
                                                     </button>
@@ -161,7 +161,7 @@
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title"
                                                                         style="font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
-                                                                        <i class="ri-file-excel-2-line"
+                                                                        <i class="bi bi-file-earmark-excel"
                                                                             style="font-size: 20px;"></i> Excel Import</h5>
                                                                     <button type="button" class="btn-close"
                                                                         data-bs-dismiss="modal" aria-label="Close"></button>
@@ -225,7 +225,7 @@
                                                     <div class="modal-header">
                                                         <h5 class="modal-title"
                                                             style="font-weight: 500;color: #012970;font-family: Poppins, sans-serif;">
-                                                            <i class="ri-file-excel-2-line" style="font-size: 20px;"></i>
+                                                            <i class="bi bi-file-earmark-excel" style="font-size: 20px;"></i>
                                                             Excel Import</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                             aria-label="Close"></button>
@@ -439,34 +439,26 @@
                                                                 <td>{{ $data->sub_department }}</td>
                                                                 <td>
 
-                                                                    @foreach (getnonRemark208($data->doc_no) as $nonremark)
-                                                                        {{ $nonremark->emp_id }}
-                                                                    @endforeach
+                                                                    {{ $data->emp_id }}
                                                                 </td>
                                                                 <td>
                                                                     {{-- {{ getnonRemark($data->doc_no)->name  }} --}}
-                                                                    @foreach (getnonRemark208($data->doc_no) as $nonremark)
-                                                                        {{ $nonremark->name }}
-                                                                    @endforeach
+                                                                    {{ $data->name }}
                                                                 </td>
 
                                                                 <td>
-                                                                     @foreach (getnonOperator($data->doc_no) as $nonremark)
+                                                                     @foreach ($operatorsByDoc->get($data->doc_no, []) as $nonremark)
                                                                         {{ $nonremark->phone }}
                                                                     @endforeach
                                                                 </td>
 
                                                                 <td>
                                                                     {{-- {{ getnonRemark($data->doc_no)->contract }} --}}
-                                                                    @foreach (getnonRemark208($data->doc_no) as $nonremark)
-                                                                        {{ $nonremark->contract }}
-                                                                    @endforeach
+                                                                    {{ $data->contract }}
                                                                 </td>
                                                                 <td>
                                                                     {{-- {{ getnonRemark($data->doc_no)->remark }} --}}
-                                                                    @foreach (getnonRemark208($data->doc_no) as $nonremark)
-                                                                        {{ $nonremark->remark }}
-                                                                    @endforeach
+                                                                    {{ $data->remark }}
 
                                                                 </td>
                                                                 <td>{{ $data->created_at }}</td>
@@ -494,7 +486,7 @@
                                                                                             class="btn btn-light-secondary"
                                                                                             data-bs-dismiss="modal">
                                                                                             <i
-                                                                                                class="bx bx-x d-block d-sm-none"></i>
+                                                                                                class="bi bi-x d-block d-sm-none"></i>
                                                                                             <span
                                                                                                 class="d-none d-sm-block">Cancel</span>
                                                                                         </button>

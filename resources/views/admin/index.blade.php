@@ -424,7 +424,7 @@
                                                                                         class="btn btn-light-secondary"
                                                                                         data-bs-dismiss="modal">
                                                                                         <i
-                                                                                            class="bx bx-x d-block d-sm-none"></i>
+                                                                                            class="bi bi-x d-block d-sm-none"></i>
                                                                                         <span
                                                                                             class="d-none d-sm-block">Cancel</span>
                                                                                     </button>
@@ -470,7 +470,7 @@
                                                                             <label for="validationCustom01"
                                                                                 class="form-label card-title"
                                                                                 style="font-size: 15px;"><i
-                                                                                    class="ri-information-fill"
+                                                                                    class="bi bi-info-circle-fill"
                                                                                     style="font-size: 16px;"
                                                                                     data-bs-toggle="tooltip"
                                                                                     data-bs-placement="top"
