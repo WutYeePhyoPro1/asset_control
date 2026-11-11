@@ -130,33 +130,6 @@
             </div>
         </div>
 
-        <div class="row g-3 mb-4">
-            <div class="col-lg-6">
-                <div class="card"><div class="card-body">
-                    <h5 class="card-title">Laptop by Branch</h5>
-                    <div id="container-pi" class="chart-shell" style="min-height:300px;"></div>
-                </div></div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card"><div class="card-body">
-                    <h5 class="card-title">Handset Only by Branch</h5>
-                    <div id="container-pi-h" class="chart-shell" style="min-height:300px;"></div>
-                </div></div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card"><div class="card-body">
-                    <h5 class="card-title">Sim Only by Branch</h5>
-                    <div id="container-pi-non" class="chart-shell" style="min-height:300px;"></div>
-                </div></div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card"><div class="card-body">
-                    <h5 class="card-title">Handset + Simcard by Branch</h5>
-                    <div id="container-pi-hs" class="chart-shell" style="min-height:300px;"></div>
-                </div></div>
-            </div>
-        </div>
-
         <div class="row">
 
             <div class="col-lg-12">
@@ -806,12 +779,6 @@ Highcharts.chart('container-fix-lh', {
                         return belongsToBranch(item.branch, branchCode);
                     });
 
-                    pieChart('container-pi', 'Laptop by Branch', 'Laptop', laptopChartData);
-                    pieChart('container-pi-h', 'Handset by Branch', 'Handset', handsetChartData);
-                    pieChart('container-pi-hs', 'Handset + Simcard by Branch', 'Handset + Simcard',
-                        handsetSimcardChartData);
-                    pieChart('container-pi-non', 'Non Asset Code Operator by Branch', 'Operators',
-                        nonAssetChartData);
 
                     var scopeLabel = branchCode ? selectedLabel.trim() : 'All branches';
                     document.getElementById('totalAssetCount').textContent = total(laptopChartData).toLocaleString();
