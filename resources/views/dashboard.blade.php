@@ -84,6 +84,12 @@
             </form>
         </div>
         <div class="col-lg-3">
+            <label class="form-label" for="subDepartmentFilter">Sub Department အလိုက် ရှာရန်</label>
+            <select id="subDepartmentFilter" class="form-control" style="width:100%">
+                <option value="">-- All Sub Departments --</option>
+            </select>
+        </div>
+        <div class="col-lg-3">
             <label class="form-label" for="monthFilter">Date အလိုက် ရှာရန်</label>
             <input type="month" name="month" id="monthFilter" class="form-control"
                 value="{{ request('month') }}" min="2000-01" max="{{ now()->format('Y-m') }}"
@@ -668,6 +674,7 @@ Highcharts.chart('container-fix-lh', {
         document.addEventListener('DOMContentLoaded', function() {
             (function() {
                 var branchFilter = document.getElementById('branchFilter');
+                var subDepartmentFilter = document.getElementById('subDepartmentFilter');
                 // Pie-chart data sources:
                 // - Laptop and Handset: Fixasset database counts
                 // - Handset+Simcard: local FixAsset counts grouped by Remark branch
@@ -767,6 +774,25 @@ Highcharts.chart('container-fix-lh', {
                 // Rebuild all four pie charts and the branch/sub-department chart.
                 // branchCode is the selected Branch.branch_code (for example MM-001),
                 // while the chart label may show the short name (for example HO).
+                function populateSubDepartments(branchCode) {
+                    var previous = subDepartmentFilter.value;
+                    var names = [];
+                    subDepartmentAssetData.forEach(function(item) {
+                        if ((!branchCode || item.branch_code === branchCode) && names.indexOf(item.sub_department) === -1) {
+                            names.push(item.sub_department);
+                        }
+                    });
+                    names.sort();
+                    subDepartmentFilter.innerHTML = '<option value="">-- All Sub Departments --</option>';
+                    names.forEach(function(name) {
+                        var opt = document.createElement('option');
+                        opt.value = name;
+                        opt.textContent = name;
+                        subDepartmentFilter.appendChild(opt);
+                    });
+                    if (names.indexOf(previous) !== -1) subDepartmentFilter.value = previous;
+                }
+
                 function renderDashboard(branchCode) {
                     // 1. Prepare each asset section's pie-chart data.
                     var selectedLabel = branchFilter.options[branchFilter.selectedIndex].text;
@@ -780,7 +806,21 @@ Highcharts.chart('container-fix-lh', {
                     });
 
 
+                    var subDepartment = subDepartmentFilter.value;
                     var scopeLabel = branchCode ? selectedLabel.trim() : 'All branches';
+                    if (subDepartment) {
+                        // Sub-department selected: recompute KPI counts from sub-department data.
+                        var subRows = subDepartmentAssetData.filter(function(item) {
+                            return (!branchCode || item.branch_code === branchCode) && item.sub_department === subDepartment;
+                        });
+                        var sumOf = function(key) {
+                            return subRows.reduce(function(sum, item) { return sum + Number(item[key] || 0); }, 0);
+                        };
+                        laptopChartData = [{ name: '', y: sumOf('laptop_count') }];
+                        handsetChartData = [{ name: '', y: sumOf('handset_count') }];
+                        handsetSimcardChartData = [{ name: '', y: sumOf('handset_simcard_count') }];
+                        scopeLabel += ' / ' + subDepartment;
+                    }
                     document.getElementById('totalAssetCount').textContent = total(laptopChartData).toLocaleString();
                     document.getElementById('totalAssetCounth').textContent = total(handsetChartData).toLocaleString();
                     document.getElementById('totalAssetCountHs').textContent = total(handsetSimcardChartData).toLocaleString();
@@ -880,7 +920,8 @@ Highcharts.chart('container-fix-lh', {
                     });
 
                     var selectedSubDepartments = subDepartmentAssetData.filter(function(item) {
-                        return !branchCode || item.branch_code === branchCode;
+                        return (!branchCode || item.branch_code === branchCode)
+                            && (!subDepartmentFilter.value || item.sub_department === subDepartmentFilter.value);
                     });
                     var useSubDepartmentBreakdown = Boolean(branchCode) && selectedSubDepartments.length;
 
@@ -963,9 +1004,14 @@ Highcharts.chart('container-fix-lh', {
                 }
 
                 branchFilter.addEventListener('change', function() {
+                    populateSubDepartments(this.value);
                     renderDashboard(this.value);
                 });
+                subDepartmentFilter.addEventListener('change', function() {
+                    renderDashboard(branchFilter.value);
+                });
 
+                populateSubDepartments(branchFilter.value);
                 renderDashboard(branchFilter.value);
             })();
         });
